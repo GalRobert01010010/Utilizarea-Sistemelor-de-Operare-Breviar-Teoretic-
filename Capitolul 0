@@ -1,0 +1,86 @@
+# Capitolul 0: INTRODUCERE
+
+Def. Sistem informatic = sisteme de calcul + infrastructura + date.
+  - Sistem de calcul (computer system) = ansamblu de componente (hardware) și programe (software) care lucrează împreună pentru a prelucra date în mod automat.
+    - echipament cu putere de calcul folosit direct sau indirect (servere, laptop, telefon etc.)
+    - componenta fizica ce prelucreaza si reda informatie 
+    Def. Hardware = tot ce se poate atinge.
+      - CPU (Procesor): „Creierul”. Execută instrucțiunile.
+      - Memoria RAM: Memorie de lucru rapidă, dar volatilă (se șterge la restart).
+      - Stocare (HDD/SSD): Memorie lentă, dar persistentă (păstrează datele).
+      - I/O (Intrare/Ieșire): Placa de rețea (NIC), tastatura, monitorul.
+    Def. Software = Instructiunile care spun hardware-ului ce sa faca.
+      - sistem de operare (OS): interfata dintre user si hardware
+      - aplicatii (browser, terminal, nano etc.)
+  - Infrastructura = reteaua / sisteme de stocare / interferentele de acces
+
+## 0.1: Sisteme de calcul
+
+Def. Echipament care preia informatii, le prelucreaza si le livreaza mai departe.
+- il mai numim: dispozitiv de calcul, dispozitiv, platforma de calcul, echipament etc.
+- este compus din: hardware (comp. fizice care ofera putere de calcul) + software (programe sau aplicatii flexibile care ofara interfata prietenoasa)
+- sistem de operare (OS): gestioneaza puterea de calcul si faciliteaza folosirea ei in aplicatii
+- aplicatiile de sistem (precum Shell): ofera suport suplimentar celorlalte aplicatii
+
+## 0.2: Sistemul de operare
+
+Def. Sistemul de operare = componenta software centrală ce asigură accesul utilizatorului (prin aplicatii software) la resursele hardware.
+Roluri:
+  - abstractizare hardware: ofera aceeasi interfata pentru aplicatii indiferent de specificul hardware
+  - portabilitate: aceeasi aplicatie poate rula la fel pe configuratii hardware diferite
+  - mediere: ofera acelasi acces la resursele hardware si traficul de informatii al aplicatiilor va fi transferat pe rand, fara sa se amestece
+  - securitate / izolare: fluxurile de informatie dintre aplicatii ruleaza izolat
+Clasificare:
+  - OS generaliste, folosite de sisteme server, desktop sau laptop
+  - OS pentru dispozitive mobile
+  - OS specializate pentru echipamente de retea
+- dispozitivele cu rol specific (embedded systems) nu au sistem de operare (ingeneral), dar au o componenta software alternativa
+Def. Compunenta centrala a OS (kernel) = nucleul sistemului de operare gare imparte resursele hardware.
+Def. Interfata de apeluri de sistem (system call interface) = modul prin care nucleul ofera aplicatiilor acces la resursele hardware. Singura modalitate de comunicare intre aplicatii si nucleu.
+
+## 0.2.1: Alegerea sistemului de operare
+
+Android - splicatiile android folosesc mediul Android Studio
+        - aplicatiile iOS se dezvolta doar pe macOS folosind mediul Xcode
+iOS - dispozitivele Apple dispun de o mai buna integrare a componentelor software / hardware
+    - se integreaza bine cu alte dispozitive Apple
+Sistemele de operare generaliste 
+  - ruleaza pe sisteme de calcul puternice (care contin unitate de calcul + periferice precum monitor, tastatura etc.)
+  - EX: servere (folosite pentru prelucrari de date), sisteme desktop sau laptop
+  - avantajele si dezavantajele fiecarui sistem de operare:
+    - Microsoft Windows: aplicatiile sunt dezvoltate sa ruleze pe windows + au integrate produse Microsoft pt companii
+    - Apple macOS: vine preinstalat cu produse Apple si preconfigurat + mediu de lucru apropiat de Linux + urmareste utilizabilitate
+    - GNU / Linux: cel mai raspuandit OS + este sistem open source (este accesibil codul sursa)
+  - are doua modalitati de a rula in paralel doua sisteme de operare diferite:
+    - dual-install / dual-boot: ruleaza pe acelasi sistem de calcul doua OS diferite, pe care le porneste alternativ
+    - masina virtuala: instaleaza un OS folosind o masina virtuala in mediul din OS principal
+Obs. In Linux, se pot investiga usor procese, fisiere, procesul de boot, sistemul de operare, aspecte de securitate etc.
+
+## 0.3: Lumea Linux
+
+- Linux este de fapt numele nucleului sistemului de operare, numele kernelului
+Codul sursa deschis (open source)
+  - se mai numeste si software liber
+  - acest cod este dezvoltat si distribuit printr-o licenta software specifica, licenta care oferă oricui acces la implementarea programelor
+
+## 0.3.1: Linux si unix
+
+Def. UNIX = sistem de operare din care s-au inspirat ulterior alte sisteme de operare.
+- Linux este un OS bazat pe Unix, dar scris de la 0
+
+## 0.3.2: GNU / Linux. Distributii
+
+- EX: Fedora, Ubuntu, Arch, Mint
+- Linux se refera doar la kernel (nucleul OS)
+Pentru a functiona, un OS are nevoie de:
+  - software de baza
+  - aplicatii pentru a rula: un shell, browser web, player multimedia, suită de utilitare pentru dezvoltare etc.
+Def. Distributie = cumul de componente software instalate pe un sistem de calcul si apoi folosite.
+  - o distributie GNU / Linux foloseste nucleul Linux si aplicatii GPU
+O distributie difera de altele prin:
+  - aplicatiile pe care le contine si modul in care pot fi gestionate
+  - configuratii ale sistemului (denumiri de fisiere, versiuni etc.)
+  - hardware-ul pentru care ofera suport si interfata
+Familii de distributii:
+  - familia RedHat (are la baza distributia RedHat): Fedora, CentOS etc.
+  - familia Debian (are la baza distributia Debian): Ubuntu, Mint etc.
