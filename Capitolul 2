@@ -1,1 +1,235 @@
+# Capitolul 2: Utilizarea sistemului de fisiere
 
+Def. Fisiere = partea vizibila a sistemului de operare.
+- sunt organizate intr-o structura ierarhica numita sistem de fisiere
+
+## 2.1: Notiuni de baza
+
+Def. Sistemul de fisiere = o componenta centrala a sistemului de operare, care ne ajuta sa organizam cantitati mari de informatie si procese.
+Roluri:
+  - controlul unei cantitati mari de documente
+  - separa resursele intre utilizatori multiplii (umani sau non-umani) ai unui sistem de calcul
+- sistemul de fisiere se alege in functie de prioritatile in functionarea sistemului
+Def. Arhitectura cloud = modul în care sunt organizate și conectate componentele tehnologice (servere, stocare, rețele, software) pentru a livra servicii prin internet.
+Sectiunile arhitecturii cloud:
+  - Front-end: tot ce vede utilizatorul (interfata grafica, browser-ul etc.)
+  - Back-end: algoritmica si logica din spate (serverele, bazele de date, sistemele de stocare și mecanismele de securitate etc.)
+  -> cele doua sunt conectate prin retea (internet) si mediate de un program central numit Middleware (care decide ce server preia cererea)
+Modele de servicii ale infrastructurii cloud:
+  - IaaS (Infrastructure as a Service): Primești componentele hardware (CPU, RAM, HDD, server, stocare). Tu instalezi OS-ul. (Ex: Google Compute Engine).
+  - PaaS (Platform as a Service): Primești o platformă pe care doar urci codul. Nu te ocupi de OS. (Ex: Heroku, Google App Engine).
+  - SaaS (Software as a Service): Primești aplicația gata făcută. (Ex: Google Drive, Gmail).
+Criterii dupa care se alege un sistem de fisiere:
+  - asigurarea integritatii datelor
+  - separarea resurselor intre utilizatori
+  - volumul pe care il poate gestiona
+  - comprimarea datelor pentru a maximiza spatiul de pe disc (comprimare = aceleasi date vor ocupa mai putin spatiu)
+  - optimizarea spatiului de stocare prin gestiunea fisierelor duplicate
+  - menttinerea unei liste a modificărilor ce permite revenirea la o stare anterioara în cazul aparitiei unei erori (prin jurnalizare si reversibilitate)
+
+## 2.1.1: Definitii
+
+Def. Fisierul = forma de organizare digitala a datelor, avand forma unei insiruiri de octeti.
+- un fișier sau un director este considerat „ascuns” (hidden) dacă numele său începe cu un punct (.).
+  - ls -> Vezi doar fișierele „normale”.
+  - ls -a -> Vezi totul, inclusiv cele care încep cu punct (ex: .bashrc, .ssh, .config).
+- este organizat in directoare
+- Binar (0 și 1): Este singurul mod în care datele există fizic pe disc sau în RAM.
+- Hexazecimal (0-F): Este doar un mod de afișare pentru oameni. (Este mult mai ușor să citești 4A decât 01001010)
+Explicatie:
+  - În fișierul Text: Există o convenție (ASCII sau UTF-8): Toți octeții (01000001, 41 în hex) din fișier sunt tratați ca simboluri grafice/litere.
+  - În fișierul Binar: Octeții pot însemna orice. Un octet poate fi o coordonată de culoare, altul poate fi volumul unui sunet, iar altul o instrucțiune pentru procesor
+Def. Directorul = colectie de fisiere si subdirectoare.
+- directoarele in Linux sunt fisiere speciale
+Def. Sistemul de fisiere = parte a sistemului de operare ce se ocupă cu numele si atributele fisierelor,pe care le stochează într-o structură ierarhică. 
+-  Sistemul de fisiere oferă o metodă de organizare fizică si logică a fisierelor într-un mediu de stocare:
+    - stocarea fisierelor ca o însiruire de octeti reprezintă organizarea fizică
+    - modul în care sunt adresate fisierele reprezintă organizarea logică
+Tipuri de interfete pentru a lucra cu sistemul de fisiere:
+- CLI (Command Line Interface)
+  - interfata bazata pe text unde scrii comenzi
+  - shell interpreteaza comenzile si le transmite kernel-ului
+- GUI (Grafical User Interface)
+  browser-ul de fisiere (Nautilus in Linux / File Explorer in Windows)
+Explicatie:
+- Terminalul = aplicația (fereastra) pe care o deschizi (ex: GNOME Terminal, Konsole, Putty). Este „ecranul” care afișează caracterele.
+- Shell-ul = programul care rulează în interiorul terminalului (ex: Bash). El este cel care afișează promptul (user@linux:~$) și interpretează comenzi.
+- CLI = metoda de interacțiune, conceptul in sine.
+
+## 2.1.2: Structura ierarhica a sistemului de fisiere
+
+- apare atunci cand fisierele sunt organizate in directoare
+- confera eficienta in procesul de cautare
+FHS (Filesystem Hierarchy Standard):
+  - / -> (root dyrectory), cel mai cuprinator director, care le contine pe celelalte
+  - /bin -> comenzi necesare bootarii, intretinerii si depanarii sistemului
+  - /boot -> comenzi necasare bootarii, precum imaginea kernel-ului
+  - /dev -> fisiere speciale utilizate pentru accesul direct la dispozitivele hardware sau logice ale sistemului
+  - /etc -> fisiere pentru configurarea sistemului (EX. inittam, fstab, hosts etc.)
+  - /home -> fisierele fiecarui utilizator de sistem; datele unui user se gasesc in /home/username (sau ~)
+  - /media -> subdirectoare in care se monteaza unitatile optice, floppy etc.
+  - /mnt -> subdirectoare in care se monteaza alte sisteme de fisiere
+  - /opt -> pachete de aplicatii de dimensiuni mari accesibile tuturor uitlizatorilor 
+  - /proc -> sistem virtual de fisiere din care se obtin informatii despre sistem si aplicatiile care rulează la un moment dat
+  - /root -> directorul home al utilizatorului root
+  - /sbin -> comenzi de baza accesibile numai utilizatorului root
+  - /tmp -> fisiere temporare
+  - /usr -> aplicatii pentru uzul normal al OS (EX. /usr/local contine aplicatii instalate / compilate de user)
+  - /var -> fisiere al căror continut se schimbă foarte des, precum log-uri, fisiere temporare, cache (date reutilizabile), spool (date neprocesate)
+
+## 2.1.3: Cai relative si cai absolute
+
+Def. Calea absoluta = adresa completa a fisierului, incepand cu root directory.
+- o cale absoluta incepe obligatoriu cu / (slash) pentru Linux (EX. /etc/ssh/sshd_config (cale unică în tot sistemul))
+- simbolul "~" este o prescurtare pentru directorul home al utilizatorului (/home/<username>/ în Linux)
+Def. Calea relativa = cale care porneste din directorul curent si construieste o cale catre directorul destinatie dorit
+- o cale relativa NU incepe cu / sau ~ (EX. Documents/referat.txt (sistemul îl caută doar în folderul curent).)
+Directoare speciale (gasite in fircare director):
+  - . (punct): indica directorul curent (nu mei e nevoie sa scriem toata calea pentru scripturi / programe din acest director)
+    - daca in directorul curent avem un executabil numit list_permissions, il putem rula cu ./list_permissions
+  - ..(punct punct): indica spre directorul parinte in ierarhia de fisiere si directoare
+  - ~ (tilde): este echivalent pentru directorul home al utilizatorului (EX. /home/gal-robert)
+Explicatii:
+  - pwd (print working directory): afișează calea absolută a directorului curent
+    - directorul curent e indicat si in promptul comenzii, intre caracterul ":" si "$"
+  - cd (change directory): schimba directorul curent; comanda primeste ca argument o cale relativa sau absoluta
+    - cd - (linie): te duce in directorul anterior
+    - cd .. (doua puncte): urca un nivel in ierarhie
+    - cd ../..: urca doua nivele in ierarhie
+    - cd (fara argumente): schimba directorul de lucru in directorul home al utilizatorului (EX. /home/gal-robert)
+  - ls (list): listeaza continutul folderului curent
+    - ls -a (all): afiseaza si fisierele ascunse (care incep cu ".")
+    - ls -l (long): afiseaza informatii (permisiuni, dimensiune, data de creare etc.)
+    - ls -h (human readable format): afiseaza date despre fisiere in format uman
+  - cp (copy): copiaza fisierul din primul argument in al doilea argument
+    - cp -r (recursive): actiunea de copiere intră înăuntru și repetă aceeași acțiune pentru fiecare element găsit, până când termină toată ierarhia
+    - EX. cp /etc/passwd . (comanda copiaza fisierul passwd mentionat cu cale absoluta in primul argument, in directorul curent, reprezentat de ".")
+  - mv (move): muta sau redenumeste
+    - EX. mv vechi.txt nou.txt (redenumeste fisierul vechi.txt in nou.txt, pastrand continutul)
+    - EX. mv fisier.txt ~/Desktop/ (muta fisier.txt in alta locatie)
+  - mkdir (make directory): creeaza foldere
+    - mkdir -p (parents): face ierarhic foldere specificate (EX. mkdir -p a/b/c)
+  - touch: creeaza un fisier gol rapid
+    - EX. touch nou.txt
+  - rm (remove): sterge definitiv
+    - rm -i (interactive): te intreaba inainte sa stearga (EX. rm -i fisier.txt)
+    - rm -rf (recursive + force): sterge un folder cu tot ce ai in el fara sa intrebe inainte
+
+## 2.2: Formatul fisierelor
+
+- fisierele sunt vazute de calculator ca o colectie de biti ce trebuie prelucrati
+- calculatorul prelucreaza fisierele in functie de formatul acestora, pentru a sti ce programe sa foloseasca pentru a le deschide
+Tipuri de fisiere:
+  - de tip text:
+    - contin linii din caractere citibile
+    - nu contin elemente ce trebuie interpretate de un program (EX. grafice, executabile etc.)
+    - pot contine:
+      - plain text (au extensia .txt)
+      - cod sursa (au extensia .c, .java etc.)
+      - formate de prezentare (precum HTML)
+  - de tip binar:
+    - orice fisier care nu e de tip text
+    - EX. programe executabile, melodii, imagini, fisiere comprimate etc.
+Def. Formatul = modul de codificare a informatiei in fisier. Specifica modul in care informatia va fi codificata in biti , in mediul digital.
+- EX. .tex (document sursă LaTeX), .mp3(format audio), .bmp (imagine tip bitmap), .png (imagine tip Portable Network Graphic) etc.
+Obs. Pentru a vedea de ce tip este un fisier, dincolo de extensie, folosim comanda "file", urmata de fisier.
+
+## 2.2.1: Atributele fisierelor
+
+- e importanta distinctia dintre date si metadate
+Def. Datele = informatii efective, precum, versuri, muzica, imagini, bilete de avion (documente digitale).
+Def. metadate = informatiii despre informatii: cantitatea informatiilor, data ultimei accesari, cine le-a creat, cine le-a modificat, unde au fost editate ultima data.
+- metadatele (atributele) unui fisier se pot citi cu "ls -l"
+  - atributele se refera la: permisiuni, informatii legate de posesie (utilizator), dimensiune, data ultimei modificări, numele fisierului
+Tipul fisierului este indicat de primul caracter din rezultatul rulării comenzii ls -l, si poate fi:
+  - - = regular file
+  - b = block special file (Dispozitive care stochează date (Hard Disk, SSD))
+  - c = character special file (Dispozitive care trimit caractere (Tastatura, Mouse))
+  - d = directory
+  - l = symbolic link (O „scurtătură” către alt fișier)
+  - n = network file
+  - p = FIFO (O țeavă (pipe) cu nume pentru comunicare între procese. Datele dintr-un FIFO nu sunt stocate permanent pe disc. Ele dispar dupa ce au fost citite de celălalt program)
+  - s = socket (Folosit de programe pentru a vorbi între ele (ca o rețea locală))
+- EX. -rw-r--r-- SAU drwxr-xr-x etc.
+Tipuri de permisiuni:
+  - r = permisiunea de a citi fis, ierul
+  - w = permisiunea de a scrie în fis, ier
+  - x = permisiunea de a executa fis, ierul
+  - - = absent, a permisiunii
+
+## 2.3: Operatii uzuale asupra fisierelor si directoarelor
+
+Operatiile uzuale asupra fisierelor includ: 
+  - afisarea si schimbarea directorului
+  - afisarea continutului fisierului
+  - listarea fisierelor dintr-un director
+  - crearea fisierelor sau a directoarelor
+  - copierea, mutarea, redenumirea sau stergerea acestora
+  - arhivarea/dezarhivarea
+  - realizarea unei versiuni de backup
+
+## 2.3.1: Afisarea si schimbarea directorului curent
+
+- Variabila $OLDPWD: Stochează calea directorului anterior. Comanda `cd -` este de fapt un alias intern pentru `cd $OLDPWD`.
+- cd - (Output): Spre deosebire de alte variante de `cd`, aceasta este singura care afișează automat pe ecran calea în care te-a mutat.
+- Navigare în adâncime (..): Poți urca oricâte niveluri dintr-o dată: `cd ../../../` (trei niveluri sus). Dacă depășești rădăcina, Linux te va lăsa pur și simplu în `/`.
+- Shortcut-ul "cd" simplu: În concurs, nu scrie niciodată `cd ~` sau `cd /home/student`. Folosește doar `cd` (fără argumente) pentru a câștiga o secundă.
+- Variabila $PWD: Comanda `pwd` afișează valoarea acestei variabile de mediu. O poți folosi în alte comenzi, de ex: `cp fisier.txt $PWD/copie.txt`.
+
+## 2.3.2: Listarea fisierelor
+
+- comanda pe care o folosim este ls [optiuni] <cale>
+Optiuni frecvente pentru aceasta comanda:
+  - ls: listeaza continutul folderului curent
+  - ls -l: afiseaza detalii despre fiecare fisier
+  - ls -a: afiseaza inclusiv fisiere ascunse
+  - ls -h: afiseaza informatii despre fisiere in format usor de inteles
+  - ls -R: afiseaza recursiv continutul folderelor si fisierelor care au ca parinte argumentul specificat
+    - EX. ls -R /usr/local/lib/
+  - ls -t (time short): afiseaza fisiere dupa data modificarii, cele mai noi fiind primele
+  - ls -S (size short): afiseaza fisiere dupa dimensiune, cele mai mari fiind primele
+  - ls -F (classify): adauga un simbol la finalul numelui pentru a identifica tipul
+    - / la final = Director.
+    - * la final = Executabil.
+    - @ la final = Link simbolic (shortcut).
+    Obs. ls -lrt este probabil cea mai folosită comandă de către sysadmini pentru că pune ultimele fișiere modificate jos, exact deasupra prompt-ului.
+    Obs. ls -lhSr gaseste cel mai mare fișier dintr-un folder cu dimensiunea în MB și să fie poziționat ultimul în listă (deasupra promptului).
+
+## 2.3.3: Afisarea continutului fisierelor
+
+- cat <nume>: afiseaza continutul intregului fisier, indiferent de lungime
+- less <nume>: permite navigarea prin output-ul comenzii
+
+## 2.3.4: Crearea fisierelor
+
+Metoda 1:
+  - touch <nume_fisier>: creaza un fisier gol cu numele specificat in directorul curent
+  - EX. student@uso:~/Downloads$ touch cats.txt
+Metoda 2:
+  - redirectioneaza (>) iesirea unei comenzi nule intr-un fisier
+    - daca fisierul exista deja, folosirea comenzii duce la trunchierea lui (dimensiunea sa va fi redusa la 0 octeti)
+    - daca nu exista, comanda creaza un fisier gol cu numele specificat
+  - EX. student@uso:~/Downloads$ > dogs.txt
+Obs. Comanda touch are rolul principal de a actualiza data ultimei modificari sau accesari a unui fisier
+  - daca fisierul nu exista, va fi creat cu data actuala => crearea fisierelor este o proprietate secundara a comenzii
+
+## 2.3.4.1: Crearea legaturilor simbolice
+
+Def. Legaturile simbolice = un mod prin care un fisier poate fi referit prin doua cai, echivalentul scurtaturilor.
+- ln -s (shortcut): comanda care infaptuie legaturi
+    - Dacă ștergi sursa, permisiunile link-ului simbolic (lrwxrwxrwx) rămân afișate exact la fel în output-ul comenzii ls -l. Link-ul în sine nu se schimbă, dar el devine un "broken link" (o legătură întreruptă).
+    - EX. student@uso:~$ ln -s uso.git/README.md readme_link
+    - in exemplu, daca dam cat la readme_link, vom avea acelasi output ca si la comanda cat uso.git/README.md.
+- ln (fara nimic): e o copie care se auto-actualizeaza. Daca se sterge sursa, ramane copia
+
+## 2.3.4.2: Crearea directoarelor
+-folosim comanda mkdir
+Comanda ls -d:
+  - când aplici ls asupra unui director, Linux „intră” în el și îți arată ce conține. Flag-ul -d (directory) forțează comanda să afișeze doar numele directorului și metadatele acestuia, ignorând complet conținutul interior.
+  - ls -ld: afiseaza datele directorului in sine (fara sa intre in interior)
+  - ls -d */: ignora fisierele si afiseaza doar directoarele din locatia curenta
+  - ls -d .*: afiseaza doar directoarele si ficierele ascunse din locatia curenta
+  - ls -di (inode): afiseaza numarul inode al directorului
+      - Def. Un inode (index node) = structură de date de pe disc care stochează toate informațiile despre un fișier, cu excepția numelui său și a conținutului propriu-zis.
+
+## 2.3.5: Copiere / mutare / redenumire / stergere
