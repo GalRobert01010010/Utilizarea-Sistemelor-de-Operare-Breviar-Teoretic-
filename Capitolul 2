@@ -233,3 +233,31 @@ Comanda ls -d:
       - Def. Un inode (index node) = structură de date de pe disc care stochează toate informațiile despre un fișier, cu excepția numelui său și a conținutului propriu-zis.
 
 ## 2.3.5: Copiere / mutare / redenumire / stergere
+
+Def. Copiere = un fisier este duplicat si se gaseste in doua locuri.
+Def. Mutarea / Redenumirea = un fisier este mutat in alt loc din sistemul de fisiere. Acesta se gaseste acum intr-un singur loc.
+Def. Stergere = eliminarea acelui fisier din sistemul de fisiere.
+Comenzile de copiere si mutare primesc 2 paramentri:
+  - primul reprezinta sursa (de unde vrem sa copiem)
+  - al doilea e destinatia (unde vrem sa ajunga)
+Obs. Primul parametru (sursa) al comenzilor din acest subcapitol poate fi reprezentat si prin globbing în sistemul de fisiere.
+Def. Globbing reprezintă utilizarea unor caractere speciale (numite wildcards) de către shell pentru a genera o listă de nume de fișiere care se potrivesc unui anumit tipar.
+Tabel cu exemple de concepte globbing:
+  - *: inlocuiește orice, de la un singur caracter, la un milion de caractere sau chiar nimic.
+    - EX. ls tema* -> va afisa toate fisierele care incep cu "tema"
+    - EX. ls *tema -> va afisa toate fisierele care se termina cu "tema"
+    - EX. ls *tema* -> va afisa toate fisierele care contin "tema"
+  - ?: cauta nume de fisiere care contin o singura litera in loc de "?"
+    - EX. avem fisierele: lab1.c, lab2.c și lab10.c
+    - EX. ls lab?.c -> rulam comanda, si afiseaza lab1.c și lab2.c dar nu afiseaza lab10.c pentru ca contine doua caractere dupa "lab"
+  - []: Funcționează ca un filtru de tip "SAU". Se potrivește cu un singur caracter, dar acel caracter trebuie să fie unul din lista din paranteze.
+    - EX. avem poza_A.jpg, poza_B.jpg, poza_C.jpg
+    - EX. ls poza_[AC].jpg -> rulam comanda si afiseaza poza_A.jpg și poza_C.jpg. Pe B îl ignoră complet.
+  - [a-z] SAU [0-9]: 
+    - EX. avem fișiere de log de la log_1.txt până la log_9.txt  
+    - ls log_[1-5].txt -> găsește doar log-urile de la 1 la 5
+  - [! ]: afiseaza tot, mai fisierele care incep cu caracterele negate in paranteze
+    - EX. avem test_alin.txt, test_bogdan.txt, test_cristi.txt
+    - ls test_[!a]*.txt -> gaseste test_bogdan.txt și test_cristi.txt, dar ignora pe test_alin.txt pentru ca incepe cu "a"
+
+## 2.3.5.1: Copierea (pag 62)
