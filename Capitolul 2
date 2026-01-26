@@ -260,4 +260,11 @@ Tabel cu exemple de concepte globbing:
     - EX. avem test_alin.txt, test_bogdan.txt, test_cristi.txt
     - ls test_[!a]*.txt -> gaseste test_bogdan.txt și test_cristi.txt, dar ignora pe test_alin.txt pentru ca incepe cu "a"
 
-## 2.3.5.1: Copierea (pag 62)
+## 2.3.5.1: Copierea 
+
+- comanda pentru a copia un fisier este: cp [optiuni] <sursa> <destinatie>
+  - pentru copierea unui director folosim optiunea -r pe copiere recursiva
+  - EX. student@uso:~$ cp passwd passwd-copy
+- comanda cmp compara doua fisiere si nu returneaza nimic daca sunt identice
+  - EX. student@uso:~$ cmp passwd passwd-copy
+- pentru a compara doua directoare pt a verifica ca sunt 
