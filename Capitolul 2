@@ -65,7 +65,7 @@ FHS (Filesystem Hierarchy Standard):
   - /bin -> comenzi necesare bootarii, intretinerii si depanarii sistemului
   - /boot -> comenzi necasare bootarii, precum imaginea kernel-ului
   - /dev -> fisiere speciale utilizate pentru accesul direct la dispozitivele hardware sau logice ale sistemului
-  - /etc -> fisiere pentru configurarea sistemului (EX. inittam, fstab, hosts etc.)
+  - /etc -> fisiere pentru configurarea sistemului (Ex. inittam, fstab, hosts etc.)
   - /home -> fisierele fiecarui utilizator de sistem; datele unui user se gasesc in /home/username (sau ~)
   - /media -> subdirectoare in care se monteaza unitatile optice, floppy etc.
   - /mnt -> subdirectoare in care se monteaza alte sisteme de fisiere
@@ -74,21 +74,21 @@ FHS (Filesystem Hierarchy Standard):
   - /root -> directorul home al utilizatorului root
   - /sbin -> comenzi de baza accesibile numai utilizatorului root
   - /tmp -> fisiere temporare
-  - /usr -> aplicatii pentru uzul normal al OS (EX. /usr/local contine aplicatii instalate / compilate de user)
+  - /usr -> aplicatii pentru uzul normal al OS (Ex. /usr/local contine aplicatii instalate / compilate de user)
   - /var -> fisiere al căror continut se schimbă foarte des, precum log-uri, fisiere temporare, cache (date reutilizabile), spool (date neprocesate)
 
 ## 2.1.3: Cai relative si cai absolute
 
 Def. Calea absoluta = adresa completa a fisierului, incepand cu root directory.
-- o cale absoluta incepe obligatoriu cu / (slash) pentru Linux (EX. /etc/ssh/sshd_config (cale unică în tot sistemul))
+- o cale absoluta incepe obligatoriu cu / (slash) pentru Linux (Ex. /etc/ssh/sshd_config (cale unică în tot sistemul))
 - simbolul "~" este o prescurtare pentru directorul home al utilizatorului (/home/<username>/ în Linux)
 Def. Calea relativa = cale care porneste din directorul curent si construieste o cale catre directorul destinatie dorit
-- o cale relativa NU incepe cu / sau ~ (EX. Documents/referat.txt (sistemul îl caută doar în folderul curent).)
+- o cale relativa NU incepe cu / sau ~ (Ex. Documents/referat.txt (sistemul îl caută doar în folderul curent).)
 Directoare speciale (gasite in fircare director):
   - . (punct): indica directorul curent (nu mei e nevoie sa scriem toata calea pentru scripturi / programe din acest director)
     - daca in directorul curent avem un executabil numit list_permissions, il putem rula cu ./list_permissions
   - ..(punct punct): indica spre directorul parinte in ierarhia de fisiere si directoare
-  - ~ (tilde): este echivalent pentru directorul home al utilizatorului (EX. /home/gal-robert)
+  - ~ (tilde): este echivalent pentru directorul home al utilizatorului (Ex. /home/gal-robert)
 Explicatii:
   - pwd (print working directory): afișează calea absolută a directorului curent
     - directorul curent e indicat si in promptul comenzii, intre caracterul ":" si "$"
@@ -96,7 +96,7 @@ Explicatii:
     - cd - (linie): te duce in directorul anterior
     - cd .. (doua puncte): urca un nivel in ierarhie
     - cd ../..: urca doua nivele in ierarhie
-    - cd (fara argumente): schimba directorul de lucru in directorul home al utilizatorului (EX. /home/gal-robert)
+    - cd (fara argumente): schimba directorul de lucru in directorul home al utilizatorului (Ex. /home/gal-robert)
   - ls (list): listeaza continutul folderului curent
     - ls -a (all): afiseaza si fisierele ascunse (care incep cu ".")
     - ls -l (long): afiseaza informatii (permisiuni, dimensiune, data de creare etc.)
@@ -105,16 +105,16 @@ Explicatii:
     - ls -1 (cifra unu): afișează un singur fișier pe linie. Foarte util când vrei să numeri fișierele cu wc -l.
   - cp (copy): copiaza fisierul din primul argument in al doilea argument
     - cp -r (recursive): actiunea de copiere intră înăuntru și repetă aceeași acțiune pentru fiecare element găsit, până când termină toată ierarhia
-    - EX. cp /etc/passwd . (comanda copiaza fisierul passwd mentionat cu cale absoluta in primul argument, in directorul curent, reprezentat de ".")
+    - Ex. cp /etc/passwd . (comanda copiaza fisierul passwd mentionat cu cale absoluta in primul argument, in directorul curent, reprezentat de ".")
   - mv (move): muta sau redenumeste
-    - EX. mv vechi.txt nou.txt (redenumeste fisierul vechi.txt in nou.txt, pastrand continutul)
-    - EX. mv fisier.txt ~/Desktop/ (muta fisier.txt in alta locatie)
+    - Ex. mv vechi.txt nou.txt (redenumeste fisierul vechi.txt in nou.txt, pastrand continutul)
+    - Ex. mv fisier.txt ~/Desktop/ (muta fisier.txt in alta locatie)
   - mkdir (make directory): creeaza foldere
-    - mkdir -p (parents): face ierarhic foldere specificate (EX. mkdir -p a/b/c)
+    - mkdir -p (parents): face ierarhic foldere specificate (Ex. mkdir -p a/b/c)
   - touch: creeaza un fisier gol rapid
-    - EX. touch nou.txt
+    - Ex. touch nou.txt
   - rm (remove): sterge definitiv
-    - rm -i (interactive): te intreaba inainte sa stearga (EX. rm -i fisier.txt)
+    - rm -i (interactive): te intreaba inainte sa stearga (Ex. rm -i fisier.txt)
     - rm -rf (recursive + force): sterge un folder cu tot ce ai in el fara sa intrebe inainte
     - rm d (dir): Șterge un director dacă este gol (ca rmdir).
 
@@ -125,16 +125,16 @@ Explicatii:
 Tipuri de fisiere:
   - de tip text:
     - contin linii din caractere citibile
-    - nu contin elemente ce trebuie interpretate de un program (EX. grafice, executabile etc.)
+    - nu contin elemente ce trebuie interpretate de un program (Ex. grafice, executabile etc.)
     - pot contine:
       - plain text (au extensia .txt)
       - cod sursa (au extensia .c, .java etc.)
       - formate de prezentare (precum HTML)
   - de tip binar:
     - orice fisier care nu e de tip text
-    - EX. programe executabile, melodii, imagini, fisiere comprimate etc.
+    - Ex. programe executabile, melodii, imagini, fisiere comprimate etc.
 Def. Formatul = modul de codificare a informatiei in fisier. Specifica modul in care informatia va fi codificata in biti , in mediul digital.
-- EX. .tex (document sursă LaTeX), .mp3(format audio), .bmp (imagine tip bitmap), .png (imagine tip Portable Network Graphic) etc.
+- Ex. .tex (document sursă LaTeX), .mp3(format audio), .bmp (imagine tip bitmap), .png (imagine tip Portable Network Graphic) etc.
 Obs. Pentru a vedea de ce tip este un fisier, dincolo de extensie, folosim comanda "file", urmata de fisier.
 
 ## 2.2.1: Atributele fisierelor
@@ -153,7 +153,7 @@ Tipul fisierului este indicat de primul caracter din rezultatul rulării comenzi
   - n = network file
   - p = FIFO (O țeavă (pipe) cu nume pentru comunicare între procese. Datele dintr-un FIFO nu sunt stocate permanent pe disc. Ele dispar dupa ce au fost citite de celălalt program)
   - s = socket (Folosit de programe pentru a vorbi între ele (ca o rețea locală))
-- EX. -rw-r--r-- SAU drwxr-xr-x etc.
+- Ex. -rw-r--r-- SAU drwxr-xr-x etc.
 Tipuri de permisiuni:
   - r = permisiunea de a citi fis, ierul
   - w = permisiunea de a scrie în fis, ier
@@ -188,7 +188,7 @@ Optiuni frecvente pentru aceasta comanda:
   - ls -a: afiseaza inclusiv fisiere ascunse
   - ls -h: afiseaza informatii despre fisiere in format usor de inteles
   - ls -R: afiseaza recursiv continutul folderelor si fisierelor care au ca parinte argumentul specificat
-    - EX. ls -R /usr/local/lib/
+    - Ex. ls -R /usr/local/lib/
   - ls -t (time short): afiseaza fisiere dupa data modificarii, cele mai noi fiind primele
   - ls -S (size short): afiseaza fisiere dupa dimensiune, cele mai mari fiind primele
   - ls -F (classify): adauga un simbol la finalul numelui pentru a identifica tipul
@@ -207,12 +207,12 @@ Optiuni frecvente pentru aceasta comanda:
 
 Metoda 1:
   - touch <nume_fisier>: creaza un fisier gol cu numele specificat in directorul curent
-  - EX. student@uso:~/Downloads$ touch cats.txt
+  - Ex. student@uso:~/Downloads$ touch cats.txt
 Metoda 2:
   - redirectioneaza (>) iesirea unei comenzi nule intr-un fisier
     - daca fisierul exista deja, folosirea comenzii duce la trunchierea lui (dimensiunea sa va fi redusa la 0 octeti)
     - daca nu exista, comanda creaza un fisier gol cu numele specificat
-  - EX. student@uso:~/Downloads$ > dogs.txt
+  - Ex. student@uso:~/Downloads$ > dogs.txt
 Obs. Comanda touch are rolul principal de a actualiza data ultimei modificari sau accesari a unui fisier
   - daca fisierul nu exista, va fi creat cu data actuala => crearea fisierelor este o proprietate secundara a comenzii
 
@@ -220,15 +220,17 @@ Obs. Comanda touch are rolul principal de a actualiza data ultimei modificari sa
 
 Def. Legaturile simbolice = un mod prin care un fisier poate fi referit prin doua cai, echivalentul scurtaturilor.
 - ln -s (shortcut): comanda care infaptuie legaturi
-    - Dacă ștergi sursa, permisiunile link-ului simbolic (lrwxrwxrwx) rămân afișate exact la fel în output-ul comenzii ls -l. Link-ul în sine nu se schimbă, dar el devine un "broken link" (o legătură întreruptă).
-    - EX. student@uso:~$ ln -s uso.git/README.md readme_link
+    - dacă ștergi sursa, permisiunile link-ului simbolic (lrwxrwxrwx) rămân afișate exact la fel în output-ul comenzii ls -l
+    - link-ul în sine nu se schimbă, dar el devine un "broken link" (o legătură întreruptă).
+    - Ex. student@uso:~$ ln -s uso.git/README.md readme_link
     - in exemplu, daca dam cat la readme_link, vom avea acelasi output ca si la comanda cat uso.git/README.md.
 - ln (fara nimic): e o copie care se auto-actualizeaza. Daca se sterge sursa, ramane copia
 
 ## 2.3.4.2: Crearea directoarelor
 -folosim comanda mkdir
 Comanda ls -d:
-  - când aplici ls asupra unui director, Linux „intră” în el și îți arată ce conține. Flag-ul -d (directory) forțează comanda să afișeze doar numele directorului și metadatele acestuia, ignorând complet conținutul interior.
+  - când aplici ls asupra unui director, Linux „intră” în el și îți arată ce conține
+    - flag-ul -d (directory) forțează comanda să afișeze doar numele directorului și metadatele acestuia, ignorând complet conținutul interior
   - ls -ld: afiseaza datele directorului in sine (fara sa intre in interior)
   - ls -d */: ignora fisierele si afiseaza doar directoarele din locatia curenta
   - ls -d .*: afiseaza doar directoarele si ficierele ascunse din locatia curenta
@@ -247,31 +249,31 @@ Obs. Primul parametru (sursa) al comenzilor din acest subcapitol poate fi reprez
 Def. Globbing reprezintă utilizarea unor caractere speciale (numite wildcards) de către shell pentru a genera o listă de nume de fișiere care se potrivesc unui anumit tipar.
 Tabel cu exemple de concepte globbing:
   - *: inlocuiește orice, de la un singur caracter, la un milion de caractere sau chiar nimic.
-    - EX. ls tema* -> va afisa toate fisierele care incep cu "tema"
-    - EX. ls *tema -> va afisa toate fisierele care se termina cu "tema"
-    - EX. ls *tema* -> va afisa toate fisierele care contin "tema"
+    - Ex. ls tema* -> va afisa toate fisierele care incep cu "tema"
+    - Ex. ls *tema -> va afisa toate fisierele care se termina cu "tema"
+    - Ex. ls *tema* -> va afisa toate fisierele care contin "tema"
   - ?: cauta nume de fisiere care contin o singura litera in loc de "?"
-    - EX. avem fisierele: lab1.c, lab2.c și lab10.c
-    - EX. ls lab?.c -> rulam comanda, si afiseaza lab1.c și lab2.c dar nu afiseaza lab10.c pentru ca contine doua caractere dupa "lab"
+    - Ex. avem fisierele: lab1.c, lab2.c și lab10.c
+    - Ex. ls lab?.c -> rulam comanda, si afiseaza lab1.c și lab2.c dar nu afiseaza lab10.c pentru ca contine doua caractere dupa "lab"
   - []: Funcționează ca un filtru de tip "SAU". Se potrivește cu un singur caracter, dar acel caracter trebuie să fie unul din lista din paranteze.
-    - EX. avem poza_A.jpg, poza_B.jpg, poza_C.jpg
-    - EX. ls poza_[AC].jpg -> rulam comanda si afiseaza poza_A.jpg și poza_C.jpg. Pe B îl ignoră complet.
+    - Ex. avem poza_A.jpg, poza_B.jpg, poza_C.jpg
+    - Ex. ls poza_[AC].jpg -> rulam comanda si afiseaza poza_A.jpg și poza_C.jpg. Pe B îl ignoră complet.
   - [a-z] SAU [0-9]: 
-    - EX. avem fișiere de log de la log_1.txt până la log_9.txt  
+    - Ex. avem fișiere de log de la log_1.txt până la log_9.txt  
     - ls log_[1-5].txt -> găsește doar log-urile de la 1 la 5
   - [! ]: afiseaza tot, mai fisierele care incep cu caracterele negate in paranteze
-    - EX. avem test_alin.txt, test_bogdan.txt, test_cristi.txt
+    - Ex. avem test_alin.txt, test_bogdan.txt, test_cristi.txt
     - ls test_[!a]*.txt -> gaseste test_bogdan.txt și test_cristi.txt, dar ignora pe test_alin.txt pentru ca incepe cu "a"
 
 ## 2.3.5.1: Copierea 
 
 - comanda pentru a copia un fisier este: cp [optiuni] <sursa> <destinatie>
   - pentru copierea unui director folosim optiunea -r pe copiere recursiva
-  - EX. student@uso:~$ cp passwd passwd-copy
+  - Ex. student@uso:~$ cp passwd passwd-copy
 - comanda cmp compara doua fisiere si nu returneaza nimic daca sunt identice
-  - EX. student@uso:~$ cmp passwd passwd-copy
+  - Ex. student@uso:~$ cmp passwd passwd-copy
 - pentru a compara doua directoare pt a verifica daca sunt identice, folosim comanda diff
-  - EX. diff -r diff -r uso.git/labs/ labs/
+  - Ex. diff -r diff -r uso.git/labs/ labs/
 - cp -p (properties): pastreaza atributele initiale ale sursei copiate cand creaza destinatia
 Steaguri pentru cp:
   - cp -i (interactive): intreaba inainte sa stergi fisierul de la destinatie prin mutare
@@ -321,7 +323,7 @@ Obs. Dacă dorim să stergem un director gol, putem să folosim comanda rmdir <d
 - comanda cea mai folosită pentru stergerea fisierelor si directoarelor este rm [optiuni] <cale>
 Steaguri:
   - rm (remove): sterge definitiv
-    - rm -i (interactive): te intreaba inainte sa stearga (EX. rm -i fisier.txt)
+    - rm -i (interactive): te intreaba inainte sa stearga (Ex. rm -i fisier.txt)
     - rm -rf (recursive + force): sterge un folder cu tot ce ai in el fara sa intrebe inainte
     - rm d (dir): Șterge un director dacă este gol (ca rmdir)
 
@@ -352,15 +354,15 @@ rezultatul e o lista cu fisiere al caror nume contie sirul de caractere care suc
 Steaguri pentru comanda find:
   - find -name (nume): cauta fisiere dupa nume
   - find -type (tip): cauta dupa tipul intrarii (fisier, director, legătură simbolică)
-    - EX. find /etc -type f -name "*.conf" cauta toate fisierele care se termina cu ".conf", pentru ca apare wildcard-ul *
-    - EX. find ~ -type l cauta in home doar soft links (hard links nu apar aici)
+    - Ex. find /etc -type f -name "*.conf" cauta toate fisierele care se termina cu ".conf", pentru ca apare wildcard-ul *
+    - Ex. find ~ -type l cauta in home doar soft links (hard links nu apar aici)
   - find -size (dimensiune): cauta dupa dimensiunea fisierelor
-    - EX. find /usr/ -size +500k
+    - Ex. find /usr/ -size +500k
   - find -inum (inode number): cauta dupa inode unic
-    - EX. find /home/student -inum 1234567
+    - Ex. find /home/student -inum 1234567
   - find -links (inode number): cauta fisiere dupa dumarul de duplicatii cu ln
-    - EX. find . -type f -links 2
-    - EX. find /var/log -type d -links +5
+    - Ex. find . -type f -links 2
+    - Ex. find /var/log -type d -links +5
 Obs. Hard links se pot identifica doar:
   - după număr: find . -links +1 (orice fișier care are „frați”)
   - după Inode: find . -inum [număr] (toate numele care aparțin aceluiași conținut)
@@ -368,9 +370,9 @@ Obs. Hard links se pot identifica doar:
 ## 2.3.6.3: Căutarea comenzilor
 
 - daca dorim să identificăm o comandă sau executabilul aferent unei comenzi, folosim comenzile whereis, which si type.
-  - comanda whereis: căutarea locurilor corespunzătoare unei comenzi în sistemul de fisiere (EX. whereis ls)
-  - comanda which: obtinerea caii pentru executabilul aferent comenzii (EX. which chmod)
-  - comanda type: determinarea modului de interpretare al unei comenzi (EX. type ls)
+  - comanda whereis: căutarea locurilor corespunzătoare unei comenzi în sistemul de fisiere (Ex. whereis ls)
+  - comanda which: obtinerea caii pentru executabilul aferent comenzii (Ex. which chmod)
+  - comanda type: determinarea modului de interpretare al unei comenzi (Ex. type ls)
     - exista comenzi integrate in shell (numite interne sau builtin) si comanda externa sau alias
 
 ## 2.3.7: Arhivarea si dezarhivarea fisierelor
@@ -394,28 +396,203 @@ Comparatie:
   - xz (Maxim): tar cJvf arhiva.tar.xz folder/
 Steaguri pentru tar:
   - tar c (create): creeaza arhiva noua
-    - EX. tar cf arhiva.tar folder 
+    - Ex. tar cf arhiva.tar folder 
   - tar x (extract): desface o arhiva existenta
-    - EX. tar -x arhiva.tar
+    - Ex. tar -xf arhiva.tar
   - tar tf (list): listeaza ce e in arhiva fara sa o desfaci
-    - EX. tar tf arhiva.tar
+    - Ex. tar tf arhiva.tar
   - tar v (verbose): afiseaza fisierele procesate
-    - EX. tar cvf arhiva.tar (creaza o arhiva cu numele arhiva.tar si arata ce fisiere intra in ea)
+    - Ex. tar cvf arhiva.tar (creaza o arhiva cu numele arhiva.tar si arata ce fisiere intra in ea)
   - tar f (file): specifica numele arhivei
-    - EX. tar f nume.tar (f e obligatoriu pus la final dupa celelalte steaguri)
+    - Ex. tar f nume.tar (f e obligatoriu pus la final dupa celelalte steaguri)
 Steaguri avansate:
   - tar -C (Change Directory): dezarhiveaza in alt folder fara a mai folosi cd
-    - EX. tar xf arhiva.tar -C /tmp/teste
+    - Ex. tar xf arhiva.tar -C /tmp/teste
     Obs. Fara -C, echivalentul exemplului de mai sus ar fi:
       cd /tmp/teste  
       tar xf ~/cale/catre/arhiva.tar
   - tar --exclude: creaza o arhiva sarind peste anumite fisiere (loguri sau temporare)
-    - EX. tar cvf arhiva.tar proiecte/ --exclude="*.log"
+    - Ex. tar cvf arhiva.tar proiecte/ --exclude="*.log"
   - tar - p (permision): desi arhivarea pastreaza toate permisiunile sursei implicit, la dezarhivarea ca root, comanda -p garanteaza ca toate drepturile rwx raman identice cu ale sursei
-    - EX. tar xpf backup.tar
+    - Ex. tar xpf backup.tar
   - tar -a (auto): ii spune lui tar sa aleaga singur modul de arhivare sau extragere in functie de etensia arhivei
-    - EX. tar caf arhiva.tar.xz folder/ (va folosi automat compresia .xz)
-    - permite arhivarea si dezarhivarea simultana, fara sa mai spunem sa foloseasca algoritmi precum z (gzip), j(bzip) sau J(xz)
+    - Ex. tar caf arhiva.tar.xz folder/ (va folosi automat compresia .xz)
+    - permite arhivarea si compresia simultana, fara sa mai spunem sa foloseasca algoritmi precum z (gzip), j(bzip) sau J(xz)
     - comanda citeste extensiape care am scris-o manual la numele fisierului si aplica automat compresiile
-      - EX. daca folosim tar caf arhiva.tar.gz, se face automat compresie cu gzip
-      - EX. daca folosim tar caf arhiva.tar.xz, se face automat compresia cu xz
+      - Ex. daca folosim tar caf arhiva.tar.gz, se face automat compresie cu gzip
+      - Ex. daca folosim tar caf arhiva.tar.xz, se face automat compresia cu xz
+
+## 2.3.8: Backup
+
+Def. Backup = realizarea unei copii a datelor pe un suport separat pentru recuperarea acestora în caz de defecțiune, ștergere accidentală sau atac malware.
+Sincronizarea în Cloud (Google Drive, OneDrive, Dropbox):
+  - Avantaj: Sincronizare automată între dispozitive (desktop, laptop, mobil)
+  - Dezavantaj: Erorile se propagă. Dacă un fișier este infectat de malware sau șters accidental pe un dispozitiv, modificarea se reflectă imediat și în Cloud.
+Backup-ul pe suport fizic distinct (HDD Extern, NAS, Stick):
+  - singura metodă sigură împotriva erorilor care se propagă în Cloud.
+  - oferă protecție "offline" (dacă suportul nu este conectat permanent, datele nu pot fi modificate de un atac curent).
+Obs. Backup-ul trebuie sa fie redundant (sa existe in mai multe locuri).
+     Backup-ul se realizeaza de ubicei sub forma de arhiva comprimata (.tar.gz SAU .tar.xz) pentru a economisi spatiu si pentru a pastra permisiunile (rwx).
+Metode de backup si descrierea lor:
+  - tar + gzip/bzip2 (rezultand .tar.gz SAU .tar.xz):
+    - Utilizare: Arhivare și compresie clasică.
+    - Limitări: Devine ineficient pentru volume uriașe de date (ocupă mult procesor și timp).
+  - dd (Data Duplicator):
+    - Caracteristică: Lucrează la nivel de blocuri (copiază bit cu bit), nu la nivel de fișiere.
+    - Avantaj: Copiază întreg sistemul de fișiere (inclusiv tabela de partiții). Independență de tipul de fișiere (ext4, ntfs, etc.).
+    - Dezavantaj: Inflexibil (dacă vrei un singur fișier din backup, trebuie să restaurezi tot sectorul/partiția).
+    - Atenție: Este supranumit și "Disk Destroyer" pentru că o singură greșeală de sintaxă (inversarea if cu of) poate șterge tot hard disk-ul fără avertisment.
+  - rsync (Remote Sync):
+    - Definiție: Evoluția comenzii cp cu suport pentru rețea.
+    - Mecanism: Sincronizează doar diferențele dintre fișiere (economisește lățime de bandă).
+    - Utilizare: Replicarea structurilor de fișiere între două calculatoare.
+  - rdiff-backup:
+    - Concept cheie: Backup Incremental.
+    - Mecanism: Salvează un backup complet inițial, iar apoi salvează doar modificările (diferențele) apărute de la ultima salvare.
+    - Avantaj: Permite revenirea la orice stare anterioară a datelor (istoric de versiuni), ocupând spațiu minim.
+
+## 2.4: Redirectarea intrarii sau iesirii
+
+- programele in executie folosesc 3 fisiere speciale pentru a interactiona cu utilizatorii
+  - stdin (standard input): locul de unde se citesc datele de intrare de catre program (de obicei tastatura)
+  - stdout (standard output): fisierul in care se afiseaza datele de iesire (de obicei consola curenta)
+  - stderr (standard error): aici se scriu mesajele de eroare de către program (de obicei tot în consola curentă)
+- fiecare fisier special are asociat un numar de catre un descriptor de fisier:
+  - stdin are descriptorul cu indexul 0, stdout are descriptorul cu indexul 1, stderr are descriptorul cu indexul 2
+Cazuri de redirectare:
+  - (sursa) intrare/stdin, (destinatie) program, (exemplu comanda) ./program < fisier_intrare
+  - (sursa) iesire/stdout, (destinatie) fisier, (exemplu comanda) ./program > fisier_iesire
+  - (sursa) eroare/stderr, (destinatie) fisier, (exemplu comanda) ./program 2> erori
+  - (sursa) eroare/stderr, (destinatie) iesire, (exemplu comanda) ./program 2>& 1
+  - (sursa) eoare & iesire, (destinatie) fisier, (exemplu comanda) ./program > fisier_iesire_si_erori 2>& 1
+Obs. 1) Cand spunem destinatie ne referim la destinatia fluxului de date, nu la locul unde se scrie ceva pe disc.
+     2) Daca avem: ./program 2> erori.txt atunci erorile merg in fisier si restul sunt afisate pe ecran.
+     3) Daca avem: ./program > fisier_iesire_si_erori 2>& 1 atunci stdout merge in fisier si erorile (2>&1) merg in 1 referentiat (adica in fisier).
+     4) Daca avem: ./program 2>& 1 atunci erorile (2) merg in stdout (1), dar stdout mergea deja pe ecran, deci tot se va afisa pe ecran.
+Tipuri de mesagerie:
+  - mail (Posta neinteractiva):
+    - mail [utilizator] < mesaje.txt
+    - permite utilizatorilor sa trimita si sa primeasca mail-uri direct din terminal
+    - utilizatorului i se vor trimite informatiile din fisier
+  - write (Mesagerie directa): 
+    - write [utilizator]
+    - se testeaza mesajul apoi se trimite cu Ctrl+D
+    - trimite un mesaj text direct pe terminalul altui utilizator logat în acel moment
+  - wall (write + all): 
+    - wall "mesaj" SAU wall < fisier.txt
+    - se testeaza mesajul apoi se trimite cu Ctrl+D
+    - trimite un mesaj text direct pe terminalul altui utilizator logat în acel moment
+  - mesg (Permisiuni de mesaje):
+    - nu trimite mesaje, ci controleaza daca altii iti pot scrie cu comenzi de chat
+    - mesg n: (no) Nimeni nu-ți mai poate scrie (primești liniște).
+    - mesg y: (yes) Permiți primirea mesajelor.
+Redirectari folosind fisiere speciale:
+  - ./program 2> /dev/null
+    - mesajele de la iesirea de eroare standard nu sunt afisate
+  - ./program > /dev/null 2>& 1
+    - niciun mesaj nu e afisat ()
+  - > new_file
+    - creeaza un fisier nou de cu numele new_file
+  - cat /dev/null > new_file
+    - creeaza un fisier cu acelasi continut ca si /dev/null, adica un fisier gol, identic ca mai sus
+
+## 2.5: Tipuri de sisteme de fisiere
+
+Criterii dupa care se alege un sistem de operare:
+  - disponibilitatea: daca sistemul respectiv poate fi folosit in mai multe sisteme de operare sau doar unul
+  - gradul de siguranta: daca asigura jurnalizare sau nu (majoritatea practica jurnalizarea, ceea ce permite integritatea datelor)
+  - restritii speciale cauzate de modul in care datele din sistemul de fisiere sunt organizate
+    - Ex. FAT32 vrea doar 32 de biti pentru dimensiunea unui fisier (deci are dimensiune maxima de 4G, mai putin ca o imadine de DVD)
+  - optimizari de performanta, realizare in functie de doua criterii:
+    - ori tipul suportului de stocare
+    - ori de dimensiunea fisierelor
+
+Sisteme de fisiere si informatii generale (2.5.2: Alegerea unui sistem de fisiere):
+  - FAT32: File Allocation Table 32-bit
+    - sisteme de operare: Windows, Linux, macOS
+    - dimeniune maxima de fisier: 4 GB
+    - jurnalizare: nu
+    Obs. 1) Cel mai folosit sistem de fisiere.
+         2) Windows limiteaza la creare dimensiunea la 32 GB, dar poate citi partitii mai mari (formatate cu aplicatii third-party) pt a asigura compatibilitate cu sisteme mai vechi.
+  - NTFS: New Technology File System
+    - sisteme de operare: Windows, Linux, macOS
+    - dimeniune maxima de fisier: 16 TiB (1 tebibyte, adică 2^40 octeti)
+    - jurnalizare: da
+    Obs. 1) Singurul sistem de fisiere recomandat de Microsoft pt Windows.
+         2) Singurul sistem de fisiere pentru Windows care are securitate.
+  - Ext2 si Ext3: Extended File System
+    - sisteme de operare: Windows, Linux
+    - dimeniune maxima de fisier: 16 GiB - 64 TiB
+    - jurnalizare: Ext2 nu SI Ext3 da
+    Obs. 1) Considerat cel mai stabil sistem de fisiere.
+         2) Ex3 e compatibil cu versiunea anterioara Ex2 si aduce in plus jurnalizare.
+  - Ext4: Extended File System
+    - sisteme de operare: Windows, Linux, macOS
+    - dimeniune maxima de fisier: 16 TiB
+    - jurnalizare: da
+    Obs. 1) Subbesorul lui Ex3, dar cu performanta, stabilitate si capacitate de stocare imbunatatite.
+         2) Adecvat si pentru stocarea datelor critice, datorita preciziei ridicate ale marcajelor temporare.
+  - HFS+: Hierarchical File System Plus
+    - sisteme de operare: Linux, macOS
+    - dimeniune maxima de fisier: 16 EiB (1 EiB = un exbibyte, adică 2^60 octeti)
+    - jurnalizare: da (in Linux, HFS+ are suport fara jurnalizare)
+  - APFS: Apple File System
+    - sisteme de operare: macOS, iOS 
+    - dimeniune maxima de fisier: 8 EiB
+    - jurnalizare: da
+    Obs. 1) Optimizat pentru dispozitivele de stocare de tip flash si solid drive.
+         2) Pune accentul pe criptare.
+  - ISO9660: -
+    - sisteme de operare: Windows, Linux, macOS
+    - dimeniune maxima de fisier: in functie de implementare
+    - jurnalizare: nu
+    Obs. 1) Sistem de fisiere folosit in principal pe CD-uri.
+         2) Organizare interna conceputa ca datele sa fie citite usor.
+  - UDF: Universal Disk format
+    - sisteme de operare: Windows, Linux, macOS
+    - dimeniune maxima de fisier: 16 EiB
+    - jurnalizare: da
+    Obs. 1) Sistem de fisiere folosit in principal me mediile optice.
+         2) Are suport atat pentru scriere, cat si pentru citire.
+
+Sisteme de fisiere si sistemul de operare pe care ruleaza:
+--------------------------------------------------------------------------------
+   Sistem fisiere            Windows                Linux            macOS
+        FAT32                 nativ                 nativ            nativ
+        NTFS              nativ()dupa WinN       prin ntfs-3g     prin ntfs-3g
+  Ext2/Ext3/Ext4         driver third-party         nativ             -
+        HFS+                    -                   nativ           nativ
+        APFS                    -                      -             nativ
+      ISO9660+                nativ                 nativ           nativ
+        UDF                   nativ                 nativ           nativ
+---------------------------------------------------------------------------------
+Def. Nativ = suportul este oferit de driverele care insotesc sistemul de operare.
+
+Sistemele de fis, iere pot fi clasificate după locul în care datele sunt stocate:
+---------------------------------------------------------------------------------------------------------------------------------------
+               Tip                                  Exemplu                                     Descriere           
+sisteme de fisiere cu suport fizic          FAT32, NTFS, Ext4, APFS             se regăsesc de obicei pe un mediu de stocare   
+    sisteme de fisiere virtuale              procfs, devfs, SSHFS         au fisiere/fisiere generate de OS sau de alta comp. software
+  sisteme de fisiere despre retea                  NFS, SMB                   utilizate pentru accesul la fisiere aflate in alta retea                 
+---------------------------------------------------------------------------------------------------------------------------------------
+
+## 2.5.1: Integritatea datelor
+
+- fisierele se pot degrada din cauza erorilor
+- sistemele de fisiere au rol in asigurarea integritatii datelor
+    - data integrity: prevenirea, detectarea si remedierea coruperii datelor
+Def. Coruperea datelor (data corruption) = degradarea neintentionata a datelor din cauza erorilor umane sau tehnice.
+Def. Securizarea datelor (data securyty) = prevenirea atacurilor intentionate asupra datelor. De asemenea, necesita sprijinul sistemului de fisiere.
+Calcularea unei sume de control (checksum):
+  - o metoda prin care sistemele de fisiere pot asigura integritatea datelor
+    - pentru un set de date, o suma de control este un numar care descrie pe scurt acel set, diferentiindu-l indeajuns de mult de alt set de date foarte asemanator
+    - Ex. o suma de control poate fi insumarea valorilor numerice asociate cu caracterele respective intr-un cod (precum ASCII)
+      - daca se modifica un caracter din gresala, suma va fi diferita si eroarea va fi detectata
+- sistemul de fisiere trebuie sa fie capabil sa-si pastreze integritatea si dupa un esec (failure)
+  Def. Esec (failure) = Orice eveniment neprevazut care inceteaza brusc functionarea sistemului, impiedicand finalizarea scrierii datelorpe suportul de stocare.
+    - de hardware: pană de curent, defectarea fizică a discului
+    - de software: blocarea sistemului de operare (Kernel Panic/BSOD), erori critice ale driverului.
+  - aceasta functionalitate se poate realiza prin jurlanizare (care permite intoarcerea la o stare anterioara functionala a sistemului)
+  - operatiile din jurnal sunt efectuate la diferite intervale de timp
+
+
