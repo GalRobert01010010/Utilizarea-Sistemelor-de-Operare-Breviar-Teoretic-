@@ -101,6 +101,8 @@ Explicatii:
     - ls -a (all): afiseaza si fisierele ascunse (care incep cu ".")
     - ls -l (long): afiseaza informatii (permisiuni, dimensiune, data de creare etc.)
     - ls -h (human readable format): afiseaza date despre fisiere in format uman
+    - ls -i (inode): afișează numărul de index al fișierului
+    - ls -1 (cifra unu): afișează un singur fișier pe linie. Foarte util când vrei să numeri fișierele cu wc -l.
   - cp (copy): copiaza fisierul din primul argument in al doilea argument
     - cp -r (recursive): actiunea de copiere intră înăuntru și repetă aceeași acțiune pentru fiecare element găsit, până când termină toată ierarhia
     - EX. cp /etc/passwd . (comanda copiaza fisierul passwd mentionat cu cale absoluta in primul argument, in directorul curent, reprezentat de ".")
@@ -114,6 +116,7 @@ Explicatii:
   - rm (remove): sterge definitiv
     - rm -i (interactive): te intreaba inainte sa stearga (EX. rm -i fisier.txt)
     - rm -rf (recursive + force): sterge un folder cu tot ce ai in el fara sa intrebe inainte
+    - rm d (dir): Șterge un director dacă este gol (ca rmdir).
 
 ## 2.2: Formatul fisierelor
 
@@ -267,4 +270,152 @@ Tabel cu exemple de concepte globbing:
   - EX. student@uso:~$ cp passwd passwd-copy
 - comanda cmp compara doua fisiere si nu returneaza nimic daca sunt identice
   - EX. student@uso:~$ cmp passwd passwd-copy
-- pentru a compara doua directoare pt a verifica ca sunt 
+- pentru a compara doua directoare pt a verifica daca sunt identice, folosim comanda diff
+  - EX. diff -r diff -r uso.git/labs/ labs/
+- cp -p (properties): pastreaza atributele initiale ale sursei copiate cand creaza destinatia
+Steaguri pentru cp:
+  - cp -i (interactive): intreaba inainte sa stergi fisierul de la destinatie prin mutare
+  - cp -p (preserve): pastreaza "buletinul" fișierului (proprietar, grup, permisiuni, timestamp) cand face copia
+  - cp -r SAU -R (recursive): pentru directoare, altfel da eroare de directoare
+  - cp -u (update): copiaza doar daca sursa este mai noua decat destinatia sau daca fisierul lipseste la destinatie
+  - cp -a (archive): copiaza pastrand absolut toate datele si metadatele si legaturile simbolice (soft links)
+  - cp -l (hard-link): in loc sa copieze datele creeaza hard link-uri
+Diferenta dintre hard links si soft links:
+  Hard links:
+    Def. O intrare suplimentară în director care indică către același Inode (aceleași date fizice de pe disc).
+    - se creeaza cu ln sursa nume_link
+    - daca se sterge fisierul original, datele nu dispar
+    - link-ul are aceleasi atribute ca sursa
+    - cifra de la numarul de legaturi (accesibila prin ls -l) creste cu 1
+  Soft links:
+    Def. Un fișier special care conține doar o cale (un text) către fișierul/directorul țintă. Este echivalentul "Shortcut-ului" din Windows.
+    - se creeaza ln -s sursa nume_link
+    - are un Inode diferit de sursa
+    - daca se sterge fisierul original (sursa), link-ul nu dispare, dar devine inutilizabil
+    - link-ul are aceleasi atribute ca sursa
+    - cifra de la numarul de legaturi (accesibila prin ls -l) creste cu 1
+    - se pot crea pentru directoare, spre deosebire de hard links, care nu exista la directoare
+    - pot indica către fișiere de pe alte partiții sau sisteme de stocare
+Steaguri pentru diff:
+  - diff -q (brief): spune doar daca fisierele difera dar nu si randurile exacte
+  - diff -s (report identical): confirma explicit daca fisierle sunt identice
+  - diff -y (side-by-side): afiseaza fisierele pe doua coloane pentru a vedea diferente
+  - diff -w (ignore all white space): util cand doua fisiere difera doar prin spatii goale la final si in rest sunt identice
+  - diff -r (recursive): compara recursiv fisiere din directoare diferite
+
+## 2.3.5.2: Mutarea / Redenumirea
+
+- comanda folosită pentru a muta/redenumi un fisier este mv [optiuni] <sursă> <destinatie>
+- mv este eficienta deoarece nu muta datele progresiv (cum face cp), ci schimba doar parintele in tabela de index
+- mv nu necesita -r (deoarece nu face nicio mutare)
+- mv pastreaza automat toate atributele (data crearii, dimenziune etc.), iar cp are nevoie de -p pentru a face asta
+Steaguri:
+  - mv -i (interactive): intreaba inainte sa stergi fisierul de la destinatie prin mutare
+  - mv -f (force): suprascrie fara sa intrebe, chiar daca destinatia este protejata 
+  - mv -n (no-clobber): nu suprascrie niciodata fisiere existente
+
+## 2.3.5.3: Stergerea fisierelor / directoarelor
+
+Def. Stergerea unei intrări înseamnă eliminarea acelei intrări si a continutului său din sistemulde fisiere.
+Obs. Dacă dorim să stergem un director gol, putem să folosim comanda rmdir <director_gol>
+- comanda cea mai folosită pentru stergerea fisierelor si directoarelor este rm [optiuni] <cale>
+Steaguri:
+  - rm (remove): sterge definitiv
+    - rm -i (interactive): te intreaba inainte sa stearga (EX. rm -i fisier.txt)
+    - rm -rf (recursive + force): sterge un folder cu tot ce ai in el fara sa intrebe inainte
+    - rm d (dir): Șterge un director dacă este gol (ca rmdir)
+
+## 2.3.6: Căutarea fisierelor
+
+- structura ierarhica a sistemului de fisiere permite gasirea fisierelor
+Tipuri de cautare:
+  - cautare indexata -> fisierele sunt inspectate si informatiile despre localizarea lor sunt retinute intr-o baza de date indexata cu fisiere
+    - folosim locate si updatedb (update database)
+  - cautare exhuastiva -> presupune trecerea prin toate fisierele din cadrul unei zone din ierarhia de fisiere
+    - folosim find
+
+## 2.3.6.1: comanda locate
+
+- cauta in toate fisierele indexata dintr-o baza de date locala
+- este o cautare rapida in sistemul de fisiere
+Dezavantaje:
+  - baza de date trebuie actualizata periodic pentru a indexa modificarile din sistemul de fisiere
+    - actualizarea se face cu comanda updatedb
+  - cauterea se face strict dupa nume, nu dupa alte atribute
+rezultatul e o lista cu fisiere al caror nume contie sirul de caractere care succede comanda locate
+
+## 2.3.6.2: Comanda find
+
+- find <director> -criterii_de_cautare <precizari_la_criterii>
+- cauta exhuasiv in ierarhia de directoare
+- comanda permite căutarea folosind diferite criterii: numele fisierului, utilizator, grup, tip, permisiuni, dimensiune, dată etc.
+Steaguri pentru comanda find:
+  - find -name (nume): cauta fisiere dupa nume
+  - find -type (tip): cauta dupa tipul intrarii (fisier, director, legătură simbolică)
+    - EX. find /etc -type f -name "*.conf" cauta toate fisierele care se termina cu ".conf", pentru ca apare wildcard-ul *
+    - EX. find ~ -type l cauta in home doar soft links (hard links nu apar aici)
+  - find -size (dimensiune): cauta dupa dimensiunea fisierelor
+    - EX. find /usr/ -size +500k
+  - find -inum (inode number): cauta dupa inode unic
+    - EX. find /home/student -inum 1234567
+  - find -links (inode number): cauta fisiere dupa dumarul de duplicatii cu ln
+    - EX. find . -type f -links 2
+    - EX. find /var/log -type d -links +5
+Obs. Hard links se pot identifica doar:
+  - după număr: find . -links +1 (orice fișier care are „frați”)
+  - după Inode: find . -inum [număr] (toate numele care aparțin aceluiași conținut)
+
+## 2.3.6.3: Căutarea comenzilor
+
+- daca dorim să identificăm o comandă sau executabilul aferent unei comenzi, folosim comenzile whereis, which si type.
+  - comanda whereis: căutarea locurilor corespunzătoare unei comenzi în sistemul de fisiere (EX. whereis ls)
+  - comanda which: obtinerea caii pentru executabilul aferent comenzii (EX. which chmod)
+  - comanda type: determinarea modului de interpretare al unei comenzi (EX. type ls)
+    - exista comenzi integrate in shell (numite interne sau builtin) si comanda externa sau alias
+
+## 2.3.7: Arhivarea si dezarhivarea fisierelor
+
+Def. Arhivare = procesul prin care mai multe fisiere si directoare sunt stranse la un loc intr-un fisier unic.
+- de obicei, acest proces implica si reducerea dimeniunii (compresie)
+Obs. Arhivarea nu implica mereu reducerea dimensiunii.
+- comanda zip: face atat arhivare cat si compresie
+- comanda tar (tape archiver): face doar arhivare (.tar)
+  - comanda tar urmează mereu structura: tar [OPȚIUNI] [NUME_ARHIVĂ_DESTINAȚIE] [SURSA_DE_ARHIVAT]
+  - fisierele .tar au o dimensiune mai mare decât suma dimensiunilor fisierelor care îl alcătuiesc
+- comanda gzip: face doar compresie
+  - gzip: are o viteză mai ridicată de compresie, dar o rată de mai scăzută (fisiere rezultat mai mari)
+  - bzip2: are viteză mai scăzută de compresie, dar o rată de compresie mai ridicată
+Obs. tar si gzip se foloses impreuna pentru a face si arhivare si compresie (Arhivă tar + compresie gzip => .tar.gz SAU .tgz)
+  - Arhivă tar + compresie bzip2 => .tar.bz2
+  - Arhivă tar + compresie xz => .tar.xz
+Comparatie:
+  - gzip (Rapid): tar czvf arhiva.tar.gz folder/
+  - bzip2 (Echilibrat): tar cjvf arhiva.tar.bz2 folder/
+  - xz (Maxim): tar cJvf arhiva.tar.xz folder/
+Steaguri pentru tar:
+  - tar c (create): creeaza arhiva noua
+    - EX. tar cf arhiva.tar folder 
+  - tar x (extract): desface o arhiva existenta
+    - EX. tar -x arhiva.tar
+  - tar tf (list): listeaza ce e in arhiva fara sa o desfaci
+    - EX. tar tf arhiva.tar
+  - tar v (verbose): afiseaza fisierele procesate
+    - EX. tar cvf arhiva.tar (creaza o arhiva cu numele arhiva.tar si arata ce fisiere intra in ea)
+  - tar f (file): specifica numele arhivei
+    - EX. tar f nume.tar (f e obligatoriu pus la final dupa celelalte steaguri)
+Steaguri avansate:
+  - tar -C (Change Directory): dezarhiveaza in alt folder fara a mai folosi cd
+    - EX. tar xf arhiva.tar -C /tmp/teste
+    Obs. Fara -C, echivalentul exemplului de mai sus ar fi:
+      cd /tmp/teste  
+      tar xf ~/cale/catre/arhiva.tar
+  - tar --exclude: creaza o arhiva sarind peste anumite fisiere (loguri sau temporare)
+    - EX. tar cvf arhiva.tar proiecte/ --exclude="*.log"
+  - tar - p (permision): desi arhivarea pastreaza toate permisiunile sursei implicit, la dezarhivarea ca root, comanda -p garanteaza ca toate drepturile rwx raman identice cu ale sursei
+    - EX. tar xpf backup.tar
+  - tar -a (auto): ii spune lui tar sa aleaga singur modul de arhivare sau extragere in functie de etensia arhivei
+    - EX. tar caf arhiva.tar.xz folder/ (va folosi automat compresia .xz)
+    - permite arhivarea si dezarhivarea simultana, fara sa mai spunem sa foloseasca algoritmi precum z (gzip), j(bzip) sau J(xz)
+    - comanda citeste extensiape care am scris-o manual la numele fisierului si aplica automat compresiile
+      - EX. daca folosim tar caf arhiva.tar.gz, se face automat compresie cu gzip
+      - EX. daca folosim tar caf arhiva.tar.xz, se face automat compresia cu xz
