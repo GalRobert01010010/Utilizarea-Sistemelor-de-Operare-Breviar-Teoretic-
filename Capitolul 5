@@ -1,2 +1,36 @@
+# Capitolul 5: Utilizatori
 
-qaa
+- utilizatorii creeaza procese (aplicatii) care folosesc resursele sistemului (Ex. procesor, memorie, I/O etc.)
+- utilizatorii transfera date in SAU din sistemul de calcul folosind sistemul de fisiere sau reteaua
+- utilizatorii au acces la resursele sistemului de calcul printr-un cont de user care are niste permisiuni
+- pe un sistem de operare modern pot exista mai multi utilizatori, ale caror procese ruleaza separat (izolat)
+- un cont de utilizator e reprezentat de username
+
+## 5.1: Utilizatori de sistem
+
+- sunt folosite pentru a obtine acces la resursele gestionate de sistemul de operare
+- conturile de utilizator permit obtinerea unui shell si rularea de comenzi care creează procese
+- in momentul autentificării unui utilizator de sistem, acesta are acces complet la o partedin sistemul de fisiere 
+    - acest sistem de fisiere se numeste directorul home al utilizatorului, reprezentand directorul personal al acestuia
+    - Ex. /home/student pe Linux, C:\user\student pe Windows si /Users/student pe macOS
+
+## 5.1.1 Permisiuni si privilegii
+
+- din punct de vedere al conceptelor de securitate:
+  - utilizatorul e un agent
+  - resursele puse la dispozitie sunt obiecte
+Def. Politica de securitate (security policy) a sistemului precizează permisiunile si dictează ce agenti au acces la ce obiecte.
+- definitia politicii de securitate da nastere termenilor permisiune si privilegiu
+Def. Permisiunile = informatii aferente obiectului care stabilesc ce agenti pot face tipuri de actiuni.
+Def. Privilegiile = certificate aferente agentului care stabilesc ce actiuni poate acesta întreprinde.
+- in sistemele de operare de uz general (Linux, Windows, macOS), exista utilizatori obisnuiti (neprivilegiati) si utilizatori privilegiati
+Def. Utilizatorii neprivilegiati au acces complet la o parte din sistemul de fisiere (directorul home) si pot crea procese care folosesc aceste resurse.
+Def. Utilizatorii privilegiati pot face actiuni care afectează starea globală a sistemului: 
+  - Ex. instalare de pachete, adăugare si stergere de utilizatori, repornirea sistemului, configurarea datei sistemului, 
+        schimbarea permisiunilor sistemului, configurarea retelei etc.
+Def. Superuser = utilizator cu permisiuni depline.
+  - pe Linux / Unix se numeste root
+  - pe Windows se numeste Administrator
+
+## 5.2: Utilizatorul administrativ (superuser)
+
