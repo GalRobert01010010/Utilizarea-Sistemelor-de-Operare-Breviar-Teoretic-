@@ -34,3 +34,84 @@ Def. Superuser = utilizator cu permisiuni depline.
 
 ## 5.2: Utilizatorul administrativ (superuser)
 
+## 5.2: Utilizatorul administrativ (superuser)
+
+- utilizatorul administrativ, superuserul, detine controlul complet al sistemului
+- toate operatiile privilegiate, inaccesibile unui utilizator obisnuit neprivilegiat, sunt permise acestuia
+- un utilizator obisnuit va accesa acest cont special pentru a realiza o operatie privilegiata
+    - accesul se face daca utilizatorul stie parola sau forma de autentificare a acestuia
+- faptul ca superuserul are acces complet la sistem il face foarte periculos de folosit
+- daca un atacator obtine acces neautorizat la contul de superuser, atunci sistemul este compromis
+- daca rulam gresit o comanda privilegiata, aceasta poate afecta iremediabil sistemul
+- Ex. rm -fr /: comanda este celebra pentru ca poate fi folosita pentru a sterge tot sistemul de fisiere
+    - daca este folosita de contul de root, aceasta comanda sterge continutul sistemului de fisiere incepand de la radacina (/)
+- recomandari de folosire pentru superuser:
+    - sa fie folosit contul doar cand este absoluta nevoie, pentru operatii privilegiate
+    - nu va autentificati ca superuser pe interfata grafica
+    - sa fie o parola sau forma de autentificare cat mai greu de accesat in mod neautorizat
+    - sa fie evitata folosirea superuser-ului cand exista forme alternative de executare de actiuni privilegiate
+- sistemele de operare moderne ofera optiuni alternative:
+    - In Linux/Unix: sudo, bitul setuid, capabilitati (prezentate in Sectiunea 5.2.3)
+    - In Windows: User Account Control (UAC)
+        - Def. User Account Control = tehnologie care ofera un prompt care trebuie confirmat ori de cate ori se doreste realizarea unei actiuni privilegiate
+
+## 5.2.1: Utilizatorul administrativ in Linux (root)
+
+- utilizatorul administrativ in Linux este numit root
+- utilizatorul root are acces complet la resursele sistemului si poate face orice operatii
+- accesarea contului de root este evidentiata in linia de comanda prin simbolul # (diez) la finalul promptului
+- Ex. Listing 5.1:
+    student@uso:~$ sudo su
+    [sudo] password for student:
+    root@uso:/home/student#
+- in secventa de mai sus:
+    - utilizatorul initial este student, iar promptul sau are simbolul $ (dolar)
+    - dupa folosirea sudo su si introducerea parolei, se obtine un shell privilegiat cu simbolul #
+- accesarea unui cont se poate face in doua moduri:
+    - autentificarea in sistem (la login in linia de comanda sau interfata grafica)
+    - schimbarea utilizatorului curent in linia de comanda prin folosirea comenzii su (substitute user)
+- nu este recomandata autentificarea direct in sistem folosind contul de root
+    - orice aplicatie lansata din acest cont va avea acces complet, devenind o posibila zona de atac
+- este recomandat sa folositi comanda su pentru schimbarea temporara a utilizatorului si apoi revenirea cu exit
+- Ex. Listing 5.2:
+    student@uso:~$ su
+    Password:
+    root@uso:/home/student# apt install deluge
+    root@uso:/home/student# exit
+    student@uso:~$
+
+## 5.2.2: Utilitarul su
+
+- utilitarul su este folosit pentru schimbarea utilizatorului, nu neaparat in root
+- daca su nu primeste niciun argument sau primeste root, va schimba utilizatorul in root
+- la rularea comenzii se cere parola noului utilizator (utilizatorul destinatie)
+- Ex. Listing 5.3:
+    student@uso:~$ su teacher
+    Password:
+    teacher@uso:/home/student$ exit
+- diferenta intre su si su - (sau su -l):
+    - su [user]: schimba doar identitatea, dar pastreaza directorul curent si variabilele de mediu ale vechiului utilizator
+    - su - [user]: schimba identitatea si incarca complet mediul de lucru al noului utilizator (Login Shell)
+    - se observa in prompt: la su - locatia se schimba automat in directorul home al noului user (simbolul ~)
+- diferenta intre comenzile de iesire exit si logout:
+    - exit: este comanda universala care inchide orice shell curent si te intoarce la utilizatorul anterior
+    - logout: functioneaza doar daca shell-ul curent este un Login Shell (creat prin su - sau su -l)
+    - Ex. in Listing 5.3:
+        - la linia 3 s-a folosit exit deoarece su simplu nu creeaza un login shell
+        - la liniile 6 si 9 s-a folosit logout deoarece su -l a creat o sesiune de login completa
+- utilitarul su permite rularea unei comenzi fara a deschide un shell prin optiunea -c
+    - se ruleaza direct comanda primita ca argument si apoi se revine automat la shell-ul initial
+    - Ex. Listing 5.3 (punctul 10):
+        student@uso:~$ su -l teacher -c whoami
+        Password:
+        teacher
+    - dupa afisarea rezultatului (teacher), sesiunea se inchide singura fara a mai fi nevoie de exit sau logout
+
+## 5.2.3: Alternative la root in Linux
+
+
+
+
+
+
+
