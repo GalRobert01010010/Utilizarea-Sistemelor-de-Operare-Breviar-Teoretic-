@@ -109,9 +109,263 @@ Def. Superuser = utilizator cu permisiuni depline.
 
 ## 5.2.3: Alternative la root in Linux
 
+- root detine controlul intregului sistem
+- sistemele de operare moderne ofera optiuni de granularizare a privilegiilor
+    - Ex. bitul setuid, capabilitati si utilitarul sudo
+Bitul setuid (set-user-id-on-execution):
+    - bit asociat unui fisier executabil
+    - cand se executa fisierul, procesul nou creat nu va apartine celui care l-a executat, ci va apartine celui care a creat fisierul (de obicei root)
+    - Ex. student@uso:~$ ls -l /bin/ping
+          2 -rwsr-xr-x 1 root root 64424 Mar 10 2017 /bin/ping
+          3 student@uso:~$ ls -l /bin/su
+          4 -rwsr-xr-x 1 root root 44664 Jan 25 2018 /bin/su
+          5 student@uso:~$ ls -l /usr/bin/sudo
+          6 -rwsr-xr-x 1 root root 149080 Jan 31 2020 /usr/bin/sudo
+    - in permisiunile fisierelor se observa litera "s" (bitul setuid)
+    Obs. Prezenta bitului setuid pe un executabil detinut de root (de exemplu passwd, su, sudo) -> acele comenzi pot fi rulate de orice utilizator pentru a crea procese privilegiate
+    - dezavantajul este ca procesul nou creat ruleaza cu privilegii complete de root
+Capabilitatile:
+    - mecanism in Linux
+    - concept de baza in sistemele de operare
+        - presupune atasarea unui privilegiu unui agent (obiect)
+    - Ex. Executabilul aferent utilitarului ping are atasata capabilitatea cap_net_raw.
+        - aceasta capabilitate înseamna ca procesele create din executabilul ping vor avea privilegiul de a crea resurse privilegiate necesare utilitarului ping
+    Obs. Spre deosebire de bitul setuid, capabilitatile sunt granulare. 
+        - un proces are atasate doar capabilitatile de care are nevoie.
+    Exemple:
+        - cap_net_raw: permite folosirea de socketi speciali (numiti raw)
+        - cap_net_admin: permite configurarea retelei
+        - cap_fowner: permite configurare de permisiuni pe orice fisier
+        - cap_kill: permite transmiterea de semnale pe orice fisiere
+    Def. Suportul de capabilitati = o componenta avansata a sistemului de operare, care permite dezvoltatorilor de aplicatii configurarea de privilegii granulare.
+
+## 5.2.3.1 Utilitarul sudo
+
+- bitul setuid si capabilitatile nu permit usor atasarea de privilegii utilizatorilor, sau configurarea personalizata (custom) a actiunilor care pot fi executate de acel user.
+- pentru asta, solutia pe Linux este utilitar sudo
+Def. sudo = utilitar care permite rularea unor comenzi in numele altui utilizator (in general root)
+    - are o configurare granulara
+    - permite precizarea explicita a ce comenzi sa fie rulate
+Obs. Spre deosebire de utilitarul su, sudo nu necesita parola noului utilizator, ci parola utilizatorului curent.
+- cand rulam sudo il succedem cu comanda pe care vrem sa o rulam ca root
+- sudo permite unui user sa ruleze comensi ca un alt user printr-o configuratie din sistemul de configurare /etc/sudousers
+- permisiunile de sudo (adica posibilitatea de a rula comenzi ca root) trebuie acordate cu grija utilizatorilor
+- pentru a preveni editarea eronata a fisierului /etc/sudousers, folosim editorul visudo
+    - folosim comanda visudo ca root SAU comanda sudo visudo
+
+## 5.2.3.1.1: sudo si redirectare
+
+- consideram urmatoarea situatie: redirectionam rezultatul rularii unei comenzi intr-un fisier privilegiat
+- daca dorim sa activam rutarea pe un sistem Linux, rulam, ca root, comanda:
+    - student@uso:~$ echo 1 > /proc/sys/net/ipv4/ip_forward
+    Def. Activarea rutarii = transformarea dispozitivului de calcul in ruter
+        - activarea rutării permite sistemului să primească pachete pe o interfață de rețea și să le trimită mai departe către destinația lor finală prin altă interfață.
+        rolul valorilor 1 si 0 in fisierele de configurare:
+        - rolul valorilor 1 si 0 in fisierele de configurare:
+        - cifra 1 (sau orice valoare diferita de 0) = Activat (On / True)
+        - cifra 0 = Dezactivat (Off / False)
+        - importanta acestui mecanism:
+            - in Linux, configurarea kernel-ului se face prin scrierea acestor valori in fisiere virtuale (totul este un fisier)
+            - modificarea valorii in /proc schimba comportamentul sistemului instantaneu, fara a necesita restartarea serviciilor sau a calculatorului
+    - Problema redirectarii cu sudo:
+        - Comanda: student@uso:~$ sudo echo 1 > /proc/sys/net/ipv4/ip_forward
+        - Rezultat: eroare 
+            - desi "echo 1" ruleaza ca root prin sudo, redirectionarea (operatorul >) este gestionata de shell
+            - shell-ul utilizatorului "student" nu are privilegii sa deschida fisierul de sistem pentru scriere
+            - redirectionarea are loc PENTRU comanda sudo, nu IN INTERIORUL ei
+Utilitarul tee:
+- Def. tee = utilitar care citeste de la intrarea standard (stdin) si scrie simultan la iesirea standard (stdout) SI intr-unul sau mai multe fisiere.
+- Ex. student@uso:~$ echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
+    - echo 1:
+        - ruleaza ca utilizator normal (student)
+        - trimite cifra 1 catre conducta (pipe)
+    - | (Pipe):
+        - transporta datele de la echo catre tee
+        - ATENTIE: Pipe-ul nu are nevoie de permisiuni pe fisierul de destinatie, deci nu blocheaza comanda
+    - sudo tee [cale_fisier]:
+        - utilitarul tee este lansat cu privilegii de ROOT
+        - primeste cifra 1 prin pipe
+        - fiind root, tee are dreptul sa deschida fisierul privilegiat si sa scrie in el
+        - rezolva problema de "Permission denied" a redirectionarii simple
+            Optiunea critica: -a (append)
+            - implicit, tee suprascrie continutul fisierului (ca operatorul >)
+            - tee -a: adauga informatia la sfarsitul fisierului (ca operatorul >>)
+            - Ex. student@uso:~$ echo "text nou" | sudo tee -a /etc/hosts
+
+## 5.3: Operații cu utilizatori
+
+- in OS, un utilizator e reprezentat de procesele si resursele acestuia
+- la nivelul OS, un user e identificat de un numar, numit user identifier (UID), asa cum un proces e identificat printr-un process identifier (PID)
+- procesele si fisierele unui utilizator au în atributele acestora câmpul UID
+    - pentru procese, acest câmp ofera informatii despre ce operatii asupra resurselor sistemului de operare pot fi executate de proces
+        => procese: UID -> posibile operatii asupra resurselor OS
+    - câmpul UID al fisierelor identifica utilizatorul care le detine
+        => fisiere: UID -> identifica userul proprietar
+Obs. Comanda ps (process status) afiseaza UID proceselor.
+    - este utilizată pentru a afișa informații despre procesele care rulează în sistem
+    - ps -o (output): permite sccesarea unui format personalizat de afisare (în loc să afișeze coloanele implicite, ps va afișa doar coloanele specificate imediat după acest steag)
+        - PPID (Parent Process ID): indică sistemului de operare cine este părintele procesului curent
+    - Ex. student@uso:~$ ps -o pid,ppid,uid,user,cmd
+          PID PPID UID USER CMD
+          24104 24103 1000 student -bash
+          24610 24104 1000 student ps -o pid,ppid,uid,user,cmd
+        - "-bash" este interpretorul de comenzi. Faptul ca am pus "-" in fata indica un Login Shell
+        Obs.  PPID-ul lui ps (24104) este exact PID-ul lui bash.
+Obs. Comanda stat listeaza UID-ul unui fisier.
+    - Ex. student@uso:~$ stat vm-actions-log.txt
+          File: vm-actions-log.txt
+          Size: 4827 Blocks: 16 IO Block: 4096 regular file
+          Device: 801h/2049d Inode: 659107 Links: 1
+          Access: (0644/-rw-r--r--) Uid: ( 1000/ student) Gid: ( 1000/ student)
+          Access: 2020-08-08 16:32:44.086193999 +0300
+          Modify: 2018-08-21 14:37:44.316527432 +0300
+          Change: 2018-08-21 14:37:44.320529432 +0300
+          Birth: -
+
+## 5.3.1: Atribute ale utilizatorilor. Informatii despre utilizatori
+
+- utilitarul id: afișează UID, GID și grupurile din care face parte utilizatorul
+    - Ex. student@uso:~$ id student
+    - output-ul va arăta: uid=1000(student) gid=1000(student) groups=1000(student),27(sudo)...
+- cele mai importante doua atribute ale unui user sunt: userneme-ul si user identifier (UID)
+- ierarhia numerotării UID:
+    - UID 0: este rezervat întotdeauna pentru utilizatorul root
+    - UID 1 - 999: rezervate pentru conturi de sistem (servicii)
+    - UID 1000+: alocate utilizatorilor obișnuiți
+- pe sistemele Unix, un user are asociat un login shell
+Def. Login shell = programul rulat in momentul autentificarii user-ului pe sistem (apare sub forma unui shell in linia de comanda).
+- utilizatorii sunt grupati -> gestiune mai flexibila a accesului la resurse
+    - un user poate face parte din unul sau mai multe grupuri
+    - un grup poate contine 0 sau mai multi utilizatori
+    - un user poate apartine unui sau mai multor grupuri
+    - group identifier (GID): identificatorul grupului principal al utilizatorului
+- în Linux, există două utilitare pentru crearea conturilor: `useradd` și `adduser`
+- diferența între cele două:
+    - useradd: utilitar de nivel scăzut (low-level), nu este interactiv
+        - acesta creează utilizatorul, dar NU creează automat directorul home sau parola decât dacă sunt specificați parametri suplimentari
+    - adduser: script de nivel înalt (high-level), interactiv
+        - este recomandat pentru utilizatori deoarece creează automat directorul home, copiază fișierele de bază și solicită parola
+- Ex. student@uso:~$ sudo adduser teacher
+- procesul de adăugare implică mai mulți pași automați:
+    - se adaugă o linie în fișierul `/etc/passwd`
+    - se adaugă o linie în fișierul `/etc/shadow`
+    - se creează un grup primar cu același nume în `/etc/group`
+    - se creează directorul home la calea `/home/nume_utilizator`
+    - se copiază fișierele de configurare inițiale (șabloane) din `/etc/skel`
 
 
 
+## 5.3.2: Obtinerea de informatii despre utilizatori
 
+- informatii despre user: nume, UID, home director
+- pot fi obtinute prin: interfatele grafice aferente unui OS, distributii, utilitare in command line
 
+## 5.3.2.1: Obtinerea de informatii despre useri in Linux
 
+- in Linux, info despre userisunt stocate in fisiere de configurare dedicate
+- in scenarii de administrare mai complexe, aceste informatii sunt pastrate intr-o baza de date 
+   Fisier                         Rol                                       Informatii
+/etc/passwd             informatii utilizatori            username, UID, home directory, GID, login shell
+/etc/shadow               parole utilizatori            username, parola criptata, informatii expirare parola
+/etc/group                informatii grupuri                    nume grup, GID, utilizatori aferenti
+
+Obs. /etc/passwd este lizibil pentru orice user din sistem.
+Obs. /etc/shadow necesita acces root pentru a fi citit.
+Utilitae pe care le putem folosi pentru a obtine informatii despre utilizatori:
+1)  id
+    Rol: info despre user
+    Fisierele investigate: /etc/passwd, /etc/group
+2)  groups
+    Rol: grupurile utilizatorului curent
+    Fisierele investigate: /etc/group
+3)  users, w, who
+    Rol: useri autentificati in sistem acum 
+    Fisierele investigate: /var/run/utmp
+4)  whoami
+    Rol: numele userului curent
+    Fisierele investigate: N/A
+5)  finger, pinky
+    Rol: informatii complete despre un utilizator
+    Fisierele investigate: /etc/passwd, /etc/group
+
+Obs. Exista utilizatori care au configurat ca shell de login /bin/false SAU /bin/nologin.
+    - acesti utilizatori nu se pot autentifica în sistem si nu pot obtine un shell de login
+Def. Utilizatorii de sistem = cei care pot avea procese dar nu pot obtine shell de login.
+Def. Utilizatorii interactivi = cei care pot obtine shell si pot rula apoi comenzi.
+
+## 5.3.3: Gestiunea utilizatorilor si a grupurilor
+
+- consta in crearea, stergerea si modificarea user-ilor si a grupurilor
+- poate fi facuta doar de un user privilegiat
+Operatiile de gestiune a utilizatorilor sunt:
+    - crearea unui user
+        - un nou cont, identificat prin nume si UID
+    - stergerea unui user
+        - dupa ce un cont e sters, nu mai pot fi create procese cu acel cont
+    - crearea unui grup
+    - stergerea unui grup
+    - adaugarea unui user la un grup
+    - stergerea unui user dintr-un grup
+    - schimbarea parolei unui user
+    - modificarea atributelor unui user: username, login shell, home directory
+
+## 5.3.3.1: Gestiunea utilizatorilor si grupurilor in Windows
+
+- o facem cu interfata din panoul de control
+- exista si utilitare in command line, folosind interfata netsh
+
+## 5.3.3.2: Gestiunea utilizatorilor si grupurilor în Linux
+
+- in Linux, exista interfete grafice pentru gestiunea utilizatorilor in functie de mediul desktop folosit
+    - Ex. de medii desktop: GNOME, KDE, XFCE etc.
+Utilitare specifice pentru gestiunea in command line:
+1)  useradd
+    Rol: adaugare utilizator
+    Fisierele modificate: /etc/passwd, /etc/shadow, /etc/group
+2)  userdel
+    Rol: sterge utilizator
+    Fisierele modificate: /etc/passwd, /etc/shadow, /etc/group
+3)  usermod
+    Rol: modificare utilizator
+    Fisierele modificate: /etc/passwd, /etc/shadow, /etc/group
+4)  groupadd
+    Rol: adaugare grup
+    Fisierele modificate: /etc/group
+5)  groupdel
+    Rol: stergere grup
+    Fisierele modificate: /etc/group
+6)  groupmod
+    Rol: modificare grup
+    Fisierele modificate: /etc/group
+7)  chsh
+    Rol: modificare shell
+    Fisierele modificate: /etc/passwd
+8)  chfn
+    Rol: modificare informatii utilizator
+    Fisierele modificate: /etc/passwd
+9)  passwd
+    Rol: schimbare parola
+    Fisierele modificate: /etc/shadow
+
+- pe distributiile bazate pe Debian (Debian, Ubuntu, Linux Mint etc.), exista un set de utilitare mai usor de folosit care înglobeaza comenzile de mai sus
+Diferenta dintre Utilitare de baza si Utilitar Wrapper:
+    - utilitarele de baza: mai rapide si native sistemului
+        - acestea sunt: useradd, userdel, groupadd, groupdel
+    - utilitarele wrapper: mai interactive (recomandate pentru utilizare manuala)
+        - acestea sunt: adduser, deluser, addgroup, delgroup
+        - pentru Debian: chsh (schimbare shell de login), chfn (schimbare informatii), passwd (schimbare parola)
+
+- in Linux / Unix exista doua tipuri de grupuri: primare si secundare
+- un user apartine unui singur grup primar, si oricator grupuri secundare
+Obs. Un grup, care este grup primar al unui user, nu poate fi sters
+    - intai trebuie sters userul, apoi grupul
+Modificarea și ștergerea utilizatorilor:
+- usermod: utilitar folosit pentru a schimba proprietățile unui cont
+    - Ex. `sudo usermod -s /bin/zsh student` (schimbă shell-ul implicit în zsh)
+    - Ex. `sudo usermod -L student` (blochează contul - Lock)
+- deluser / userdel: utilitare pentru ștergerea conturilor
+    - implicit, aceste comenzi șterg doar contul, nu și fișierele utilizatorului
+    - pentru a șterge și directorul home, se folosește opțiunea `--remove-home`
+    - Ex. student@uso:~$ `sudo deluser --remove-home teacher`
+
+## 5.4: Autentificare. Gestiunea parolelor
