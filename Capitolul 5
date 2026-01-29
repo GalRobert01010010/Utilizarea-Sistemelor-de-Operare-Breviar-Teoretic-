@@ -202,6 +202,14 @@ Utilitarul tee:
     - câmpul UID al fisierelor identifica utilizatorul care le detine
         => fisiere: UID -> identifica userul proprietar
 Obs. Comanda ps (process status) afiseaza UID proceselor.
+    Steaguri pentru ps:
+        - ps -l (long format)
+        - ps -e (everything): listeaza toate procesele
+        - ps -u (user format)
+        - ps -a (all without session leaders)
+        - ps -f (full-listing)
+        - ps -x : procese care ruleaza in background fara terminal
+    - nu listeaza procesele care s-au terminat, ci doar cele care inca ruleaza
     - este utilizată pentru a afișa informații despre procesele care rulează în sistem
     - ps -o (output): permite sccesarea unui format personalizat de afisare (în loc să afișeze coloanele implicite, ps va afișa doar coloanele specificate imediat după acest steag)
         - PPID (Parent Process ID): indică sistemului de operare cine este părintele procesului curent
