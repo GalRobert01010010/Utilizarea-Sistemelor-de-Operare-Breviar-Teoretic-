@@ -279,6 +279,7 @@ Def. Login shell = programul rulat in momentul autentificarii user-ului pe siste
 
 Obs. /etc/passwd este lizibil pentru orice user din sistem.
 Obs. /etc/shadow necesita acces root pentru a fi citit.
+
 Utilitae pe care le putem folosi pentru a obtine informatii despre utilizatori:
 1)  id
     Rol: info despre user
@@ -305,6 +306,7 @@ Def. Utilizatorii interactivi = cei care pot obtine shell si pot rula apoi comen
 
 - consta in crearea, stergerea si modificarea user-ilor si a grupurilor
 - poate fi facuta doar de un user privilegiat
+
 Operatiile de gestiune a utilizatorilor sunt:
     - crearea unui user
         - un nou cont, identificat prin nume si UID
@@ -326,6 +328,7 @@ Operatiile de gestiune a utilizatorilor sunt:
 
 - in Linux, exista interfete grafice pentru gestiunea utilizatorilor in functie de mediul desktop folosit
     - Ex. de medii desktop: GNOME, KDE, XFCE etc.
+
 Utilitare specifice pentru gestiunea in command line:
 1)  useradd
     Rol: adaugare utilizator
@@ -356,6 +359,7 @@ Utilitare specifice pentru gestiunea in command line:
     Fisierele modificate: /etc/shadow
 
 - pe distributiile bazate pe Debian (Debian, Ubuntu, Linux Mint etc.), exista un set de utilitare mai usor de folosit care înglobeaza comenzile de mai sus
+
 Diferenta dintre Utilitare de baza si Utilitar Wrapper:
     - utilitarele de baza: mai rapide si native sistemului
         - acestea sunt: useradd, userdel, groupadd, groupdel
@@ -367,6 +371,7 @@ Diferenta dintre Utilitare de baza si Utilitar Wrapper:
 - un user apartine unui singur grup primar, si oricator grupuri secundare
 Obs. Un grup, care este grup primar al unui user, nu poate fi sters
     - intai trebuie sters userul, apoi grupul
+
 Modificarea și ștergerea utilizatorilor:
 - usermod: utilitar folosit pentru a schimba proprietățile unui cont
     - Ex. `sudo usermod -s /bin/zsh student` (schimbă shell-ul implicit în zsh)
@@ -378,5 +383,268 @@ Modificarea și ștergerea utilizatorilor:
 
 ## 5.4: Autentificare. Gestiunea parolelor
 
+Def. Autentificare = procedura prin care un utilizator doreste acces la sistemul de operare.
+- presupune fornizarea unui username si unei parole
+- autentificarea e valabila si pentru aplicatii
+  - Ex. aplicatii web, jocuri, aplicatii de baza de date, conturi bancare etc. 
+- moduri de autentificare: folosirea de informatii biometrice, dispozitiv de tip token de autentificare, autentificare cu cheie publica
+Def. Dispozitiv de tip token de autentificare = dispozitiv hardware sau aplicatie software care genereaza un cod numeric temporar (OTP - One Time Password)
+     sau trimite o confirmare criptografica pentru a dovedi identitatea user-ului.
+  - Ex. hardware: un stick USB (ex. YubiKey) pe care il introduci in PC si il atingi pentru a te loga.
+  - Ex. software: aplicatia Google Authenticator, care genereaza un cod de 6 cifre.
+Def. Autentificare cu cheie publica = metoda bazata pe criptografie asimetrica unde user-ul detine o cheie privata si serverul detine
+     cheia publica corespunzatoare.
+  - nu se transmit parole prin retea (dispare riscul unui atac Man-In-The-Middle)
+  - Ex. SSH: Accesarea unui server Linux de la distanta fara parola, folosind fisierul id_rsa (cheia privata) 
+
+## 5.4.1: Baza de date de parole
+
+- sistemul de operare detine o baza de date cu perechi (username, parola)
+- autentificarea e reusita daca username-ul si parola introduse se regasesc in aceeasi pereche in baza de date
+
+Baza de date cu parole e modificata de actiunile de lucru cu utilizatori
+  - in momentul adaugarii unui utilizator in sistem
+    - se adauga o noua pereche de nume si parola bazei de date
+  - in momentul stergerii unui utilizator
+    - se sterge o intrare existenta
+  - in momentul schimbarii unei parole 
+    - se modifica o intrare existenta
+- se poate intampla ca o defectiune de sistem sa permita unui user neprivilegiat sa aiba acces la baza de date cu parole
+  -> de aceea parolele nu sunt in format citibil (plain text), ci sunt criptate
+Obs. /etc/passwd = fisierul cu baza de date despre utilizatori.
+  - acest fisier nu poate retine parola deoarece multe comenzi trebuie sa il acceseze pentru a afal UID-ul user-ului
+  - daca ar fi asa, orice comenzi obisnuite ar putea gasi parola user-ului
+Obs. /etc/shadow = fisierul care reprezinta baza de date pentru parole in Linux
+  - poate fi accesat doar de catre utilizatori privilegiati
+  - o intrare (linie de configurare) in fisierul /etc/shadow contine numele de utilizator, parola criptata si informatii legate de gestiunea parolei
+  - datele sunt separate prin ":"
+  - Ex. student:$6$VNq0Dxyc$[...].:17749:0:99999:7:::
+    - student = nume de utilizator
+    - $6$VNq0Dxyc$[...]. = parola criptata (Hash-ul)
+      - $6$ indică algoritmul folosit (SHA-512)
+      - VNq0Dxyc este "Salt-ul" (un șir aleator care previne spargerea parolei prin Rainbow Tables)
+      - restul este hash-ul propriu-zis
+    - 17749 = data ultimei schimbări a parolei (calculată în număr de zile scurse de la 1 ianuarie 1970)
+    - 0 = Numărul minim de zile înainte ca parola să poată fi schimbată (0 înseamnă că o poți schimba oricând)
+    - 99999 = numărul maxim de zile după care parola trebuie schimbată (practic, nu expiră niciodată)
+    - 7 = perioada de avertizare (cu 7 zile înainte de expirare, utilizatorul primește un mesaj de avertizare)
+    - : (Gol): Perioada de inactivitate (câte zile după expirare contul mai rămâne activ înainte de a fi blocat).
+    - : (Gol): Data la care contul expiră definitiv (exprimată tot în zile de la 1.01.1970).
+    - : (Gol): Un câmp rezervat pentru utilizări viitoare.
+Obs. Dacă exista un semn de exclamare (!) sau un asterisc (*) în locul hash-ului (câmpul 2), 
+     înseamnă că utilizatorul are contul blocat sau nu are nicio parolă setată, deci nu se poate loga.
+Obs. Dacă hash-ul începe cu (!!), parola a expirat și contul a fost blocat automat de sistem.
+
+Prefixe pentru algoritmi Hashing:
+  $1$ = MD5 - vulnerabil la coliziuni 
+  $2a$ SAU $2y$ = Blowfish / bcrypt - rezistent la atacuri brute-force prin GPU (Graphics Processing Unit - componenta hardware specializata pt. grafica)
+  $5$ = SHA-256 - folosit ca alternativa rapida pentru SHA-512
+  $6$ = SHA-512 - standardul actual (default in Ubuntu/Debian/RHEL(Red Hat Enterprise Linux))
+  $y$ = yescrypt - cel mai modern (default în Fedora/Debian 12+); rezistent la atacuri cu circuite dedicate (ASIC)
+  $2b$ = variantă de bcrypt (similară cu 2a/2y).
+  $3$ = NT Hash (folosit de sisteme Windows vechi, extrem de rar în Linux).
+  $md5$ = o variantă specifică de MD5 utilizată uneori în configurații Apache.
+  $sha1$ = algoritmul SHA-1, rar folosit acum în /etc/shadow deoarece este considerat nesigur.
+Def. Atacuri cu circuite dedicate (ASIC) = utilizarea unor cipuri hardware special proiectate (Application-Specific Integrated Circuit) 
+     pentru o singură sarcină: calcularea hash-urilor cu viteză extremă. Atacul e de tip brute-force.
+Def. Algoritmii "memory-hard" = algoritmi proiectați să necesite o cantitate mare de memorie RAM pentru a calcula un singur hash. 
+     - scopul este să facă atacurile hardware (ASIC/GPU) foarte scumpe și lente
+  - algoritmii "memory-hard" sunt proiectați special pentru a neutraliza avantajul atacurilor de tip ASIC
+
+Exemple de algoritmi "memory-hard":
+  Argon2: cel mai performant instrument de hashing de parole; este standardul modern "memory-hard";
+  yescrypt: bazat pe scrypt; cel folosit acum în distribuțiile Linux noi (Debian 12, Fedora).
+
+In Windows:
+  - baza de date pentru parole se numeste Security Account Manager (SAM)
+  - se gaseste in \%SystemRoot%\system32\config\SAM
+  - accesul la SAM are loc prin intermediul Windows Registry si e asemanator cu /etc/shadow -> parolele sunt mentinute criptate
+
+## 5.4.2: Gestiunea parolelor
+
+- un utilizator isi poate gestiona propria parola
+- un utilizator administrativ poate gestiona parolele tuturor utilizatorilor
+
+Exista urmatoarele actiuni de gestionare a parolelor:
+  - schimbarea parolei
+  - stabilirea duratei de viata a unei parole
+  - blocarea parolei
+- in Linux, modul uzual de gestiune a parolei este prin linia de comanda, folosind utilitarul "passwd"
+
+Exemplu:
+  - pentru utilizatorul neprivilegiat
+      student@uso:~$ passwd
+      Changing password for student.
+      (current) UNIX password:
+      Enter new UNIX password:
+      Retype new UNIX password:
+      passwd: password updated successfully
+  - pentru utilizatorul administrativ
+      root@uso:~# passwd teacher
+      Enter new UNIX password:
+      Retype new UNIX password:
+      passwd: password updated successfully
+Obs. Utilizatorul privilegiat nu trebuie sa introduca parola actuala inainte sa o modifice, spre deosebire de utilizatorul neprivilegiat.
+
+Bitul SUID (Set Owner User ID):
+  Problema: Fișierul `/etc/shadow` este protejat prin permisiuni stricte (600), putând fi accesat și modificat exclusiv de utilizatorul `root`.
+  Soluția (SUID): Activarea bitului special SUID pe executabilul `passwd` forțează procesul să ruleze cu privilegiile proprietarului fișierului (`root`), nu ale utilizatorului curent.
+  Efectul: Utilizatorul obișnuit obține drepturi administrative temporare strict pentru acea comandă, permițând actualizarea hash-ului parolei în `/etc/shadow`.
+- Configurarea Proprietății (Ownership)
+  - `sudo chown root /cale/catre/fisier` - Comanda pentru stabilirea proprietarului.
+  - `root` - Trebuie să fie proprietarul pentru ca SUID să ofere privilegii administrative.
+  - `Importanță` - SUID împrumută identitatea proprietarului; dacă acesta nu este root, comanda nu va avea acces la /etc/shadow.
+  - `Sintaxă completă` - `sudo chown root:root /usr/bin/passwd` (asigură și grupul proprietar).
+- Activarea Bitului Special SUID (Set Owner User ID) se poate face prin doua metode
+  - Metoda Simbolică
+    - `sudo chmod u+s /cale/catre/fisier` - Adaugă bitul special proprietarului.
+    - `u` (user) + `s` (setid).
+  - Metoda Numerică (Octală)
+    - `sudo chmod 4755 /cale/catre/fisier` - Activează SUID folosind masca numerică.
+    - `4` - Reprezintă bitul SUID (valoare 4000).
+    - `755` - Permisiunile standard de execuție (rwxr-xr-x).
+- Verificarea Implementării
+  - `ls -l /cale/catre/fisier` - Vizualizarea drepturilor de acces.
+  - `Simbolul 's'` - Înlocuiește 'x'-ul de la proprietar (ex: -rwsr-xr-x).
+  - `S mare (S)` - Indică o eroare: SUID este setat, dar fișierul NU are drept de execuție.
+- Mecanismul de Funcționare (Cazul passwd)
+  - `Problema` - /etc/shadow este protejat (permisiuni 600, doar root are acces).
+  - `Acțiunea SUID` - Când student rulează passwd, procesul devine temporar root.
+  - `Finalitate` - Procesul poate scrie în /etc/shadow, permițând schimbarea parolei fără acces sudo direct.
+- Securitate și Riscuri
+  - `Privilege Escalation` - Riscul ca un user normal să devină root prin exploatarea unui binar cu SUID.
+  - `Interdicție` - Nu se pune SUID pe scripturi (.sh) sau editoare de text (vim, nano).
+  - `Audit` - `find / -perm -4000` - Găsește toate fișierele cu SUID din sistem.
+
+Observatii:
+1) Comanda stat /usr/bin/passwd afișează permisiunile atât în format simbolic, cât și numeric (octal), fiind foarte utilă pentru a vedea cifra 4 de la SUID clar.
+2) Dacă vrei să elimini bitul SUID, folosește comanda sudo chmod u-s /cale/catre/fisier.
+3) În Linux, binarul ping are adesea bitul SUID setat pentru a putea deschide socket-uri "raw", operațiune permisă în mod normal doar utilizatorului root.
+
+Manipularea bitului SUID:
+  - Ștergerea Bitului SUID (Revocarea Privilegiilor)
+    - Metoda Simbolică
+      - `sudo chmod u-s /usr/bin/passwd` - Elimină ( - ) bitul special de pe proprietar.
+      - `Utilizare` - Se folosește atunci când un binar nu mai trebuie să ruleze cu drepturi de root.
+    - Metoda Numerică (Octală)
+      - `sudo chmod 0755 /usr/bin/passwd` - Setează bitul special la 0 (dezactivat).
+      - `0` - Prima cifră indică absența oricărui bit special (SUID, SGID sau Sticky).
+  - Identificarea Fișierelor cu SUID în Sistem
+    - `find /usr/bin -perm -4000` - Caută în folderul binarelor toate fișierele care au exact bitul SUID setat.
+    - `-perm -4000` - Filtrul pentru masca numerică a SUID (4).
+    - `find / -perm -u=s 2>/dev/null` - Caută în tot sistemul fișierele cu SUID (metoda simbolică) și ascunde erorile de permisiuni.
+  - Diagnosticarea Erorilor de Configurare (S mare vs s mic)
+    - `ls -l /cale/fisier` - Verificarea stării curente.
+    - `Eroare (S)` - Dacă execuți `sudo chmod u+s fisier` pe un fișier care NU are drept de execuție (`x`), `ls` va afișa `S` (S mare).
+    - `Corecție` - `sudo chmod u+x /cale/fisier` - Transformă `S` în `s` mic, făcând SUID-ul funcțional.
+  - Manipularea concomitentă cu alte drepturi
+    - `sudo chmod 4700 /cale/fisier` - Activează SUID și restricționează restul accesului (doar proprietarul root poate citi/scrie/executa).
+    - `Sintaxă` - `rws------` (rezultatul comenzii de mai sus).
+
+Bitul SGID (Set Group ID):
+  Mecanismul de Funcționare (SGID pe Fișiere și Directoare)
+    Problema: Într-un mediu de lucru colaborativ, când un utilizator creează un fișier într-un folder partajat, 
+            acel fișier primește grupul primar al utilizatorului, împiedicând ceilalți membri ai grupului proiectului să îl modifice.
+    Soluția (SGID): Activarea bitului SGID pe un director forțează toate fișierele noi create în interior să moștenească automat 
+            grupul proprietar al directorului, nu grupul utilizatorului care le-a creat.
+    Efectul: Membrii aceluiași grup pot lucra împreună în același folder fără a fi nevoie să schimbe manual grupul fiecărui fișier 
+            nou (comanda `chgrp`) pentru a permite accesul colegilor.
+- Configurarea Proprietății de Grup
+  - `sudo chgrp echipa_proiect /folder_partajat` - Comanda pentru stabilirea grupului care va fi moștenit.
+  - `Sens` - SGID are impact doar dacă grupul directorului este cel sub care vor să colaboreze utilizatorii.
+- Activarea Bitului Special SGID (Set Group ID)
+  - Metoda Simbolică
+    - `sudo chmod g+s /folder_partajat` - Adaugă bitul special grupului (g).
+    - `g` (group) + `s` (setid).
+  - Metoda Numerică (Octală)
+    - `sudo chmod 2775 /folder_partajat` - Activează SGID folosind masca numerică.
+    - `2` - Reprezintă cifra pentru SGID (valoarea 2000).
+    - `775` - Permisiuni rwxrwxr-x (oferă drept de scriere grupului).
+- Verificarea Implementării
+  - `ls -ld /folder_partajat` - Vizualizarea drepturilor directorului (folosim `-d` pentru a vedea folderul, nu conținutul).
+  - `Simbolul 's'` - Apare în locul 'x'-ului de la grup (ex: `drwxrwsr-x`).
+  - `S mare (S)` - Indică faptul că SGID este setat, dar grupul NU are drept de execuție pe acel folder.
+- Ștergerea și Căutarea SGID
+  - `sudo chmod g-s /folder_partajat` - Elimină bitul SGID (metoda simbolică).
+  - `find / -perm -2000 2>/dev/null` - Caută toate fișierele/directoarele cu SGID setat în sistem.
+
+Observatii:
+1) Dacă la proba practică se cere "ca toate fișierele create într-un folder să aparțină grupului 'profesori'", soluția este întotdeauna chmod g+s.
+2) Valoarea octală pentru SGID este 2, deci în format de 4 cifre, orice permisiune care începe cu 2 (ex. 2770) indică prezența SGID.
+3) Spre deosebire de SUID, SGID este util și pe scripturi în anumite contexte de rețea, dar utilizarea sa principală rămâne pe directoare pentru colaborare.
+
+- expirarea si blocarea parolelor pot fi utile pentru crearea de conturi temporare
+- un user cu parola blocata poate folosi si alte moduri de autentificare la acel cont, cum ar fi SSH
+
+Utilitarul usermod
+  - comanda folosita pentru a modifica setările unui cont de utilizator deja existent în sistemul Linux.
+Exemplu:
+  student@uso:~$ sudo usermod --expiredate 1 teacher
+  student@uso:~$ su - teacher
+  Password:
+  Your account has expired;
+  please contact your system administrator
+  su: Authentication failure
+  student@uso:~$
+Obs. Comanda configurează contul să expire la 1 ianuarie 1970 făcându-l, astfel, inutilizabil.
+  - este un exemplu de blocare prin expirare, nu de blocare prin parola
+Steaguri esențiale:
+  - usermod -e, --expiredate YYYY-MM-DD` - Setează data de expirare a contului.
+    - Ex: sudo usermod -e 2026-12-31 student`
+  - usermod -L, --lock` - Blochează parola utilizatorului (pune un "!" în fața hash-ului în /etc/shadow).
+    - Ex: sudo usermod -L teacher`
+  - usermod -U, --unlock` - Deblochează parola utilizatorului.
+    - Ex: sudo usermod -U teacher`
+  - usermod -s, --shell` - Modifică shell-ul de login al utilizatorului.
+    - Ex: sudo usermod -s /bin/bash student`
+  - usermod -d, --home` - Modifică directorul home (adesea folosit cu `-m` pentru a muta conținutul vechi).
+    - Ex: sudo usermod -d /home/new_home -m student`
+Obs. Blocarea cu `-L` oprește doar autentificarea prin parolă; dacă utilizatorul are chei SSH setate, acesta se poate loga în continuare. 
+Obs. Expirarea cu `-e` este singura care oprește orice formă de acces.
+
+Utilitarul passwd
+  - comanda folosita pentru a schimba parola unui cont de utilizator
+  - e utilitar interactiv, necesita intrarea de la utilizator
+  - dificil de folosit pentru automatizare
+Steaguri esențiale:
+    - passwd -l, --lock` - Blochează parola (similar cu usermod -L).
+      - Ex: sudo passwd -l teacher`
+    - passwd -u, --unlock` - Deblochează parola.
+      - Ex: sudo passwd -u teacher`
+    - passwd -d, --delete` - Șterge parola utilizatorului (contul devine fără parolă, periculos).
+      - Ex: sudo passwd -d student`
+    - passwd -e, --expire` - Forțează expirarea parolei (utilizatorul TREBUIE să o schimbe la următoarea logare).
+      - Ex: sudo passwd -e student`
+    - passwd -S, --status` - Afișează starea parolei (L = locked, P = usable, NP = no password).
+      - Ex: passwd -S student`
+Obs. Root poate schimba parola oricui fără să cunoască parola veche, în timp ce un user normal trebuie să o introducă pe cea curentă pentru a rula comanda.
+
+Utilitarul chpasswd
+  - comanda folosita pentru a actualiza parolele în masă (pentru mai mulți utilizatori simultan) prin citirea datelor de la intrarea standard (stdin).
+Exemplu:
+    student@uso:~$ echo "teacher:woof2PhaiNiphooS" | sudo chpasswd
+    - am schimbat parola utilizatorului teacher in valoarea woof2PhaiNiphooS
+    - chpasswd primeste la intrarea standard linii de forma username:password si le schimbă în mod neinteractiv, folosibil în scripturi
+Steaguri esențiale:
+    - chpasswd -e, --encrypted` - Indică faptul că parolele primite la intrare sunt deja criptate (hash-uri), nu text clar.
+      - Ex: echo 'student:$6$salt$hash' | sudo chpasswd -e`
+    - chpasswd -c, --crypt-method` - Specifică algoritmul de criptare dorit (ex: SHA512).
+      - Ex: echo "user:pass" | sudo chpasswd -c SHA512`
+Obs. Este utilitarul preferat pentru Scripting la proba practică (ex: "Creați 100 de utilizatori cu parola implicită 'SchimbaMa123'").
+
+Folosirea parolelor poate fi problematica pentru ca:
+  - folosim foarte multe parole si, în mod ideal, trebuie să fie diferite între ele
+  - parolele pot fi slabe si usor de ghicit
+  - parolele trebuie să fie schimbate periodic, altfel sansele de fi ghicite/decriptate cresc
+  - folosim parolele de pe dispozitive multiple: desktop, laptop, dispozitiv mobil
+
+Pentru gestiunea parolelor se recomanda:
+  - Parolele să fie lungi (cel putin 10 caractere) si să contină caractere diferite
+      - se poate apela la un generator de parole precum utilitarul pwgen
+  - nu notati parolele în clar pe hârtii sau în fisiere de unde pot fi usor citite
+  - folositi un utilitar de tipul password manager care să retină parolele si să minimizeze riscul expunerii lor la un atacator
+      - in acelasi timp, să ajute să fie accesibile de pe dispozitive multiple
+
+## 5.4.3: Autentificare centralizata
 
 
