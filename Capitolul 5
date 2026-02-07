@@ -89,16 +89,19 @@ Def. Superuser = utilizator cu permisiuni depline.
     student@uso:~$ su teacher
     Password:
     teacher@uso:/home/student$ exit
+
 - diferenta intre su si su - (sau su -l):
     - su [user]: schimba doar identitatea, dar pastreaza directorul curent si variabilele de mediu ale vechiului utilizator
     - su - [user]: schimba identitatea si incarca complet mediul de lucru al noului utilizator (Login Shell)
     - se observa in prompt: la su - locatia se schimba automat in directorul home al noului user (simbolul ~)
+
 - diferenta intre comenzile de iesire exit si logout:
     - exit: este comanda universala care inchide orice shell curent si te intoarce la utilizatorul anterior
     - logout: functioneaza doar daca shell-ul curent este un Login Shell (creat prin su - sau su -l)
     - Ex. in Listing 5.3:
         - la linia 3 s-a folosit exit deoarece su simplu nu creeaza un login shell
         - la liniile 6 si 9 s-a folosit logout deoarece su -l a creat o sesiune de login completa
+
 - utilitarul su permite rularea unei comenzi fara a deschide un shell prin optiunea -c
     - se ruleaza direct comanda primita ca argument si apoi se revine automat la shell-ul initial
     - Ex. Listing 5.3 (punctul 10):
@@ -112,6 +115,7 @@ Def. Superuser = utilizator cu permisiuni depline.
 - root detine controlul intregului sistem
 - sistemele de operare moderne ofera optiuni de granularizare a privilegiilor
     - Ex. bitul setuid, capabilitati si utilitarul sudo
+
 Bitul setuid (set-user-id-on-execution):
     - bit asociat unui fisier executabil
     - cand se executa fisierul, procesul nou creat nu va apartine celui care l-a executat, ci va apartine celui care a creat fisierul (de obicei root)
@@ -124,6 +128,7 @@ Bitul setuid (set-user-id-on-execution):
     - in permisiunile fisierelor se observa litera "s" (bitul setuid)
     Obs. Prezenta bitului setuid pe un executabil detinut de root (de exemplu passwd, su, sudo) -> acele comenzi pot fi rulate de orice utilizator pentru a crea procese privilegiate
     - dezavantajul este ca procesul nou creat ruleaza cu privilegii complete de root
+
 Capabilitatile:
     - mecanism in Linux
     - concept de baza in sistemele de operare
@@ -173,6 +178,7 @@ Obs. Spre deosebire de utilitarul su, sudo nu necesita parola noului utilizator,
             - desi "echo 1" ruleaza ca root prin sudo, redirectionarea (operatorul >) este gestionata de shell
             - shell-ul utilizatorului "student" nu are privilegii sa deschida fisierul de sistem pentru scriere
             - redirectionarea are loc PENTRU comanda sudo, nu IN INTERIORUL ei
+
 Utilitarul tee:
 - Def. tee = utilitar care citeste de la intrarea standard (stdin) si scrie simultan la iesirea standard (stdout) SI intr-unul sau mai multe fisiere.
 - Ex. student@uso:~$ echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
