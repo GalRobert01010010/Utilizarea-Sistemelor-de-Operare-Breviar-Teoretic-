@@ -34,8 +34,6 @@ Def. Superuser = utilizator cu permisiuni depline.
 
 ## 5.2: Utilizatorul administrativ (superuser)
 
-## 5.2: Utilizatorul administrativ (superuser)
-
 - utilizatorul administrativ, superuserul, detine controlul complet al sistemului
 - toate operatiile privilegiate, inaccesibile unui utilizator obisnuit neprivilegiat, sunt permise acestuia
 - un utilizator obisnuit va accesa acest cont special pentru a realiza o operatie privilegiata
