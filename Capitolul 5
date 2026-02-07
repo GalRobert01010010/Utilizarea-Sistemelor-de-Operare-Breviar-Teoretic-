@@ -639,7 +639,7 @@ Folosirea parolelor poate fi problematica pentru ca:
   - folosim parolele de pe dispozitive multiple: desktop, laptop, dispozitiv mobil
 
 Pentru gestiunea parolelor se recomanda:
-  - Parolele să fie lungi (cel putin 10 caractere) si să contină caractere diferite
+  - parolele să fie lungi (cel putin 10 caractere) si să contină caractere diferite
       - se poate apela la un generator de parole precum utilitarul pwgen
   - nu notati parolele în clar pe hârtii sau în fisiere de unde pot fi usor citite
   - folositi un utilitar de tipul password manager care să retină parolele si să minimizeze riscul expunerii lor la un atacator
@@ -647,4 +647,371 @@ Pentru gestiunea parolelor se recomanda:
 
 ## 5.4.3: Autentificare centralizata
 
+- este problematic pentru un utilizator sa aiba un cont si o parola pentru fiecare aplicatie folosita
+- solutia: autentificarea centralizata
+Def. Autentificarea centralizata = presupune existenta unui serviciu de autentificare care gestioneaza baza de date de parole
+  - acest serviciu este accesat de diferite aplicatii
+- autentificarea centralizata implica folosirea acelasi nume de utilizator si aceeasi parola pentru mai multe aplicatii
+- aplicatiile trimit mai departe catre baza de date informatiile introduse de user; daca sunt corecte, utilizatorul primeste acces
 
+Pentru Windows:
+  - autentificarea centralizata se bazeaza pe serviciul AD (Active Directory)
+Pentru Linux:
+  - autentificarea centralizata se bazeaza pe serviciul LDAP (Lightweight Directory Access Protocol)
+
+## 5.5: Accesul la sistemul de fisiere
+
+- conturile de utilizator, in OS, au rolul de a separa resursele (Ex. Sistemul de fisiere) la care au acces fiecare utilizator
+- fiecare user are un director Home la care are permisiuni complete
+- un anumit agent (subiect) are un anumit acces la unele resurse (obiecte)
+- spunem ca agentul este utilizatorul, iar resursa este fisierul
+  - mai precis, agentul este un proces apartinand unui utilizator
+Def. Un prroces este un program in executie:
+Explicatie: Un program este o entitate pasiva (un fisier pe disc, ex. /bin/ls), iar procesul este entitatea activa care ocupa resurse
+            si are un set de parmisiuni.
+
+Procesul este definit de:
+  - PID (Process ID): un numar unic de identificare 
+  - Contextul de securitate (Credentiale): fiecare proces mosteneste identitatea user-ului care l-a lansat, avand un UID si GID
+  - EUID / EGID (Effective UID/GID): sunt ID-urile "efective" pe care sistemul le verifică atunci când procesul cere acces la un fișier.
+      - Exemplu: Când rulezi un fișier cu SUID root, procesul tău va avea UID-ul tău, dar EUID-ul va fi 0 (root).
+  Obs. Este instanta vie a unui program, cea cu care interactioneaza userul.
+
+Programul este definit de:
+  - Definiție Statică
+    - Un program este un fișier executabil stocat pe un mediu de stocare permanent (HDD/SSD).
+    - Spre deosebire de proces, programul nu consumă timp de procesor (CPU) sau memorie RAM până când nu este lansat în execuție.
+  - Cod Mașină (Instrucțiuni)
+    - Reprezintă setul de instrucțiuni binare pe care procesorul trebuie să le execute.
+    - Acestea sunt specifice arhitecturii sistemului (ex: x86_64 pentru PC-uri, ARM pentru telefoane).
+  - Date Inițiale
+    - Conține constante, mesaje text (ex: "Enter password:") și variabile predefinite de către programator.
+    - Aceste date sunt încărcate în memorie în momentul în care programul devine proces.
+  - Atribute de Sistem (Metadate)
+    - `Proprietar (Owner)` - Utilizatorul care deține fișierul executabil (important pentru mecanismul SUID).
+    - `Permisiuni` - Bitul de execuție (+x) care îi spune sistemului că fișierul poate fi lansat ca proces.
+    - `Punct de intrare (Entry Point)` - Adresa primei instrucțiuni care trebuie executată din codul mașină.
+  - Resurse Externe Necesare
+    - `Biblioteci Partajate (Libraries)` - Referințe către alte fișiere (ex: .so în Linux, .dll în Windows) de care programul are nevoie pentru a funcționa.
+  Obs. Este o entitate statica, pasiva, stocata pe disc.
+  Obs. Un program poate genera mai multe procese (ex. Firecox poate fi deschis de mai multe ori).
+  Obs. Un proces nu poate sa apartina mai multor programe.
+
+## 5.5.1: Gestiunea permisiunilor in Windows
+
+- in Windows, permisiunile sunt retinute in forma unor liste de acces (ACL - Access Control List)
+Pentru un user, pot fi precizate mai multe tipuri de permisiuni:
+  - List Folder/Read Data: utilizatorul poate lista continutul unui director si datele unui fisier
+  - Create Files/Write Data: utilizatorul poate crea fisiere într-un director si poate scrie date într-un fisier
+  - Traverse Folder/Execute File: utilizatorul poate traversa un director si poate executa un fisier
+
+## 5.5.2: Gestiunea parmisiunilor in Linux
+
+- fiecare fisier are metadate
+Metadate relevante pentru permisiuni:
+  - user: utilizatorul fisierului
+  - group: grupul fisierului
+  - permisiuni: informatii despre ce tipuri de accesari sunt permise si cui
+
+Exista 3 tipuri de entitati pentru care se pot configura permisiuni:
+  - user (utilizator): utilizatorul fisierului
+  - group (grup): grupul fisierului
+  - others (ceilalti): ceilalti utilizatori, diferiti de utilizatorul fisierului si care nu fac parte din grupul fisierului
+
+Exista 3 tipuri de permisiuni:
+  - read (citeste): fisierul poate fi citit, directorul poate fi listat
+  - write (scrie): fisierul poate fi modificat, pot fi adăugate / sterse intrări în director
+  - execute (executa): fisierul poate fi executat, directorul poate fi parcurs
+
+- Algoritmul de Verificare a Permisiunilor (Ierarhia de acces)
+  - Pasul 1: Identificarea Agentului
+    - Sistemul determină cine este posesorul procesului (UID-ul procesului).
+  - Pasul 2: Verificarea la nivel de User (Proprietar)
+    - `Comparație`: Este UID-ul procesului == UID-ul proprietarului fișierului?
+    - `Dacă Da`: Se aplică DOAR prima triadă de permisiuni (ex: `rwx------`). 
+    - `Efect`: Dacă ai permisiune, treci. Dacă NU ai (chiar dacă grupul ar avea), ești blocat direct ("Permission denied").
+  - Pasul 3: Verificarea la nivel de Group (Grup)
+    - `Comparație`: Face utilizatorul parte din GID-ul fișierului?
+    - `Dacă Da`: Se aplică a doua triadă de permisiuni (ex: `---r-x---`).
+    - `Efect`: Dacă grupul are acces, treci. Dacă nu, mergi la pasul următor.
+  - Pasul 4: Verificarea la nivel de Others (Alții)
+    - `Acțiune`: Dacă nu ești nici proprietar, nici membru al grupului, se aplică ultima triadă (ex: `------r--`).
+    - `Rezultat`: Dacă permisiunea există, treci. Dacă nu, accesul este respins definitiv.
+Obs. Această verificare se face pe baza EUID (Effective UID) al procesului. Dacă procesul are SUID, 
+     verificarea de la Pasul 1 se va face cu UID-ul proprietarului fișierului executabil (de obicei root).
+
+Reguli de Acces: Director vs. Fișier
+  - Traversarea (Calea)
+    - `Cerință`: Permisiune de execuție (x) pe toate directoarele din cale.
+    - `Exemplu`: Pentru `cd /home/student/proiect`, directoarele `home`, `student` și `proiect` trebuie să aibă bitul `x`.
+  - Listarea (ls)
+    - `Cerință`: Permisiune de citire (r) ȘI execuție (x) pe acel director.
+    - `Obs`: Doar `r` pe director îți permite să vezi numele fișierelor, dar nu și detaliile lor (dimensiune, proprietar).
+  - Citirea unui fișier (cat, less)
+    - `Cerință`: r pe fișier + x pe directorul părinte.
+    - `Comparație`: Dacă ai `r` pe fișier dar NU ai `x` pe folder, nu poți nici măcar să "ajungi" la fișier pentru a-l citi.
+  - Editarea unui fișier (nano, vim)
+    - `Cerință`: w pe fișier + x pe directorul părinte.
+    - `Obs`: Nu ai nevoie de `r` pe fișier ca să scrii peste el (dar e greu să editezi fără să vezi ce e acolo).
+  - Crearea/Ștergerea (rm, touch, mkdir)
+    - `Cerință`: w ȘI x pe directorul părinte.
+    - `CRITIC`: Nu contează ce permisiuni are fișierul în sine! Dacă ai `wx` pe folder, poți șterge un fișier chiar dacă acesta este deținut de root și are permisiuni `000`.
+  - Execuția unui program (./script.sh)
+    - `Cerință`: r ȘI x pe fișier + x pe directorul părinte.
+    - `De ce r?`: Sistemul trebuie să poată citi instrucțiunile din fișier pentru a le încărca în RAM.
+
+## 5.5.2.1: Formatul permisiunilor
+
+Permisiunile sunt listate ca un sir de 9 caractere:
+  - primele 3 sunt permisiuni pt user
+  - urmatoarele 3 sunt pentru grup
+  - ultimele 3 sunt permisiunu pentru others
+
+Logica de Calcul (Sistemul 4-2-1):
+  - Fiecare permisiune dintr-o triadă are o valoare fixă:
+    - r (read) = 4 (binar 100)
+    - w (write) = 2 (binar 010)
+    - x (execute) = 1 (binar 001)
+    - - (none) = 0 (binar 000)
+  - `Metodă`: Aduni valorile active dintr-o triadă pentru a obține cifra corespunzătoare.
+
+- Tabel de Corespondență Rapidă
+  | Simbolic | Binar | Octal | Semnificație              |
+  | :---     | :---  | :---  |         :---              |
+  | `---`    | 000   | **0** | Nicio permisiune          |
+  | `--x`    | 001   | **1** | Doar execuție             |
+  | `-w-`    | 010   | **2** | Doar scriere              |
+  | `-wx`    | 011   | **3** | Scriere și execuție (2+1) |
+  | `r--`    | 100   | **4** | Doar citire               |
+  | `r-x`    | 101   | **5** | Citire și execuție (4+1)  |
+  | `rw-`    | 110   | **6** | Citire și scriere (4+2)   |
+  | `rwx`    | 111   | **7** | Acces complet (4+2+1)     |
+
+Structura celor 3 cifre
+  - Cifra 1: User (Proprietar)
+  - Cifra 2: Group (Grup)
+  - Cifra 3: Others (Alții)
+  - `Exemplu`: 755 -> Proprietarul face tot (7), Grupul și Alții doar citesc și traversează (5).
+
+## 5.5.3: Comenzi pentru gestionarea permisiunilor
+
+- pentru gestiunea permisiunilor:
+    - comenzi de afisare a metadatelor fisierului (user, grup si permisiuni)
+    - comenzi de modificare a metadatelor
+
+1. Afisarea metadatelor:
+
+Utilitarul ls (list) - Modul de afișare detaliată
+- Comanda este folosită pentru a vedea cine deține fișierul și ce drepturi sunt active.
+
+- Steaguri (Flag-uri) și Exemple:
+  - -l (long format): Afișează coloanele de metadate (permisiuni, proprietar, grup, mărime, dată).
+  - Comandă terminal: ls -l /etc/passwd
+  - -d (directory): Vizualizează metadatele directorului în sine, nu conținutul său.
+  - Comandă terminal: ls -ld /home/student
+  - -n (numeric): Afișează UID și GID sub formă de numere în loc de nume.
+  - Comandă terminal: ls -ln /etc/shadow
+  - -h (human-readable): Afișează mărimea fișierelor în formate KB, MB, GB.
+  - Comandă terminal: ls -lh /boot/vmlinuz
+  - -i (inode): Afișează identificatorul unic (index node) al fișierului.
+  - Comandă terminal: ls -li /etc/hosts
+  - -a (all): Afișează și fișierele ascunse (cele care încep cu punct).
+  - Comandă terminal: ls -la /home/student
+  - -A (almost-all): Afișează fișierele ascunse, dar exclude directorul curent (.) și cel părinte (..).
+  - Comandă terminal: ls -lA /home/student
+  - -F (classify): Adaugă un indicator vizual numelui (ex: / pentru directoare, * pentru executabile).
+  - Comandă terminal: ls -F /bin
+  - -R (recursive): Afișează conținutul tuturor subdirectoarelor în mod ierarhic.
+  - Comandă terminal: ls -lR /etc/network
+  - -t (time): Sortează fișierele după timpul ultimei modificări (cele mai noi primele).
+  - Comandă terminal: ls -lt /var/log
+  - -r (reverse): Inversează ordinea sortării (utilizat des împreună cu -t).
+  - Comandă terminal: ls -ltr /var/log
+  - -S (size): Sortează fișierele după dimensiune (cele mai mari primele).
+  - Comandă terminal: ls -lS /var/log
+
+ Utilitarul stat
+- Comanda oferă detalii profunde despre fișier, incluzând timpii de acces și permisiunile octale.
+
+Steaguri (Flag-uri) și Exemple:
+- -c (format): Permite extragerea unei anumite metadate (ex: %a pentru permisiuni octale, %U pentru nume proprietar).
+- Comandă terminal: stat -c %a /etc/shadow
+- -t (terse): Afișează informațiile într-un format compact, pe o singură linie.
+- Comandă terminal: stat -t /etc/hostname
+- -f (file system): Afișează starea sistemului de fișiere unde este stocat obiectul (blocuri, inode-uri libere).
+- Comandă terminal: stat -f /
+- -L (dereference): Dacă fișierul este un link simbolic, afișează metadatele fișierului către care punctează, nu ale linkului.
+- Comandă terminal: stat -L /bin/sh
+
+Comparație și Exemple:
+- Poți vedea rapid care este cel mai mare fișier dintr-un folder?
+- Răspuns: Da, folosind ls -lS.
+- Poți vedea ultimele log-uri generate în ordine cronologică?
+- Răspuns: Da, folosind ls -ltr (cele mai recente vor apărea la sfârșitul listei).
+- Dacă un fișier este un link simbolic, ls -l îți arată unde punctează?
+- Răspuns: Da, în ultima coloană vei vedea nume_link -> nume_tinta.
+
+Obs. Combinația ls -alt este salvatoare când trebuie să găsești ce fișier a fost modificat de un atacator sau de un script într-un director cu mii de fișiere ascunse.
+
+2. Modificarea metadatelor:
+- primele doua comenzi (chown si chgrp) modifica utilizatorul si grupul
+- chown poate modifica si utilizatorul si grupurile
+- chgrp poate modifica doar grupuri
+- chmod modifica permisiunile
+
+Utilitarul chown (change owner)
+- Comanda este folosită pentru a schimba utilizatorul proprietar și grupul unui fișier sau director. Poate fi rulată doar de utilizatorul privilegiat (root).
+
+- Steaguri:
+  - -R (recursive): Modifică proprietarul pentru toate fișierele și subdirectoarele din interior.
+  - Comandă terminal: sudo chown -R student /home/student/proiect
+  - -v (verbose): Afișează un mesaj de confirmare pentru fiecare fișier procesat.
+  - Comandă terminal: sudo chown -v student invoice.pdf
+  - -c (changes): Raportează doar fișierele unde s-a produs efectiv o schimbare de proprietar.
+  - Comandă terminal: sudo chown -c teacher invoice.pdf
+  - --reference: Copiază proprietarul de la un alt fișier model.
+  - Comandă terminal: sudo chown --reference=model.txt invoice.pdf
+
+Utilitarul chgrp (change group)
+- Comanda este folosită exclusiv pentru a schimba grupul proprietar al unui fișier. Similar cu chown, necesită privilegii de root.
+
+- Steaguri :
+  - -R (recursive): Modifică grupul pentru un întreg arbore de directoare.
+  - Comandă terminal: sudo chgrp -R staff /var/www
+  - -v (verbose): Confirmă schimbarea grupului în terminal.
+  - Comandă terminal: sudo chgrp -v avahi invoice.pdf
+  - --reference: Aplică grupul de la un fișier sursă către fișierul destinație.
+  - Comandă terminal: sudo chgrp --reference=config.log invoice.pdf
+
+Utilitarul chmod (change mode)
+- Comanda modifică permisiunile fișierelor. Poate fi rulată de root sau de proprietarul fișierului (owner).
+
+- Steaguri:
+  - -R (recursive): Aplică permisiunile în mod recursiv tuturor fișierelor dintr-un folder.
+  - Comandă terminal: chmod -R 755 /home/student/public_html
+  - -v (verbose): Afișează permisiunile setate pentru fiecare obiect.
+  - Comandă terminal: chmod -v 644 road-trip.png
+  - --reference: Setează permisiunile conform unui fișier de referință.
+  - Comandă terminal: chmod --reference=script_vechi.sh script_nou.sh
+
+Comparație și Exemple:
+- Poate un utilizator obișnuit să schimbe proprietarul fișierului său către root?
+- Răspuns: Nu. Doar superuser-ul poate folosi chown sau chgrp.
+- Poate un utilizator să își blocheze singur accesul la un fișier propriu?
+- Răspuns: Da, folosind chmod a-r nume_fisier. Totuși, fiind proprietar, poate reveni oricând asupra deciziei.
+- Care este diferența de sintaxă la chown pentru a schimba și grupul simultan?
+- Răspuns: Se folosește simbolul două puncte între utilizator și grup.
+- Comandă terminal: sudo chown teacher:gdm invoice.pdf
+
+Metode chmod:
+- Vrei să setezi de la zero un set complet de permisiuni (ex: rw-r--r--)?
+- Răspuns: Da, este preferată metoda octală.
+- Comandă terminal: chmod 644 road-trip.png
+- Vrei să faci o modificare mică fără să afectezi restul permisiunilor (ex: adăugare execuție)?
+- Răspuns: Da, este preferată metoda simbolică.
+- Comandă terminal: chmod g+x road-trip.png
+
+Obs. Forma în octal a permisiunilor la chmod este preferată atunci când vrem să configurăm un nou set de permisiuni. 
+     Când modificările sunt mici, forma simbolică (ex: g-w, o+w) este mai rapidă pentru actualizări punctuale.
+Obs. Dacă vi se cere să permiteți grupului să scrie într-un fișier dar să eliminați dreptul de citire pentru ceilalți dintr-o singură comandă, 
+     folosiți virgula în metoda simbolică: chmod g+w,o-r fisier.
+
+## 5.5.3.1: Permisiuni de creare pentru fisiere
+
+- se introduce comceptul umask (usermask)
+- cand folosim comenzile touch (pt fisiere) si mkdir (pt directoare), le sunt asociate metadate implicite la creare
+- stabilirea permisiunilor la creare tine de masca de creare a shell-ului (numita si "umask")
+- masca de creare a shell-ului este o valoare pe biti folosita astfel: 
+  - pt fisiere se face un SI logic intre valoarea 666 (octal) si maska inversata; 666 inseamna (rw-rw-rw-).
+  - pt directoare se face un SI logic intre valoarea 777 (octal) si maska inversata; 777 inseamna (rwxrwxrwx).
+Obs. Diferenta intre valorile octale atribuite apare pentru ca directoarele au nevoie de permisiuni de executie pentru toate operatiile, 
+     iar fisierele nu au nevoie de aceste permisiuni (daca au nevoie, trebuie acordate explicit).
+
+Tabel de corespondență umask:
+| Mască de creare | Mască inversată | Permisiuni creare fișier (666 - Mască) | Permisiuni creare director (777 - Mască) |
+| :---            | :---            | :---                                   | :---                                     |
+| 022             | 755             | 644 (rw-r--r--)                        | 755 (rwxr-xr-x)                          |
+| 002             | 775             | 664 (rw-rw-r--)                        | 775 (rwxrwxr-x)                          |
+| 077             | 700             | 600 (rw-------)                        | 700 (rwx------)                          |
+
+Utilitarul umask
+- Comanda este folosită pentru afișarea sau setarea măștii de creare a shell-ului curent.
+
+Steaguri:
+- umask (fără parametru): Afișează masca curentă în format octal.
+- Comandă terminal: umask
+- -S (symbolic): Afișează masca în format simbolic (u=rwx,g=rx,o=rx), fiind mult mai ușor de citit.
+- Comandă terminal: umask -S
+- [valoare]: Modifică masca de creare pentru procesul curent de shell.
+- Comandă terminal: umask 0022
+
+Comparație și Exemple (Stilul Da/Nu):
+- Dacă umask este 000, fișierele noi vor fi executabile?
+- Răspuns: Nu. Chiar și cu umask 000, fișierele pornesc de la 666, deci vor avea cel mult 666 (rw-rw-rw-). Execuția se dă doar manual cu chmod.
+- Este umask-ul o permisiune a fișierului?
+- Răspuns: Nu. Este o setare a shell-ului (a procesului) care influențează doar fișierele create după momentul setării.
+- Poți avea umask diferit pentru fișiere și directoare?
+- Răspuns: Nu. Există o singură valoare umask, dar ea se aplică diferit (scăzută din 666 pentru fișiere și din 777 pentru directoare).
+
+Obs. O metodă simplă de calcul la examen: Scade valoarea măștii din valoarea maximă (666 sau 777). 
+Exemplu: Dacă umask este 027:
+- Fișier: 666 - 027 = 640 (rw-r-----)
+- Director: 777 - 027 = 750 (rwxr-x---)
+Obs. Daca se cere să se afișeze permisiunile fișierului X folosind umask, întrebarea este o capcană. 
+     Răspunsul corect este: Nu se poate, umask nu afișează permisiunile fișierelor existente.
+Obs. Dacă vrei ca toate fișierele tale noi să fie private (doar tu să le vezi), rulează umask 0077. 
+     Astfel, orice fișier creat ulterior va avea permisiunile 600.
+
+## 5.5.4: Biti speciali de acces: setuid, setgid, sticky
+
+- cand afisam masca de creare a shell-ului, observam ca sunt 4 cifre octale afisate (are structura pe 4 cifre)
+- in mod normal, permisiunile au 3 cifre (user, group, others). 
+- prima cifră (cea din stânga) reprezintă biții speciali, activați în această ordine: SUID (4), SGID (2), Sticky Bit (1).
+
+1. Bitul setuid (SUID - Set User ID) - Valoare 4
+- apare astfel: 4755 / -rwsr-xr-x
+- Identificare: Apare litera s în locul x la proprietar.
+- are sens cand este folosit pe fisiere executabile; adauga functionalitatea  de set user ID on execution
+- Descriere: Procesul creat va rula cu drepturile proprietarului fișierului, nu ale celui care îl execută.
+- Utilitate: Permite utilizatorilor obișnuiți să ruleze comenzi care au nevoie de privilegii de root (ex: schimbarea parolei).
+- Comandă terminal (Activare octală): chmod 4755 nume_fisier
+- Comandă terminal (Activare simbolică): chmod u+s nume_fisier
+
+2. Bitul stegid (SGID - Set Group ID) - Valoare 2
+- apare astfel: 2755 / drwxr-sr-x
+- Identificare: Apare litera s în locul x la grup.
+- Descriere: Pe fișiere, oferă drepturile grupului proprietar. 
+             Pe directoare, forțează toate fișierele și subdirectoarele noi să moștenească grupul directorului părinte.
+- Utilitate: Crearea de spații de lucru partajate pentru echipe (colaborare).
+- Comandă terminal (Activare octală): chmod 2755 nume_director
+- Comandă terminal (Activare simbolică): chmod g+s nume_director
+
+3. Bitul sticky (Restricted Deletion) - Valoare 1
+- apare astfel: 1777 / drwxrwxrwt
+- Identificare: Apare litera t în locul x la others.
+- Descriere: Previne ștergerea sau redenumirea fișierelor de către utilizatori care nu sunt proprietarii acelor fișiere, 
+             chiar dacă au drept de scriere în director.
+- Utilitate: Protejarea fișierelor în directoare publice (ex: /tmp).
+- Comandă terminal (Activare octală): chmod 1777 nume_director
+- Comandă terminal (Activare simbolică): chmod +t nume_director
+
+Tabel de recapitulare (Cifra specială):
+| Cifră | Bit activ    | Exemplu Octal  | Efect principal                          |
+| :---  | :---         | :---           | :---                                     |
+| 4     | SUID         | 4755           | Rulezi ca proprietarul (ex: root)        |
+| 2     | SGID         | 2755           | Moștenire grup pe directoare             |
+| 1     | Sticky       | 1777           | Doar proprietarul poate șterge fișierul  |
+| 6     | SUID + SGID  | 6755           | Activare simultană 4 + 2                 |
+| 7     | Toți biții   | 7777           | Activare 4 + 2 + 1                       |
+
+Comparație și Exemple:
+- Poate student să schimbe parola deși /etc/shadow este deținut de root?
+- Răspuns: Da, deoarece /usr/bin/passwd are SUID (4755), deci procesul rulează ca root.
+- Dacă creez un fișier într-un folder cu SGID, va aparține acesta grupului meu principal?
+- Răspuns: Nu. Va aparține grupului setat pe directorul părinte.
+- Într-un folder cu Sticky Bit activ (ca /tmp), pot șterge fișierul colegului dacă am amândoi permisiuni rwx?
+- Răspuns: Nu. Sticky Bit te oprește dacă nu ești proprietarul fișierului sau root.
+
+Obs. La examen, uitați-vă cu atenție la litera s sau t. Dacă este literă MARE (S sau T), înseamnă că bitul special este activat, dar bitul de execuție de dedesubt (x) lipsește, deci permisiunea specială ar putea să nu funcționeze corect.
+     Comanda stat este cea mai sigură metodă de a vedea cifra specială (prima cifră din cele patru).
+     Comandă terminal (Verificare rapidă): stat -c %a /usr/bin/passwd (va returna 4755).
