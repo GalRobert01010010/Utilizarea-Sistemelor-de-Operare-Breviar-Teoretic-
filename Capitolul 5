@@ -567,8 +567,8 @@ Bitul SGID (Set Group ID):
             acel fișier primește grupul primar al utilizatorului, împiedicând ceilalți membri ai grupului proiectului să îl modifice.
     Soluția (SGID): Activarea bitului SGID pe un director forțează toate fișierele noi create în interior să moștenească automat 
             grupul proprietar al directorului, nu grupul utilizatorului care le-a creat.
-    Efectul: Membrii aceluiași grup pot lucra împreună în același folder fără a fi nevoie să schimbe manual grupul fiecărui fișier 
-            nou (comanda `chgrp`) pentru a permite accesul colegilor.
+    Efectul: Membrii aceluiași grup pot lucra împreună în același folder fără a fi nevoie să 
+            schimbe manual grupul fiecărui fișier nou (comanda `chgrp`) pentru a permite accesul colegilor.
 - Configurarea Proprietății de Grup
   - `sudo chgrp echipa_proiect /folder_partajat` - Comanda pentru stabilirea grupului care va fi moștenit.
   - `Sens` - SGID are impact doar dacă grupul directorului este cel sub care vor să colaboreze utilizatorii.
