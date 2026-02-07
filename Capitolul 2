@@ -10,15 +10,18 @@ Roluri:
   - controlul unei cantitati mari de documente
   - separa resursele intre utilizatori multiplii (umani sau non-umani) ai unui sistem de calcul
 - sistemul de fisiere se alege in functie de prioritatile in functionarea sistemului
+
 Def. Arhitectura cloud = modul în care sunt organizate și conectate componentele tehnologice (servere, stocare, rețele, software) pentru a livra servicii prin internet.
 Sectiunile arhitecturii cloud:
   - Front-end: tot ce vede utilizatorul (interfata grafica, browser-ul etc.)
   - Back-end: algoritmica si logica din spate (serverele, bazele de date, sistemele de stocare și mecanismele de securitate etc.)
   -> cele doua sunt conectate prin retea (internet) si mediate de un program central numit Middleware (care decide ce server preia cererea)
+
 Modele de servicii ale infrastructurii cloud:
   - IaaS (Infrastructure as a Service): Primești componentele hardware (CPU, RAM, HDD, server, stocare). Tu instalezi OS-ul. (Ex: Google Compute Engine).
   - PaaS (Platform as a Service): Primești o platformă pe care doar urci codul. Nu te ocupi de OS. (Ex: Heroku, Google App Engine).
   - SaaS (Software as a Service): Primești aplicația gata făcută. (Ex: Google Drive, Gmail).
+
 Criterii dupa care se alege un sistem de fisiere:
   - asigurarea integritatii datelor
   - separarea resurselor intre utilizatori
@@ -36,21 +39,35 @@ Def. Fisierul = forma de organizare digitala a datelor, avand forma unei insirui
 - este organizat in directoare
 - Binar (0 și 1): Este singurul mod în care datele există fizic pe disc sau în RAM.
 - Hexazecimal (0-F): Este doar un mod de afișare pentru oameni. (Este mult mai ușor să citești 4A decât 01001010)
+
 Explicatie:
   - În fișierul Text: Există o convenție (ASCII sau UTF-8): Toți octeții (01000001, 41 în hex) din fișier sunt tratați ca simboluri grafice/litere.
   - În fișierul Binar: Octeții pot însemna orice. Un octet poate fi o coordonată de culoare, altul poate fi volumul unui sunet, iar altul o instrucțiune pentru procesor
 Def. Directorul = colectie de fisiere si subdirectoare.
 - directoarele in Linux sunt fisiere speciale
 Def. Sistemul de fisiere = parte a sistemului de operare ce se ocupă cu numele si atributele fisierelor,pe care le stochează într-o structură ierarhică. 
--  Sistemul de fisiere oferă o metodă de organizare fizică si logică a fisierelor într-un mediu de stocare:
-    - stocarea fisierelor ca o însiruire de octeti reprezintă organizarea fizică
-    - modul în care sunt adresate fisierele reprezintă organizarea logică
+
+Sistemul de fisiere oferă o metodă de organizare fizică si logică a fisierelor într-un mediu de stocare:
+  - stocarea fisierelor ca o însiruire de octeti reprezintă organizarea fizică
+  - modul în care sunt adresate fisierele reprezintă organizarea logică
+
 Tipuri de interfete pentru a lucra cu sistemul de fisiere:
-- CLI (Command Line Interface)
-  - interfata bazata pe text unde scrii comenzi
-  - shell interpreteaza comenzile si le transmite kernel-ului
-- GUI (Grafical User Interface)
-  browser-ul de fisiere (Nautilus in Linux / File Explorer in Windows)
+
+1. CLI / CUI (Command Line Interface / Character User Interface)
+- Descriere: Interfața bazată pe text, unde utilizatorul introduce comenzi de la tastatură într-un terminal sau consolă.
+- Caracteristici:
+  - Consum minim de resurse (RAM, CPU).
+  - Permite automatizarea prin scripturi.
+  - Oferă control total asupra permisiunilor și metadatelor.
+- Comandă terminal (Exemplu de navigare CLI): cd /var/log && ls -l
+
+2. GUI (Graphical User Interface)
+- Descriere: Interfața grafică unde utilizatorul interacționează cu sistemul prin elemente vizuale (ferestre, pictograme, meniuri, mouse).
+- Caracteristici:
+  - Intuitivă și ușor de învățat pentru utilizatorii începători.
+  - Consumă resurse semnificative pentru redarea grafică.
+  - Exemple de manageri de fișiere: Nautilus (GNOME), Dolphin (KDE), Thunar (XFCE).
+- Comandă terminal (Lansare manager fișiere din CLI): nautilus /home/student
 Explicatie:
 - Terminalul = aplicația (fereastra) pe care o deschizi (ex: GNOME Terminal, Konsole, Putty). Este „ecranul” care afișează caracterele.
 - Shell-ul = programul care rulează în interiorul terminalului (ex: Bash). El este cel care afișează promptul (user@linux:~$) și interpretează comenzi.
@@ -60,6 +77,7 @@ Explicatie:
 
 - apare atunci cand fisierele sunt organizate in directoare
 - confera eficienta in procesul de cautare
+
 FHS (Filesystem Hierarchy Standard):
   - / -> (root dyrectory), cel mai cuprinator director, care le contine pe celelalte
   - /bin -> comenzi necesare bootarii, intretinerii si depanarii sistemului
@@ -84,11 +102,13 @@ Def. Calea absoluta = adresa completa a fisierului, incepand cu root directory.
 - simbolul "~" este o prescurtare pentru directorul home al utilizatorului (/home/<username>/ în Linux)
 Def. Calea relativa = cale care porneste din directorul curent si construieste o cale catre directorul destinatie dorit
 - o cale relativa NU incepe cu / sau ~ (Ex. Documents/referat.txt (sistemul îl caută doar în folderul curent).)
+
 Directoare speciale (gasite in fircare director):
   - . (punct): indica directorul curent (nu mei e nevoie sa scriem toata calea pentru scripturi / programe din acest director)
     - daca in directorul curent avem un executabil numit list_permissions, il putem rula cu ./list_permissions
   - ..(punct punct): indica spre directorul parinte in ierarhia de fisiere si directoare
   - ~ (tilde): este echivalent pentru directorul home al utilizatorului (Ex. /home/gal-robert)
+
 Explicatii:
   - pwd (print working directory): afișează calea absolută a directorului curent
     - directorul curent e indicat si in promptul comenzii, intre caracterul ":" si "$"
@@ -122,6 +142,7 @@ Explicatii:
 
 - fisierele sunt vazute de calculator ca o colectie de biti ce trebuie prelucrati
 - calculatorul prelucreaza fisierele in functie de formatul acestora, pentru a sti ce programe sa foloseasca pentru a le deschide
+
 Tipuri de fisiere:
   - de tip text:
     - contin linii din caractere citibile
@@ -133,6 +154,7 @@ Tipuri de fisiere:
   - de tip binar:
     - orice fisier care nu e de tip text
     - Ex. programe executabile, melodii, imagini, fisiere comprimate etc.
+
 Def. Formatul = modul de codificare a informatiei in fisier. Specifica modul in care informatia va fi codificata in biti , in mediul digital.
 - Ex. .tex (document sursă LaTeX), .mp3(format audio), .bmp (imagine tip bitmap), .png (imagine tip Portable Network Graphic) etc.
 Obs. Pentru a vedea de ce tip este un fisier, dincolo de extensie, folosim comanda "file", urmata de fisier.
@@ -144,6 +166,7 @@ Def. Datele = informatii efective, precum, versuri, muzica, imagini, bilete de a
 Def. metadate = informatiii despre informatii: cantitatea informatiilor, data ultimei accesari, cine le-a creat, cine le-a modificat, unde au fost editate ultima data.
 - metadatele (atributele) unui fisier se pot citi cu "ls -l"
   - atributele se refera la: permisiuni, informatii legate de posesie (utilizator), dimensiune, data ultimei modificări, numele fisierului
+
 Tipul fisierului este indicat de primul caracter din rezultatul rulării comenzii ls -l, si poate fi:
   - - = regular file
   - b = block special file (Dispozitive care stochează date (Hard Disk, SSD))
@@ -154,6 +177,7 @@ Tipul fisierului este indicat de primul caracter din rezultatul rulării comenzi
   - p = FIFO (O țeavă (pipe) cu nume pentru comunicare între procese. Datele dintr-un FIFO nu sunt stocate permanent pe disc. Ele dispar dupa ce au fost citite de celălalt program)
   - s = socket (Folosit de programe pentru a vorbi între ele (ca o rețea locală))
 - Ex. -rw-r--r-- SAU drwxr-xr-x etc.
+
 Tipuri de permisiuni:
   - r = permisiunea de a citi fis, ierul
   - w = permisiunea de a scrie în fis, ier
@@ -182,6 +206,7 @@ Operatiile uzuale asupra fisierelor includ:
 ## 2.3.2: Listarea fisierelor
 
 - comanda pe care o folosim este ls [optiuni] <cale>
+
 Optiuni frecvente pentru aceasta comanda:
   - ls: listeaza continutul folderului curent
   - ls -l: afiseaza detalii despre fiecare fisier
@@ -208,11 +233,13 @@ Optiuni frecvente pentru aceasta comanda:
 Metoda 1:
   - touch <nume_fisier>: creaza un fisier gol cu numele specificat in directorul curent
   - Ex. student@uso:~/Downloads$ touch cats.txt
+
 Metoda 2:
   - redirectioneaza (>) iesirea unei comenzi nule intr-un fisier
     - daca fisierul exista deja, folosirea comenzii duce la trunchierea lui (dimensiunea sa va fi redusa la 0 octeti)
     - daca nu exista, comanda creaza un fisier gol cu numele specificat
   - Ex. student@uso:~/Downloads$ > dogs.txt
+
 Obs. Comanda touch are rolul principal de a actualiza data ultimei modificari sau accesari a unui fisier
   - daca fisierul nu exista, va fi creat cu data actuala => crearea fisierelor este o proprietate secundara a comenzii
 
@@ -227,6 +254,7 @@ Def. Legaturile simbolice = un mod prin care un fisier poate fi referit prin dou
 - ln (fara nimic): e o copie care se auto-actualizeaza. Daca se sterge sursa, ramane copia
 
 ## 2.3.4.2: Crearea directoarelor
+
 -folosim comanda mkdir
 Comanda ls -d:
   - când aplici ls asupra unui director, Linux „intră” în el și îți arată ce conține
@@ -242,11 +270,13 @@ Comanda ls -d:
 Def. Copiere = un fisier este duplicat si se gaseste in doua locuri.
 Def. Mutarea / Redenumirea = un fisier este mutat in alt loc din sistemul de fisiere. Acesta se gaseste acum intr-un singur loc.
 Def. Stergere = eliminarea acelui fisier din sistemul de fisiere.
+
 Comenzile de copiere si mutare primesc 2 paramentri:
   - primul reprezinta sursa (de unde vrem sa copiem)
   - al doilea e destinatia (unde vrem sa ajunga)
 Obs. Primul parametru (sursa) al comenzilor din acest subcapitol poate fi reprezentat si prin globbing în sistemul de fisiere.
 Def. Globbing reprezintă utilizarea unor caractere speciale (numite wildcards) de către shell pentru a genera o listă de nume de fișiere care se potrivesc unui anumit tipar.
+
 Tabel cu exemple de concepte globbing:
   - *: inlocuiește orice, de la un singur caracter, la un milion de caractere sau chiar nimic.
     - Ex. ls tema* -> va afisa toate fisierele care incep cu "tema"
@@ -275,6 +305,7 @@ Tabel cu exemple de concepte globbing:
 - pentru a compara doua directoare pt a verifica daca sunt identice, folosim comanda diff
   - Ex. diff -r diff -r uso.git/labs/ labs/
 - cp -p (properties): pastreaza atributele initiale ale sursei copiate cand creaza destinatia
+
 Steaguri pentru cp:
   - cp -i (interactive): intreaba inainte sa stergi fisierul de la destinatie prin mutare
   - cp -p (preserve): pastreaza "buletinul" fișierului (proprietar, grup, permisiuni, timestamp) cand face copia
@@ -282,6 +313,7 @@ Steaguri pentru cp:
   - cp -u (update): copiaza doar daca sursa este mai noua decat destinatia sau daca fisierul lipseste la destinatie
   - cp -a (archive): copiaza pastrand absolut toate datele si metadatele si legaturile simbolice (soft links)
   - cp -l (hard-link): in loc sa copieze datele creeaza hard link-uri
+
 Diferenta dintre hard links si soft links:
   Hard links:
     Def. O intrare suplimentară în director care indică către același Inode (aceleași date fizice de pe disc).
@@ -298,6 +330,7 @@ Diferenta dintre hard links si soft links:
     - cifra de la numarul de legaturi (accesibila prin ls -l) creste cu 1
     - se pot crea pentru directoare, spre deosebire de hard links, care nu exista la directoare
     - pot indica către fișiere de pe alte partiții sau sisteme de stocare
+
 Steaguri pentru diff:
   - diff -q (brief): spune doar daca fisierele difera dar nu si randurile exacte
   - diff -s (report identical): confirma explicit daca fisierle sunt identice
@@ -311,6 +344,7 @@ Steaguri pentru diff:
 - mv este eficienta deoarece nu muta datele progresiv (cum face cp), ci schimba doar parintele in tabela de index
 - mv nu necesita -r (deoarece nu face nicio mutare)
 - mv pastreaza automat toate atributele (data crearii, dimenziune etc.), iar cp are nevoie de -p pentru a face asta
+
 Steaguri:
   - mv -i (interactive): intreaba inainte sa stergi fisierul de la destinatie prin mutare
   - mv -f (force): suprascrie fara sa intrebe, chiar daca destinatia este protejata 
@@ -321,6 +355,7 @@ Steaguri:
 Def. Stergerea unei intrări înseamnă eliminarea acelei intrări si a continutului său din sistemulde fisiere.
 Obs. Dacă dorim să stergem un director gol, putem să folosim comanda rmdir <director_gol>
 - comanda cea mai folosită pentru stergerea fisierelor si directoarelor este rm [optiuni] <cale>
+
 Steaguri:
   - rm (remove): sterge definitiv
     - rm -i (interactive): te intreaba inainte sa stearga (Ex. rm -i fisier.txt)
@@ -330,6 +365,7 @@ Steaguri:
 ## 2.3.6: Căutarea fisierelor
 
 - structura ierarhica a sistemului de fisiere permite gasirea fisierelor
+
 Tipuri de cautare:
   - cautare indexata -> fisierele sunt inspectate si informatiile despre localizarea lor sunt retinute intr-o baza de date indexata cu fisiere
     - folosim locate si updatedb (update database)
@@ -340,6 +376,7 @@ Tipuri de cautare:
 
 - cauta in toate fisierele indexata dintr-o baza de date locala
 - este o cautare rapida in sistemul de fisiere
+
 Dezavantaje:
   - baza de date trebuie actualizata periodic pentru a indexa modificarile din sistemul de fisiere
     - actualizarea se face cu comanda updatedb
@@ -351,6 +388,7 @@ rezultatul e o lista cu fisiere al caror nume contie sirul de caractere care suc
 - find <director> -criterii_de_cautare <precizari_la_criterii>
 - cauta exhuasiv in ierarhia de directoare
 - comanda permite căutarea folosind diferite criterii: numele fisierului, utilizator, grup, tip, permisiuni, dimensiune, dată etc.
+
 Steaguri pentru comanda find:
   - find -name (nume): cauta fisiere dupa nume
   - find -type (tip): cauta dupa tipul intrarii (fisier, director, legătură simbolică)
@@ -390,10 +428,12 @@ Obs. Arhivarea nu implica mereu reducerea dimensiunii.
 Obs. tar si gzip se foloses impreuna pentru a face si arhivare si compresie (Arhivă tar + compresie gzip => .tar.gz SAU .tgz)
   - Arhivă tar + compresie bzip2 => .tar.bz2
   - Arhivă tar + compresie xz => .tar.xz
+
 Comparatie:
   - gzip (Rapid): tar czvf arhiva.tar.gz folder/
   - bzip2 (Echilibrat): tar cjvf arhiva.tar.bz2 folder/
   - xz (Maxim): tar cJvf arhiva.tar.xz folder/
+
 Steaguri pentru tar:
   - tar c (create): creeaza arhiva noua
     - Ex. tar cf arhiva.tar folder 
@@ -405,6 +445,7 @@ Steaguri pentru tar:
     - Ex. tar cvf arhiva.tar (creaza o arhiva cu numele arhiva.tar si arata ce fisiere intra in ea)
   - tar f (file): specifica numele arhivei
     - Ex. tar f nume.tar (f e obligatoriu pus la final dupa celelalte steaguri)
+
 Steaguri avansate:
   - tar -C (Change Directory): dezarhiveaza in alt folder fara a mai folosi cd
     - Ex. tar xf arhiva.tar -C /tmp/teste
@@ -425,14 +466,18 @@ Steaguri avansate:
 ## 2.3.8: Backup
 
 Def. Backup = realizarea unei copii a datelor pe un suport separat pentru recuperarea acestora în caz de defecțiune, ștergere accidentală sau atac malware.
+
 Sincronizarea în Cloud (Google Drive, OneDrive, Dropbox):
   - Avantaj: Sincronizare automată între dispozitive (desktop, laptop, mobil)
   - Dezavantaj: Erorile se propagă. Dacă un fișier este infectat de malware sau șters accidental pe un dispozitiv, modificarea se reflectă imediat și în Cloud.
+
 Backup-ul pe suport fizic distinct (HDD Extern, NAS, Stick):
   - singura metodă sigură împotriva erorilor care se propagă în Cloud.
   - oferă protecție "offline" (dacă suportul nu este conectat permanent, datele nu pot fi modificate de un atac curent).
+
 Obs. Backup-ul trebuie sa fie redundant (sa existe in mai multe locuri).
      Backup-ul se realizeaza de ubicei sub forma de arhiva comprimata (.tar.gz SAU .tar.xz) pentru a economisi spatiu si pentru a pastra permisiunile (rwx).
+
 Metode de backup si descrierea lor:
   - tar + gzip/bzip2 (rezultand .tar.gz SAU .tar.xz):
     - Utilizare: Arhivare și compresie clasică.
@@ -459,16 +504,19 @@ Metode de backup si descrierea lor:
   - stderr (standard error): aici se scriu mesajele de eroare de către program (de obicei tot în consola curentă)
 - fiecare fisier special are asociat un numar de catre un descriptor de fisier:
   - stdin are descriptorul cu indexul 0, stdout are descriptorul cu indexul 1, stderr are descriptorul cu indexul 2
+
 Cazuri de redirectare:
   - (sursa) intrare/stdin, (destinatie) program, (exemplu comanda) ./program < fisier_intrare
   - (sursa) iesire/stdout, (destinatie) fisier, (exemplu comanda) ./program > fisier_iesire
   - (sursa) eroare/stderr, (destinatie) fisier, (exemplu comanda) ./program 2> erori
   - (sursa) eroare/stderr, (destinatie) iesire, (exemplu comanda) ./program 2>& 1
   - (sursa) eoare & iesire, (destinatie) fisier, (exemplu comanda) ./program > fisier_iesire_si_erori 2>& 1
+
 Obs. 1) Cand spunem destinatie ne referim la destinatia fluxului de date, nu la locul unde se scrie ceva pe disc.
      2) Daca avem: ./program 2> erori.txt atunci erorile merg in fisier si restul sunt afisate pe ecran.
      3) Daca avem: ./program > fisier_iesire_si_erori 2>& 1 atunci stdout merge in fisier si erorile (2>&1) merg in 1 referentiat (adica in fisier).
      4) Daca avem: ./program 2>& 1 atunci erorile (2) merg in stdout (1), dar stdout mergea deja pe ecran, deci tot se va afisa pe ecran.
+
 Tipuri de mesagerie:
   - mail (Posta neinteractiva):
     - mail [utilizator] < mesaje.txt
@@ -486,6 +534,7 @@ Tipuri de mesagerie:
     - nu trimite mesaje, ci controleaza daca altii iti pot scrie cu comenzi de chat
     - mesg n: (no) Nimeni nu-ți mai poate scrie (primești liniște).
     - mesg y: (yes) Permiți primirea mesajelor.
+
 Redirectari folosind fisiere speciale:
   - ./program 2> /dev/null
     - mesajele de la iesirea de eroare standard nu sunt afisate
@@ -583,6 +632,7 @@ sisteme de fisiere cu suport fizic          FAT32, NTFS, Ext4, APFS             
     - data integrity: prevenirea, detectarea si remedierea coruperii datelor
 Def. Coruperea datelor (data corruption) = degradarea neintentionata a datelor din cauza erorilor umane sau tehnice.
 Def. Securizarea datelor (data securyty) = prevenirea atacurilor intentionate asupra datelor. De asemenea, necesita sprijinul sistemului de fisiere.
+
 Calcularea unei sume de control (checksum):
   - o metoda prin care sistemele de fisiere pot asigura integritatea datelor
     - pentru un set de date, o suma de control este un numar care descrie pe scurt acel set, diferentiindu-l indeajuns de mult de alt set de date foarte asemanator
