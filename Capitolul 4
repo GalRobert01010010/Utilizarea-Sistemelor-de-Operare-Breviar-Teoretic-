@@ -1,1 +1,29 @@
-# Capitolul 4
+# Capitolul 4: Procese
+
+Def. Proces = aplicatie care se executa in sistemul de operare, folosind resursele sistemului, pentru a realiza o actiune ceruta de user.
+- la nivelul sistemului de operare, aceste aplicatii sau comenzi pornite de user sunt procese
+- procesele ruleaza, se executa, sau se afla in executie
+- procesele cunt entitati active, care atunci cand ruleaza, folosesc resursele sistemului: procesor, memorie, sistem de fisiere
+Def. Procese interactive = procese pornite prin actiunea unui utilizator, precum rularea unei aplicatii grafice sau a unei comenzi.
+  - acestea interactioneaza cu utilizatorul pe parcursul rularii lor
+Def. Procese neinteractive = procese pornite de catre sistem, care nu interactioneaza cu utilizatorul.
+  - au rol in gestiunea sistemului sau oferirea de servicii (Ex. actualizarea ceasului, indexarea fisierelor pentru cautare rapida etc.)
+  - se mai numesc servicii sau procese daemon
+
+- cand folosim interfata grafica, o fereastra de aplicatie care ruleaza poate avea in spate mai multe procese
+Obs. Este esential ca orice aplicatie care ruleaza in sistem sa foloseasca unul sau mei multe procese pentru 
+     a satisface cerintele utilizatorului.
+
+Sistemul de operare ofera:
+- izolare a resurselor proceselor, asigurandu-se ca un proces nu poate accesa sau corupe resursele altui proces
+  - sistemul este mentinut integru 
+- arbitrare a accesului la resursele partajate: daca doua sau mai multe procese acceseaza o resursa comuna, 
+  un proces nu trebuie sa suprascrie informatiile altuia
+- mecanisme explicite de comunicare intre procese
+  - Ex. semnalele si pipe-urile sunt mecanisme de comunicare intre procese
+- comportament echitabil al proceselor, pentru a ne asigura ca un proces nu foloseste prea multe resurse 
+  - OS are grija sa aloce fiecarui proces resurse in mod echitabil
+
+## 4.1: Programe si procese
+
+
