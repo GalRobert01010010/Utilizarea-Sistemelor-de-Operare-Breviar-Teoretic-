@@ -1,7 +1,10 @@
+
+
 # Capitolul 0: INTRODUCERE
 
 Def. Sistem informatic = sisteme de calcul + infrastructura + date.
-  - Sistem de calcul (computer system) = ansamblu de componente (hardware) și programe (software) care lucrează împreună pentru a prelucra date în mod automat.
+  - Sistem de calcul (computer system) = ansamblu de componente (hardware) și programe (software) care lucrează împreună 
+    pentru a prelucra date în mod automat.
     - echipament cu putere de calcul folosit direct sau indirect (servere, laptop, telefon etc.)
     - componenta fizica ce prelucreaza si reda informatie 
     Def. Hardware = tot ce se poate atinge.
@@ -18,32 +21,39 @@ Def. Sistem informatic = sisteme de calcul + infrastructura + date.
 
 Def. Echipament care preia informatii, le prelucreaza si le livreaza mai departe.
 - il mai numim: dispozitiv de calcul, dispozitiv, platforma de calcul, echipament etc.
-- este compus din: hardware (comp. fizice care ofera putere de calcul) + software (programe sau aplicatii flexibile care ofara interfata prietenoasa)
+- este compus din: hardware (comp. fizice care ofera putere de calcul) + software (programe sau aplicatii 
+  flexibile care ofara interfata prietenoasa)
 - sistem de operare (OS): gestioneaza puterea de calcul si faciliteaza folosirea ei in aplicatii
 - aplicatiile de sistem (precum Shell): ofera suport suplimentar celorlalte aplicatii
 
 ## 0.2: Sistemul de operare
 
 Def. Sistemul de operare = componenta software centrală ce asigură accesul utilizatorului (prin aplicatii software) la resursele hardware.
+
 Roluri:
   - abstractizare hardware: ofera aceeasi interfata pentru aplicatii indiferent de specificul hardware
   - portabilitate: aceeasi aplicatie poate rula la fel pe configuratii hardware diferite
   - mediere: ofera acelasi acces la resursele hardware si traficul de informatii al aplicatiilor va fi transferat pe rand, fara sa se amestece
   - securitate / izolare: fluxurile de informatie dintre aplicatii ruleaza izolat
+
 Clasificare:
   - OS generaliste, folosite de sisteme server, desktop sau laptop
   - OS pentru dispozitive mobile
   - OS specializate pentru echipamente de retea
 - dispozitivele cu rol specific (embedded systems) nu au sistem de operare (ingeneral), dar au o componenta software alternativa
+
 Def. Compunenta centrala a OS (kernel) = nucleul sistemului de operare gare imparte resursele hardware.
-Def. Interfata de apeluri de sistem (system call interface) = modul prin care nucleul ofera aplicatiilor acces la resursele hardware. Singura modalitate de comunicare intre aplicatii si nucleu.
+Def. Interfata de apeluri de sistem (system call interface) = modul prin care nucleul ofera aplicatiilor acces 
+     la resursele hardware. Singura modalitate de comunicare intre aplicatii si nucleu.
 
 ## 0.2.1: Alegerea sistemului de operare
 
 Android - splicatiile android folosesc mediul Android Studio
         - aplicatiile iOS se dezvolta doar pe macOS folosind mediul Xcode
+
 iOS - dispozitivele Apple dispun de o mai buna integrare a componentelor software / hardware
     - se integreaza bine cu alte dispozitive Apple
+
 Sistemele de operare generaliste 
   - ruleaza pe sisteme de calcul puternice (care contin unitate de calcul + periferice precum monitor, tastatura etc.)
   - EX: servere (folosite pentru prelucrari de date), sisteme desktop sau laptop
@@ -72,15 +82,18 @@ Def. UNIX = sistem de operare din care s-au inspirat ulterior alte sisteme de op
 
 - EX: Fedora, Ubuntu, Arch, Mint
 - Linux se refera doar la kernel (nucleul OS)
+
 Pentru a functiona, un OS are nevoie de:
   - software de baza
   - aplicatii pentru a rula: un shell, browser web, player multimedia, suită de utilitare pentru dezvoltare etc.
 Def. Distributie = cumul de componente software instalate pe un sistem de calcul si apoi folosite.
   - o distributie GNU / Linux foloseste nucleul Linux si aplicatii GPU
+
 O distributie difera de altele prin:
   - aplicatiile pe care le contine si modul in care pot fi gestionate
   - configuratii ale sistemului (denumiri de fisiere, versiuni etc.)
   - hardware-ul pentru care ofera suport si interfata
+
 Familii de distributii:
   - familia RedHat (are la baza distributia RedHat): Fedora, CentOS etc.
   - familia Debian (are la baza distributia Debian): Ubuntu, Mint etc.
