@@ -24,7 +24,8 @@ Def. Politica de securitate (security policy) a sistemului precizează permisiun
 Def. Permisiunile = informatii aferente obiectului care stabilesc ce agenti pot face tipuri de actiuni.
 Def. Privilegiile = certificate aferente agentului care stabilesc ce actiuni poate acesta întreprinde.
 - in sistemele de operare de uz general (Linux, Windows, macOS), exista utilizatori obisnuiti (neprivilegiati) si utilizatori privilegiati
-Def. Utilizatorii neprivilegiati au acces complet la o parte din sistemul de fisiere (directorul home) si pot crea procese care folosesc aceste resurse.
+Def. Utilizatorii neprivilegiati au acces complet la o parte din sistemul de fisiere (directorul home) 
+     si pot crea procese care folosesc aceste resurse.
 Def. Utilizatorii privilegiati pot face actiuni care afectează starea globală a sistemului: 
   - Ex. instalare de pachete, adăugare si stergere de utilizatori, repornirea sistemului, configurarea datei sistemului, 
         schimbarea permisiunilor sistemului, configurarea retelei etc.
@@ -51,7 +52,8 @@ Def. Superuser = utilizator cu permisiuni depline.
 - sistemele de operare moderne ofera optiuni alternative:
     - In Linux/Unix: sudo, bitul setuid, capabilitati (prezentate in Sectiunea 5.2.3)
     - In Windows: User Account Control (UAC)
-        - Def. User Account Control = tehnologie care ofera un prompt care trebuie confirmat ori de cate ori se doreste realizarea unei actiuni privilegiate
+        - Def. User Account Control = tehnologie care ofera un prompt care trebuie confirmat ori de cate ori se 
+          doreste realizarea unei actiuni privilegiate
 
 ## 5.2.1: Utilizatorul administrativ in Linux (root)
 
@@ -116,7 +118,8 @@ Def. Superuser = utilizator cu permisiuni depline.
 
 Bitul setuid (set-user-id-on-execution):
     - bit asociat unui fisier executabil
-    - cand se executa fisierul, procesul nou creat nu va apartine celui care l-a executat, ci va apartine celui care a creat fisierul (de obicei root)
+    - cand se executa fisierul, procesul nou creat nu va apartine celui care l-a executat, ci va apartine 
+      celui care a creat fisierul (de obicei root)
     - Ex. student@uso:~$ ls -l /bin/ping
           2 -rwsr-xr-x 1 root root 64424 Mar 10 2017 /bin/ping
           3 student@uso:~$ ls -l /bin/su
@@ -124,7 +127,8 @@ Bitul setuid (set-user-id-on-execution):
           5 student@uso:~$ ls -l /usr/bin/sudo
           6 -rwsr-xr-x 1 root root 149080 Jan 31 2020 /usr/bin/sudo
     - in permisiunile fisierelor se observa litera "s" (bitul setuid)
-    Obs. Prezenta bitului setuid pe un executabil detinut de root (de exemplu passwd, su, sudo) -> acele comenzi pot fi rulate de orice utilizator pentru a crea procese privilegiate
+    Obs. Prezenta bitului setuid pe un executabil detinut de root (de exemplu passwd, su, sudo) -> acele comenzi pot 
+         fi rulate de orice utilizator pentru a crea procese privilegiate
     - dezavantajul este ca procesul nou creat ruleaza cu privilegii complete de root
 
 Capabilitatile:
@@ -132,7 +136,8 @@ Capabilitatile:
     - concept de baza in sistemele de operare
         - presupune atasarea unui privilegiu unui agent (obiect)
     - Ex. Executabilul aferent utilitarului ping are atasata capabilitatea cap_net_raw.
-        - aceasta capabilitate înseamna ca procesele create din executabilul ping vor avea privilegiul de a crea resurse privilegiate necesare utilitarului ping
+        - aceasta capabilitate înseamna ca procesele create din executabilul ping vor avea privilegiul de a crea 
+          resurse privilegiate necesare utilitarului ping
     Obs. Spre deosebire de bitul setuid, capabilitatile sunt granulare. 
         - un proces are atasate doar capabilitatile de care are nevoie.
     Exemple:
@@ -140,11 +145,13 @@ Capabilitatile:
         - cap_net_admin: permite configurarea retelei
         - cap_fowner: permite configurare de permisiuni pe orice fisier
         - cap_kill: permite transmiterea de semnale pe orice fisiere
-    Def. Suportul de capabilitati = o componenta avansata a sistemului de operare, care permite dezvoltatorilor de aplicatii configurarea de privilegii granulare.
+    Def. Suportul de capabilitati = o componenta avansata a sistemului de operare, care permite dezvoltatorilor 
+         de aplicatii configurarea de privilegii granulare.
 
 ## 5.2.3.1 Utilitarul sudo
 
-- bitul setuid si capabilitatile nu permit usor atasarea de privilegii utilizatorilor, sau configurarea personalizata (custom) a actiunilor care pot fi executate de acel user.
+- bitul setuid si capabilitatile nu permit usor atasarea de privilegii utilizatorilor, sau configurarea 
+  personalizata (custom) a actiunilor care pot fi executate de acel user.
 - pentru asta, solutia pe Linux este utilitar sudo
 Def. sudo = utilitar care permite rularea unor comenzi in numele altui utilizator (in general root)
     - are o configurare granulara
@@ -162,7 +169,8 @@ Obs. Spre deosebire de utilitarul su, sudo nu necesita parola noului utilizator,
 - daca dorim sa activam rutarea pe un sistem Linux, rulam, ca root, comanda:
     - student@uso:~$ echo 1 > /proc/sys/net/ipv4/ip_forward
     Def. Activarea rutarii = transformarea dispozitivului de calcul in ruter
-        - activarea rutării permite sistemului să primească pachete pe o interfață de rețea și să le trimită mai departe către destinația lor finală prin altă interfață.
+        - activarea rutării permite sistemului să primească pachete pe o interfață de rețea și să le trimită mai 
+          departe către destinația lor finală prin altă interfață.
         rolul valorilor 1 si 0 in fisierele de configurare:
         - rolul valorilor 1 si 0 in fisierele de configurare:
         - cifra 1 (sau orice valoare diferita de 0) = Activat (On / True)
@@ -215,7 +223,8 @@ Obs. Comanda ps (process status) afiseaza UID proceselor.
         - ps -x : procese care ruleaza in background fara terminal
     - nu listeaza procesele care s-au terminat, ci doar cele care inca ruleaza
     - este utilizată pentru a afișa informații despre procesele care rulează în sistem
-    - ps -o (output): permite sccesarea unui format personalizat de afisare (în loc să afișeze coloanele implicite, ps va afișa doar coloanele specificate imediat după acest steag)
+    - ps -o (output): permite sccesarea unui format personalizat de afisare (în loc să afișeze coloanele 
+      implicite, ps va afișa doar coloanele specificate imediat după acest steag)
         - PPID (Parent Process ID): indică sistemului de operare cine este părintele procesului curent
     - Ex. student@uso:~$ ps -o pid,ppid,uid,user,cmd
           PID PPID UID USER CMD
@@ -392,7 +401,8 @@ Def. Autentificare = procedura prin care un utilizator doreste acces la sistemul
 - autentificarea e valabila si pentru aplicatii
   - Ex. aplicatii web, jocuri, aplicatii de baza de date, conturi bancare etc. 
 - moduri de autentificare: folosirea de informatii biometrice, dispozitiv de tip token de autentificare, autentificare cu cheie publica
-Def. Dispozitiv de tip token de autentificare = dispozitiv hardware sau aplicatie software care genereaza un cod numeric temporar (OTP - One Time Password)
+Def. Dispozitiv de tip token de autentificare = dispozitiv hardware sau aplicatie software care genereaza un cod 
+     numeric temporar (OTP - One Time Password)
      sau trimite o confirmare criptografica pentru a dovedi identitatea user-ului.
   - Ex. hardware: un stick USB (ex. YubiKey) pe care il introduci in PC si il atingi pentru a te loga.
   - Ex. software: aplicatia Google Authenticator, care genereaza un cod de 6 cifre.
@@ -441,7 +451,8 @@ Obs. Dacă hash-ul începe cu (!!), parola a expirat și contul a fost blocat au
 
 Prefixe pentru algoritmi Hashing:
   $1$ = MD5 - vulnerabil la coliziuni 
-  $2a$ SAU $2y$ = Blowfish / bcrypt - rezistent la atacuri brute-force prin GPU (Graphics Processing Unit - componenta hardware specializata pt. grafica)
+  $2a$ SAU $2y$ = Blowfish / bcrypt - rezistent la atacuri brute-force prin GPU 
+    (GPU - Graphics Processing Unit - componenta hardware specializata pt. grafica)
   $5$ = SHA-256 - folosit ca alternativa rapida pentru SHA-512
   $6$ = SHA-512 - standardul actual (default in Ubuntu/Debian/RHEL(Red Hat Enterprise Linux))
   $y$ = yescrypt - cel mai modern (default în Fedora/Debian 12+); rezistent la atacuri cu circuite dedicate (ASIC)
@@ -491,9 +502,12 @@ Exemplu:
 Obs. Utilizatorul privilegiat nu trebuie sa introduca parola actuala inainte sa o modifice, spre deosebire de utilizatorul neprivilegiat.
 
 Bitul SUID (Set Owner User ID):
-  Problema: Fișierul `/etc/shadow` este protejat prin permisiuni stricte (600), putând fi accesat și modificat exclusiv de utilizatorul `root`.
-  Soluția (SUID): Activarea bitului special SUID pe executabilul `passwd` forțează procesul să ruleze cu privilegiile proprietarului fișierului (`root`), nu ale utilizatorului curent.
-  Efectul: Utilizatorul obișnuit obține drepturi administrative temporare strict pentru acea comandă, permițând actualizarea hash-ului parolei în `/etc/shadow`.
+  Problema: Fișierul `/etc/shadow` este protejat prin permisiuni stricte (600), putând fi accesat și 
+            modificat exclusiv de utilizatorul `root`.
+  Soluția (SUID): Activarea bitului special SUID pe executabilul `passwd` forțează procesul să ruleze cu 
+                  privilegiile proprietarului fișierului (`root`), nu ale utilizatorului curent.
+  Efectul: Utilizatorul obișnuit obține drepturi administrative temporare strict pentru acea comandă, 
+           permițând actualizarea hash-ului parolei în `/etc/shadow`.
 - Configurarea Proprietății (Ownership)
   - `sudo chown root /cale/catre/fisier` - Comanda pentru stabilirea proprietarului.
   - `root` - Trebuie să fie proprietarul pentru ca SUID să ofere privilegii administrative.
@@ -521,9 +535,11 @@ Bitul SUID (Set Owner User ID):
   - `Audit` - `find / -perm -4000` - Găsește toate fișierele cu SUID din sistem.
 
 Observatii:
-1) Comanda stat /usr/bin/passwd afișează permisiunile atât în format simbolic, cât și numeric (octal), fiind foarte utilă pentru a vedea cifra 4 de la SUID clar.
+1) Comanda stat /usr/bin/passwd afișează permisiunile atât în format simbolic, cât și numeric (octal), 
+   fiind foarte utilă pentru a vedea cifra 4 de la SUID clar.
 2) Dacă vrei să elimini bitul SUID, folosește comanda sudo chmod u-s /cale/catre/fisier.
-3) În Linux, binarul ping are adesea bitul SUID setat pentru a putea deschide socket-uri "raw", operațiune permisă în mod normal doar utilizatorului root.
+3) În Linux, binarul ping are adesea bitul SUID setat pentru a putea deschide socket-uri "raw", 
+   operațiune permisă în mod normal doar utilizatorului root.
 
 Manipularea bitului SUID:
   - Ștergerea Bitului SUID (Revocarea Privilegiilor)
@@ -573,9 +589,12 @@ Bitul SGID (Set Group ID):
   - `find / -perm -2000 2>/dev/null` - Caută toate fișierele/directoarele cu SGID setat în sistem.
 
 Observatii:
-1) Dacă la proba practică se cere "ca toate fișierele create într-un folder să aparțină grupului 'profesori'", soluția este întotdeauna chmod g+s.
-2) Valoarea octală pentru SGID este 2, deci în format de 4 cifre, orice permisiune care începe cu 2 (ex. 2770) indică prezența SGID.
-3) Spre deosebire de SUID, SGID este util și pe scripturi în anumite contexte de rețea, dar utilizarea sa principală rămâne pe directoare pentru colaborare.
+1) Dacă la proba practică se cere "ca toate fișierele create într-un folder să aparțină grupului 
+   'profesori'", soluția este întotdeauna chmod g+s.
+2) Valoarea octală pentru SGID este 2, deci în format de 4 cifre, orice permisiune care începe cu 2 
+   (ex. 2770) indică prezența SGID.
+3) Spre deosebire de SUID, SGID este util și pe scripturi în anumite contexte de rețea, dar utilizarea 
+   sa principală rămâne pe directoare pentru colaborare.
 
 - expirarea si blocarea parolelor pot fi utile pentru crearea de conturi temporare
 - un user cu parola blocata poate folosi si alte moduri de autentificare la acel cont, cum ar fi SSH
@@ -621,10 +640,12 @@ Steaguri esențiale:
       - Ex: sudo passwd -e student`
     - passwd -S, --status` - Afișează starea parolei (L = locked, P = usable, NP = no password).
       - Ex: passwd -S student`
-Obs. Root poate schimba parola oricui fără să cunoască parola veche, în timp ce un user normal trebuie să o introducă pe cea curentă pentru a rula comanda.
+Obs. Root poate schimba parola oricui fără să cunoască parola veche, în timp ce un user normal trebuie 
+     să o introducă pe cea curentă pentru a rula comanda.
 
 Utilitarul chpasswd
-  - comanda folosita pentru a actualiza parolele în masă (pentru mai mulți utilizatori simultan) prin citirea datelor de la intrarea standard (stdin).
+  - comanda folosita pentru a actualiza parolele în masă (pentru mai mulți utilizatori simultan) 
+    prin citirea datelor de la intrarea standard (stdin).
 Exemplu:
     student@uso:~$ echo "teacher:woof2PhaiNiphooS" | sudo chpasswd
     - am schimbat parola utilizatorului teacher in valoarea woof2PhaiNiphooS
@@ -696,7 +717,8 @@ Programul este definit de:
     - `Permisiuni` - Bitul de execuție (+x) care îi spune sistemului că fișierul poate fi lansat ca proces.
     - `Punct de intrare (Entry Point)` - Adresa primei instrucțiuni care trebuie executată din codul mașină.
   - Resurse Externe Necesare
-    - `Biblioteci Partajate (Libraries)` - Referințe către alte fișiere (ex: .so în Linux, .dll în Windows) de care programul are nevoie pentru a funcționa.
+    - `Biblioteci Partajate (Libraries)` - Referințe către alte fișiere (ex: .so în Linux, .dll în Windows) 
+       de care programul are nevoie pentru a funcționa.
   Obs. Este o entitate statica, pasiva, stocata pe disc.
   Obs. Un program poate genera mai multe procese (ex. Firecox poate fi deschis de mai multe ori).
   Obs. Un proces nu poate sa apartina mai multor programe.
@@ -759,7 +781,8 @@ Reguli de Acces: Director vs. Fișier
     - `Obs`: Nu ai nevoie de `r` pe fișier ca să scrii peste el (dar e greu să editezi fără să vezi ce e acolo).
   - Crearea/Ștergerea (rm, touch, mkdir)
     - `Cerință`: w ȘI x pe directorul părinte.
-    - `CRITIC`: Nu contează ce permisiuni are fișierul în sine! Dacă ai `wx` pe folder, poți șterge un fișier chiar dacă acesta este deținut de root și are permisiuni `000`.
+    - `CRITIC`: Nu contează ce permisiuni are fișierul în sine! Dacă ai `wx` pe folder, poți șterge un fișier chiar 
+                dacă acesta este deținut de root și are permisiuni `000`.
   - Execuția unui program (./script.sh)
     - `Cerință`: r ȘI x pe fișier + x pe directorul părinte.
     - `De ce r?`: Sistemul trebuie să poată citi instrucțiunile din fișier pentru a le încărca în RAM.
@@ -855,7 +878,8 @@ Comparație și Exemple:
 - Dacă un fișier este un link simbolic, ls -l îți arată unde punctează?
 - Răspuns: Da, în ultima coloană vei vedea nume_link -> nume_tinta.
 
-Obs. Combinația ls -alt este salvatoare când trebuie să găsești ce fișier a fost modificat de un atacator sau de un script într-un director cu mii de fișiere ascunse.
+Obs. Combinația ls -alt este salvatoare când trebuie să găsești ce fișier a fost modificat de un atacator sau de 
+     un script într-un director cu mii de fișiere ascunse.
 
 2. Modificarea metadatelor:
 - primele doua comenzi (chown si chgrp) modifica utilizatorul si grupul
@@ -864,7 +888,8 @@ Obs. Combinația ls -alt este salvatoare când trebuie să găsești ce fișier 
 - chmod modifica permisiunile
 
 Utilitarul chown (change owner)
-- Comanda este folosită pentru a schimba utilizatorul proprietar și grupul unui fișier sau director. Poate fi rulată doar de utilizatorul privilegiat (root).
+- Comanda este folosită pentru a schimba utilizatorul proprietar și grupul unui fișier sau director. Poate 
+  fi rulată doar de utilizatorul privilegiat (root).
 
 - Steaguri:
   - -R (recursive): Modifică proprietarul pentru toate fișierele și subdirectoarele din interior.
@@ -1016,6 +1041,7 @@ Comparație și Exemple:
 - Într-un folder cu Sticky Bit activ (ca /tmp), pot șterge fișierul colegului dacă am amândoi permisiuni rwx?
 - Răspuns: Nu. Sticky Bit te oprește dacă nu ești proprietarul fișierului sau root.
 
-Obs. La examen, uitați-vă cu atenție la litera s sau t. Dacă este literă MARE (S sau T), înseamnă că bitul special este activat, dar bitul de execuție de dedesubt (x) lipsește, deci permisiunea specială ar putea să nu funcționeze corect.
+Obs. Sunt importante litera s sau t. Dacă este literă MARE (S sau T), înseamnă că bitul special este activat, 
+     dar bitul de execuție de dedesubt (x) lipsește, deci permisiunea specială ar putea să nu funcționeze corect.
      Comanda stat este cea mai sigură metodă de a vedea cifra specială (prima cifră din cele patru).
      Comandă terminal (Verificare rapidă): stat -c %a /usr/bin/passwd (va returna 4755).
