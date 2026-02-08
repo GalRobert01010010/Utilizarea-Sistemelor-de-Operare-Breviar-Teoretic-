@@ -689,17 +689,158 @@ Obs. 1) Simbolul + (Job-ul curent): Este ultimul job cu care ai interacționat (
 
 ## 4.3.4: Procesul init
 
+- aflat in varful ierarhiei proceselor
+Obs. Spunem ca un sistem Lunux a bootat in momentul crearii procesului init.
 
+Roluri:
+1. pornirea proceselor initiale
+2. intretinerea sistemului 
+  - adopta procesele orfane
 
+Obs. Daca procesul init moare sau este oprit, sistemul devine neutilizabil.
+Solutie: Pe sistemul Ubuntu a aparut solutia folosirii mai multor procese init
+  - cate un proces pentru fiecare sesiune
 
-a
+## 4.4: Procese si fisiere
 
+- fisierele sunt folosite pentru a stoca informatii care urmeaza sa fie accesate,
+  prelucrate si transferate prin diverse operatii pe care le efectueaza user-ul
 
+Acces și Gestiune
+- Conceptul de Handle:
+  - Definiție: Este un "mâner" sau o referință prin care un proces manipulează un fișier.
+- Descriptorul de fișier (File Descriptor - FD):
+  - Definiție: Un număr întreg (index) dintr-o tabelă internă a procesului (Tabela Descriptorilor).
+  - Rol: Face legătura între proces și fișierul fizic de pe disc.
+- Descriptori Standard:
+  - 0 (stdin) : Intrarea standard (tastatura).
+  - 1 (stdout) : Ieșirea standard (ecranul pentru rezultate).
+  - 2 (stderr) : Eroarea standard (ecranul pentru mesaje de eroare).
 
+- Concurs:
+  - Tabela Descriptorilor: Fiecare proces are propria tabelă. Dacă două procese 
+    deschid același fișier, fiecare va avea propriul descriptor în tabela sa.
+  - Legătura cu Redirectările: Când scrii `2> eroare.txt`, îi spui shell-ului: 
+    "ia tot ce procesul trimite către descriptorul 2 și mută în fișier".
+  - Identificare: În Linux, poți vedea descriptorii unui proces în directorul 
+    `/proc/[PID]/fd/`.
 
+- Concurs :
+  - Orice acces la un fișier se face printr-un proces. Fișierul nu se citește singur.
+  - "Handle" este interfața software, "Descriptorul" este numărul (indexul) din tabelă.
+  - În C, `fopen()` returnează un handle (`FILE *`), care în spate folosește 
+    un descriptor de fișier (un simplu număr precum 3, 4, 5...).
 
+## 4.4.1: Descriptori de fisiere
 
+- un descriptor de fisiere identifica pentru un proces fisierul pe care il opereaza
+- un proces, cand vrea sa acceseze un fisier, porneste de la descriptorul de fisiere, 
+  acceseaza intrarea aferenta in tebela de descriptori de fisiere si se foloseste de 
+  informatiile de acolo pentru a folosi fisierul
+- tabela de descriptori are dimensiune limitata in Linux (1024 intari)
+  - previne folosirea abuziva de resurse ale sistemului
+  -> previne un atac de tip denial of service
+  -> un proces nu poate deschide un numar infinit de fisiere (maxim 1024)
 
+- Utilitarul `lsof` (List Open Files)
+  - afișează toate fișierele și resursele deschise de procesele din sistem.
+  - Steaguri:
+    - -p [PID] : Listează fișierele deschise de un proces specific (identificat prin PID).
+      - Comandă terminal: lsof -p 9585
+    - -u [user] : Listează fișierele deschise de un anumit utilizator.
+      - Comandă terminal: lsof -u student
+    - -i : Afișează fișierele de rețea (conexiuni active).
+      - Comandă terminal: lsof -i
+  - Interpretare Output (Coloana FD):
+    - 0, 1, 2 : Descriptorii standard (stdin, stdout, stderr).
+    - u, r, w : Modul de acces (u = read/write, r = read, w = write).
+    - txt : Fișierul executabil al procesului (codul sursă compilat).
+    - mem : Biblioteci partajate (shared libraries) încărcate în memorie (.so).
+    - cwd : Directorul curent de lucru (Current Working Directory).
+  - Capcană:
+    - Primul descriptor disponibil pentru un fișier nou deschis de utilizator este `3`, 
+      deoarece 0, 1 și 2 sunt ocupate automat la pornirea procesului.
+    - Chiar dacă procesul rulează același program (ex: `bash`), descriptorii 0, 1, 2 
+      pot pointa către terminale diferite (ex: `/dev/pts/1` vs `/dev/pts/2`).
+
+- Concurs:
+  - Alocarea descriptorilor: Sistemul de operare alocă întotdeauna `cel mai mic index disponibil` 
+    în tabela de descriptori atunci când un proces deschide un fișier nou.
+  - Izolare: Fiecare proces are propria tabelă. Descriptorul 3 din procesul A nu 
+    are nicio legătură cu descriptorul 3 din procesul B.
+  - Tipuri de resurse: `lsof` arată că un proces nu deschide doar fișiere text, ci și:
+    - Biblioteci sistem (`/lib/.../libc.so`)
+    - Terminale (`/dev/pts/X`)
+    - Directoare (`cwd`, `rtd`)
+  - Identificator standard: Dacă în output vezi un număr urmat de 'u' (ex: `255u`), 
+    acela este un descriptor de fișier activ în tabelă.
+
+Procese și Editoare
+- Mod de lucru: Editoarele (Vim, Gedit, Emacs) NU mențin fișierul deschis permanent în timpul editării.
+  - Citesc fișierul în memorie (RAM) într-o structură numită buffer.
+  - Modificările se fac direct în RAM pentru viteză (discul este mult mai lent).
+  Obs. Fișierul de pe disc este deschis și închis rapid doar în momentul salvării (save).
+- Fișiere Swap (.swp): Pentru a preveni pierderea datelor în caz de crash, editoarele creează 
+  un fișier temporar pe disc care stochează modificările nesalvate.
+- Interpretare lsof pentru Vim:
+  - În `lsof -p [PID]`, nu vei vedea fișierul `a.txt` deschis cu un descriptor numeric (3, 4 etc.).
+  - Vei vedea în schimb fișierul swap (ex: `.a.txt.swp`) alocat de obicei pe descriptorul 3.
+
+- Utilitar: pidof 
+  - afișează ID-ul procesului (PID) pentru un program care rulează, căutându-l după nume.
+  - Steaguri:
+    - -s : Returnează un singur PID (Single), chiar dacă rulează mai multe instanțe ale programului.
+      - Comandă terminal: pidof -s vim
+  - Exemplu probă:
+    - student@uso:~$ pidof vim
+    - 11414
+
+- Concurs:
+  - Capcană: La întrebarea "Are editorul Vim fișierul message.txt deschis în tabela de descriptori în timpul editării?", 
+    răspunsul corect este NU. Are deschis un fișier temporar (swap), nu fișierul original.
+  - Avantaj buffer: Performanță ridicată. Editarea direct pe disc ar fi ineficientă 
+    din cauza latenței hardware-ului de stocare.
+  - Securitate/Recuperare: Fișierul `.swp` este cel care permite recuperarea 
+    textului dacă terminalul se închide accidental.
+
+- Concurs (Sinteză Grile):
+  - lsof -p [PID] : Este metoda prin care verificăm ce "vede" un proces în timp real.
+  - Descriptorul 3u : În exemplul cu Vim, litera 'u' (read/write) indică faptul 
+    că fișierul swap este deschis pentru ambele operații.
+
+## 4.4.2: Redirectarea  in/din fisiere
+
+- descriptorii de fisiere pot sa refere terminalul, cum fac descriptorii standard (0, 1, 2),
+  sau pot sa refere fisiere
+- legaturile descriptorilor standard cu terminalul nu sunt fixe si pot fi modificate
+  -> procesul se numeste redirectare
+Def. Redirectarea = modificarea unor descriptori standard, astfel incat sa refere fisiere, nu terminalul.
+
+- Utilitar: lshw
+  - listează informații detaliate despre componentele hardware ale calculatorului.
+  Steaguri:
+  - -short : Afișează hardware-ul într-un format compact, sub formă de listă.
+    - Comandă terminal: lshw -short
+  - -html : Generează un raport hardware în format HTML (util pentru documentare).
+    - Comandă terminal: lshw -html > hardware.html
+  - -C [class] : Filtrează după o anumită clasă de hardware (ex: network, memory).
+    - Comandă terminal: lshw -C network
+
+- Concurs (Redirectări):
+  - Operatorul > : Modifică descriptorul 1 (stdout) al procesului `lshw`.
+  - Efect: În loc ca datele despre hardware să fie afișate pe ecran (terminal), 
+    ele sunt scrise în fișierul `lshw.out`.
+  - Comandă terminal: lshw > lshw.out
+  - Capcană AcadNet: Dacă fișierul `lshw.out` există deja, operatorul `>` îl va `suprascrie` 
+    complet (șterge tot ce era înainte). Pentru a adăuga la finalul fișierului, se folosește `>>`.
+- Concurs (Sinteză Grile):
+  - lshw vs lsof: `lshw` se ocupă de hardware (discuri, CPU), în timp ce 
+    `lsof` se ocupă de fișiere deschise de procese.
+  - Permisiuni: De cele mai multe ori, `lshw` necesită drepturi de administrator
+    (root) pentru a accesa toate detaliile hardware.
+    - Comandă terminal: sudo lshw
+
+## 4.5: Operatii cu procese. Interactiunea intre procese
 
 
 
