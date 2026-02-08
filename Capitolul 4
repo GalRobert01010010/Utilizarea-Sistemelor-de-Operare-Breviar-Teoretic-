@@ -446,19 +446,145 @@ Obs. Comanda `renice` poate fi folosita de un user neprivilegiat doar pentru a c
 Obs. Pentru scaderea valorii nice folosim contul privilegiat cu ajutorul `sudo`.
 Obs. La fel, si `nice` poate porni un proces cu valoare modificata.
 
+## 4.3: Ierarhia de procese
 
+- un proces e creat la load-time dintr-ul fisier executabil, dupa aceea, 
+  ii sunt acordate resurse (timp de procesor si zone de memorie), apoi ruleaza (run-time)
+Obs. Crearea unui proces dintr-un executabil se mai numeste si loading.
+Obs. Momentul crearii se mai numeste si load-time.
 
+- un proces este creat din alt proces (proces parinte)
+- un proces parinte poate crea oricate procese copil ii permit resursele sistemului
+- un proces poate avea un singor proces parinte
 
+- procesul parinte foloseste o interfata specifica a OS, pentru crearea unui alt proces
+In Linux: 
+  - foloseste grupul de apel fork() si exec()
+In Windows:
+  - foloseste CreatePrrocess()
 
+Apeluri si semnificatia lor:
 
+fork()
+  - Creează o copie identică a procesului părinte. Procesul copil primește 
+    un PID nou, dar moștenește tot (variabile, fișiere deschise).
+  - Caracteristică: Este singura funcție care returnează de două ori: 
+    0 în procesul copil și PID-ul copilului în procesul părinte.
+  - Comandă terminal: ps --forest (pentru a vedea rezultatul 
+    vizual al fork-urilor succesive).
 
+exec() 
+  - Înlocuiește imaginea procesului curent cu un program nou 
+    (de exemplu, înlocuiește shell-ul cu `ls`).
+  - Caracteristică: Procesul NU primește un PID nou; PID-ul rămâne același, 
+    dar conținutul procesului se schimbă complet.
+  - Exemplu: Când scrii `ls` în terminal, shell-ul face `fork()` (se multiplică), 
+    iar copia face `exec()` (se transformă în `ls`).
 
+wait() / waitpid() 
+  - Suspendă execuția părintelui până când unul sau un anumit proces 
+    copil se termină.
+  - Caracteristică: Este mecanismul prin care părintele colectează 
+    "statusul de ieșire" al copilului.
+    Dacă părintele nu apelează `wait()`, copilul devine Zombie (Z).
+  - Comandă terminal: ps -el (vezi coloana S pentru starea Z).
 
+exit()
+  - Termină execuția procesului curent și eliberează majoritatea resurselor ocupate.
+  - Caracteristică: Trimite un cod de eroare (0 pentru succes, >0 pentru eroare) 
+    către părinte.
+  - Comandă terminal: echo $? (afișează codul de ieșire al ultimului proces terminat).
 
+clone()
+- O versiune mai versatilă de `fork()` folosită în 
+  Linux pentru a crea fire de execuție (threads).
+- Caracteristică: Permite copilului să împartă (share) 
+  aceeași memorie cu părintele, nu doar să o copieze.
+- Comandă terminal: ps -fL (pentru a vedea thread-urile create prin clone).
 
+getpid() / getppid()
+- Apeluri prin care un proces își întreabă sistemul propriul PID sau PID-ul părintelui său.
+- Caracteristică: Sunt folosite de procese pentru a-și identifica "identitatea" în sistem.
 
+Obs. Procesul care creeaza un nou proces este `shell`.
+  - poate fi grafic (Ex. Windows Esplorer)
+  - poate fi in linia de comanda (Bash)
 
+Moduri in care un proces poate fi incheiat:
 
+- Terminare Voluntară
+  - Procesul își termină codul sau execută `exit()`.
+  - Exemplu: `exit 0`
+
+- Terminare Involuntară (Kill)
+  - Forțată de utilizator/sistem prin semnale.
+  - Comandă: `kill -[semnal] [PID]`
+  - Exemplu: `kill -9 1234`
+
+- Terminare prin Eroare (Crash)
+  - Acțiuni nevalide (ex: Segmentation fault).
+  - Exemplu: Accesarea memoriei interzise.
+
+- Terminare prin Sistem (OOM - Out Of Memory)
+  - Kernel-ul închide procesul din lipsă de RAM.
+  - Comandă: `dmesg | grep "OOM"`
+    - Afișează mesajele din jurnalul kernelului care conțin eroarea Out Of Memory
+
+## 4.3.1: Ierarhia de procese in Linux/Unix
+
+Utilitarul `pstree`
+  - ne permite sa vedem ierarhia de procese
+
+Steaguri:
+
+- -p (show PIDs)
+  - Afișează PID-ul lângă fiecare nume de proces.
+  - Comandă terminal: pstree -p
+  - Exemplu: pstree -p
+
+- -u (show users)
+  - Arată tranzițiile de utilizator (când un proces își schimbă proprietarul).
+  - Comandă terminal: pstree -u
+  - Exemplu: pstree -u
+
+- -h (highlight)
+  - Evidențiază procesul curent sau un proces specific.
+  - Comandă terminal: pstree -h [PID]
+  - Exemplu: pstree -h 10384
+
+- -a / -A (arguments)
+  - Afișează argumentele liniei de comandă folosite la pornire.
+  - Comandă terminal: pstree -a
+  - Exemplu: pstree -a
+
+- [utilizator]
+  - Afișează doar arborele proceselor ce aparțin unui utilizator.
+  - Comandă terminal: pstree [nume_utilizator]
+  - Exemplu: pstree student
+
+Procesul init (PID 1)
+  - Reprezintă rădăcina ierarhiei de procese (primul proces al sistemului).
+  - Implementare actuală: systemd (majoritatea distribuțiilor Linux).
+  - Rol: Pornește serviciile sistemului și procesele de bază.
+Ierarhia de procese
+  - Un proces are un singur părinte și poate avea oricâți copii.
+  - Structură: init -> servicii/shell-uri -> alte procese.
+Procese orfane
+  - Def. Procese al căror părinte și-a încheiat execuția înaintea lor.
+  - Mecanism: Sunt "adoptate" automat de procesul init, care devine noul lor părinte.
+
+## 4.3.2: Ierarhia de procese in Windows
+
+- la fel ca in Linux, si in Windows un proces creeaza alt proces
+- ierarhia de procese are legaturi mai slabe ca in Linux
+  - in Linux un proces parinte are privilegii specifice de comunicare cu un proces copil 
+    (prin `pipe` de exemplu)
+  - in Windows, un proces poate comunica in acelasi mod si cu unul cu care nu e conectat ierarhic
+- un proces are o referinta (handle) catre un proces pe care l-a creat, dar acea referinta poate
+  fi transferata altui proces, afectand ierarhia
+Obs. Shell-ul Windows este un shell grafic reprezentat de procesul Explorer.
+
+## 4.3.3: Foreground si background
 
 
 
