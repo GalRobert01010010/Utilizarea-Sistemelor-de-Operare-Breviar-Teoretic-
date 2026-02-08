@@ -586,10 +586,108 @@ Obs. Shell-ul Windows este un shell grafic reprezentat de procesul Explorer.
 
 ## 4.3.3: Foreground si background
 
+- procesele deja existente ci cele nou create in shell folosesc simultan terminalul
+- terminalul este modul in care user-ul poate transmite informatii la iesirea standard 
+  si modul in care se afiseaza informatiile la iesirea standard
+- procesele noi create si shell-ul afiseaza informatii la iesirea standard 
+  - aceste afisari vor aparea pe terminal
+- totusi, daca trimitem informatii la intrarea standard, prin terminal, 
+  doar procesul nou creat in shell le va accesa
 
+Obs. In foreground exista un singur proces care detine controlul intrarii in cadrul terminalului
 
+Moodul de functionare al shell-ului:
+1. shell-ul citeste de la intrarea standard (din terminal), comenzi introduse de user
+2. shell-ul creeaza un nou proces pornind de la comanda introdusa
+3. procesul nou creat ruleaza in foreground si are controlul terminalului 
+  - are si controlul intrarii standard a terminalului
+4. procesul nou creat isi incheie executia
+  - shell-ul, in calitate de proces parinte, retine informatii despre incheierea executiei
+5. shell-ul redobandeste controlul asupra terminalului si reincepe pasul 1
 
+- problema apare daca procesul nou creat acapareaza terminalul si nu se incheie rapid
+- solutia este un mod de folosire a terminalului: background
+  - permite shell-ului rularea continua si crearea de mai multe procese
+  - este modul prin care un proces nu mai are acces la informatii furnizate de utilizator
+- pot exista oricat de multe procese in background
+- in bg, procesele se pot gasi in doua stari:
+  - ruland (running)
+  - suspendate (stopped, suspended, paused)
+Obs. Un proces suspendat nu se poate gasi in foreground (fg), ci doar in background (bg).
+Obs. Un proces poate rula de la inceput in background sau poate fi transferat acolo dupa pornire.
+Obs. Pt a rula un proces in bg, folosim `&` imediat dupa ce introducem comanda si parametri ei.
 
+Utilitarul `jobs`:
+  Def. Utilitar shell care afișează starea proceselor pornite în fundal sau suspendate din 
+       terminalul curent, identificate prin ID-uri de job.
+  Steaguri:
+  - -l : Afișează PID-ul procesului alături de numărul job-ului.
+    - Comandă terminal: jobs -l
+  - -p : Afișează doar PID-urile proceselor.
+    - Comandă terminal: jobs -p
+  - -r : Afișează doar job-urile care sunt în starea "Running".
+    - Comandă terminal: jobs -r
+  - -s : Afișează doar job-urile care sunt în starea "Stopped".
+    - Comandă terminal: jobs -s
+  Exemplu probă:
+  - student@uso:~$ firefox &
+  - [1] 10533
+  - student@uso:~$ jobs -l
+  - [1]+ 10533 Running  firefox &
+  Capcană:
+  - Comanda jobs afișează doar procesele pornite din shell-ul curent. 
+    - Într-un terminal nou, lista va fi goală.
+  - Diferența PID vs Job ID: PID (ex: 10533) este global, Job ID (ex: [1]) este local shell-ului.
+
+Obs. Un proces creat ca sa ruleze in fg, poate fi suspendat cu comanda `Ctrl + z` si va trece in bg.
+Obs. Operatorul `&` duce in background un proces ruland (running), iar comada `Ctrl + z`
+     il duce in background in starea suspendat.
+
+Utilitare: fg și bg (Capitolul 4 - Procese)
+  Steaguri:
+  - [job_id] : Se folosește indexul job-ului (ex: %1, %2) pentru a ținti un proces specific.
+    - Comandă terminal: fg %1
+  - Exemplu probă:
+    - student@uso:~$ sleep 100
+    - ^Z
+    - [1]+ Stopped sleep 100
+    - student@uso:~$ bg %1
+    - [1]+ sleep 100 &
+    - student@uso:~$ jobs
+    - [1]+ Running sleep 100 &
+  - Capcană:
+    - Un proces mutat cu Ctrl+Z este în starea **Stopped**. El NU rulează în 
+      background până nu primește comanda `bg`.
+    - În foreground, un proces "acaparează" terminalul. Orice comandă tastată (ex: `ls`) în 
+      timp ce un proces rulează în foreground (ex: `sleep 100`) nu va fi interpretată de shell până când 
+      procesul din foreground nu se termină sau este suspendat.
+
+- Concurs:
+  - Identificatori de Job: Sunt afișați între paranteze pătrate `[1]`, `[2]`. Se folosesc 
+    cu simbolul `%` în fața cifrei pentru comenzile `fg` și `bg`.
+  - Scenariu GUI: Dacă pornești o aplicație grafică (ex: `emacs`, `firefox`) fără `&`, 
+    terminalul rămâne blocat. Soluția standard AcadNet: `Ctrl+Z` urmat de `bg`.
+  - Închiderea Shell-ului: Dacă închizi terminalul, procesele active (și cele din 
+    background) sunt de regulă omorâte (primesc semnalul SIGHUP).
+  - Simboluri de stare în jobs:
+    - + : Job-ul curent (cel mai recent modificat).
+    - - : Job-ul imediat precedent celui curent.
+Obs. 1) Simbolul + (Job-ul curent): Este ultimul job cu care ai interacționat (cel pornit 
+        cel mai recent sau cel mai recent suspendat). Dacă scrii simplu `fg` sau `bg`, acesta este cel vizat.
+     2) Simbolul - (Job-ul precedent): Este "rezerva". Dacă job-ul cu `+` se termină, cel 
+        cu `-` îi va lua locul și va deveni noul job curent (+).
+     3) Clarificare: Cel cu `-` NU este încheiat și nici nu "urmează" să pornească singur. 
+        Ambele pot rula simultan în background. `-` indică doar ordinea de prioritate în stiva shell-ului.
+
+- Concurs (Sinteză Grile):
+  - Transfer de stare: Foreground (Running) --Ctrl+Z--> Background (Stopped) --bg--> 
+    Background (Running) --fg--> Foreground (Running).
+  - Execuție simultană: Pot exista oricâte procese în background în starea "Running", 
+    dar numai unul poate fi în foreground.
+  - Prioritate terminal: Doar procesul din foreground are acces la "Standard Input" 
+    (poate citi ce scrii la tastatură).
+
+## 4.3.4: Procesul init
 
 
 
