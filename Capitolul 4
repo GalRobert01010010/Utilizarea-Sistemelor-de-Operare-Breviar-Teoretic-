@@ -26,4 +26,466 @@ Sistemul de operare ofera:
 
 ## 4.1: Programe si procese
 
+- un proces ruleaza si foloseste resursele sistemului pentru a indeplini o anumita sarcina
+  - pentru asta, foloseste resursele sistemului
+- procesul stocheaza in memorie instructiunile pe care trebuie sa le execute
+
+Se pune problema: Cum ajung aceste instructiuni in memorie?
+  - nu vorbin de memoria fizica (HDD/SDD, aici locuieste programul), ci despre memoria activa (RAM)
+  - un proces primeste instructiunile in momentul crearii sale
+  - un proces e creat dintr-un program
+  - programul e un fisier executabil care contine codul (instructiunile)
+  - cand pornim o aplicatie sau rulam o comanda, un program este loaded
+    - atunci are loc coperea instructiunilor din fisierul executabil in memoria viitorului proces si pornirea sa
+
+- Utilitarul ps (Process Status)
+  - Ne permite să vizualizăm starea proceselor active în sistem la un moment dat.
+
+  Steaguri ps:
+
+- -e (every)
+  - Selectează toate procesele din sistem.
+  - Comandă terminal: ps -e
+  - Exemplu: ps -e
+
+- --no-header
+  - Elimină linia de antet din afișare pentru a lăsa doar datele brute.
+  - Comandă terminal: ps [alte_steaguri] --no-header
+  - Exemplu: ps -e --no-header
+
+- -f (full-format)
+  - Afișează detalii complete (UID, PID, PPID, C, STIME, TTY, TIME, CMD).
+  - Comandă terminal: ps -f [alte_steaguri]
+  - Exemplu: ps -ef
+
+- -u (user / effective user)
+  - Filtrează procesele după identitatea sub care rulează efectiv procesul acum.
+  - Comandă terminal: ps -u [nume_utilizator_sau_UID]
+  - Exemplu: ps -u student
+
+- -U (real user)
+  - Selectează procesele după utilizatorul real care a pornit inițial comanda.
+  - Comandă terminal: ps -U [nume_utilizator_sau_UID]
+  - Exemplu: ps -U root
+
+- -G (real group)
+  - Selectează procesele după grupul real din care face parte cel care a pornit procesul.
+  - Comandă terminal: ps -G [nume_grup_sau_GID]
+  - Exemplu: ps -G sudo
+
+- -N (negate)
+  - Afișează toate procesele, exceptând cele care se potrivesc filtrului setat.
+  - Comandă terminal: ps -N [filtru_de_negat]
+  - Exemplu: ps -N -u student
+
+- -C (command)
+  - Selectează procesele după numele exact al fișierului executabil.
+  - Comandă terminal: ps -C [nume_executabil]
+  - Exemplu: ps -C VBoxClient
+
+- -o (output format)
+  - Permite alegerea și ordonarea coloanelor afișate.
+  - Comandă terminal: ps -o [coloana1,coloana2,...]
+  - Exemplu: ps -e -o pid,cmd,%cpu,rss
+
+- pid= (custom header)
+  - Dezactivează antetul pentru coloana PID (folosit pentru a extrage doar numărul).
+  - Comandă terminal: ps -o pid= [alte_filtre]
+  - Exemplu: ps -o pid= -C VBoxClient
+
+- --sort
+  - Ordonează lista după o coloană specifică (folosește "-" pentru descrescător).
+  - Comandă terminal: ps [filtre] --sort [+/-coloană]
+  - Exemplu: ps -u student -o pid,cmd,%cpu --sort -%cpu
+
+- aux (BSD style)
+  - Format combinat: toate procesele (a), orientat pe utilizator (u), inclusiv cele fără terminal (x).
+  - Comandă terminal: ps aux
+  - Exemplu: ps aux
+
+- --forest
+  - Afișează vizual relația părinte-copil prin indentare grafică.
+  - Comandă terminal: ps [filtre] --forest
+  - Exemplu: ps -ef --forest
+
+- -p (pid)
+  - Afișează date doar pentru un anumit proces identificat prin număr.
+  - Comandă terminal: ps -p [PID]
+  - Exemplu: ps -p 1234
+
+- -L (threads)
+  - Afișează firele de execuție (LWP) din cadrul proceselor.
+  - Comandă terminal: ps -L [alte_steaguri]
+  - Exemplu: ps -efL
+
+Obs. Diferența dintre -u și -U:
+  - -u (effective user): Se uită la utilizatorul sub a cărui identitate rulează 
+     procesul în prezent (poate fi schimbată prin mecanisme de tip SUID).
+  - -U (real user): Se uită la utilizatorul care a pornit inițial procesul.
+  - Comandă terminal: ps -U student -u root
+  - Explicație: Această comandă ar găsi procesele pornite de "student" 
+    care au primit drepturi de "root" (de exemplu, prin `sudo`).
+
+Comparație și Exemple:
+- Cum aflam ce proces consuma cel mai mult RAM sau CPU
+  -> Folosind ps aux (coloanele %CPU și %MEM).
+- Cum vedem ierarhia parinte-copil a proceselor
+  -> Folosind ps -ef --forest sau ps -ejH.
+- Cum aflam calea catre executabilul care a pornit procesul
+  -> Analizand coloana CMD (ultima coloană) din ps -ef 
+  -> Arată calea completă și argumentele (ex: /usr/lib/firefox/firefox).
+
+Obs. Coloana PID (Process ID) este unică pentru fiecare proces. 
+Obs. Coloana PPID (Parent Process ID) indică cine a creat acel proces (părintele).
+Obs. PID 1 este întotdeauna procesul init (sau systemd), primul proces pornit de Kernel la boot-are.
+     Este părintele tuturor celorlalte procese.
+Obs. ps este aproape mereu combinat cu grep pentru a filtra rezultatele: ps -ef | grep firefox.
+Obs. Diferența între ps -ef și ps aux: Prima folosește sintaxa standard UNIX (cu liniuță), a doua folosește sintaxa BSD (fără liniuță). 
+     ps aux este preferat de administratori pentru că arată consumul de resurse (%CPU, %MEM).
+Obs. Litera S în coloana STAT, indica faptul că procesul este în starea Sleeping (așteaptă un eveniment).
+Obs. Spre deosebire de `top` sau `htop`, utilitarul `ps` nu se actualizeaza in timp real.
+
+Esenta:
+  - un program este o entitate statica, un fisier executabil in sistemul de fisiere
+  - un proces este o entitate dinamica, una care ruleaza si foloseste resursele sistemului
+    - pt un proces, spunem ca programul executabil din care a fost creat este imaginea procesului
+
+## 4.2: Resursele si atributele unui proces
+
+- instructiunile copiate in proces din fisierul executabil sunt executate de procesor
+- pe parcursul executiei, un proces comunica cu elemente I/O si cu alte procese
+- unui proces i se aloca memorie la creare si rulare
+  - prin alocare dinamica (Ex. malloc())
+- comenzi precum `ps` si `top` ne permit sa investigam si sa monitorizam resursele folosite de procese
+- CPU (procesorul) este unitatea centrală care conține două componente majore: UAL și UC.
+  - UAL (Unitatea Aritmetica si Logica): componenta care prelucreaza date brute primite de procesor
+  - UC (Unitatea de Control): gestioneaza fluxul de date si sincronizarea intre componente
+
+## 4.2.1: Atributele unui proces
+
+- un proces are atribute primite implicit la pornirea sa: 
+  -> identificatorul procesului, procesul părinte, utilizatorul, prioritatea de rulare
+Def. Atributele = date despre un proces cu rolul de a identifica un proces, de a stabili ce 
+     si cat de multe resurse poate folosi si de a contabiliza resursele utilizate.
+
+Atributul PID:
+  - id-ul unic al procesului la nivelul sistemului de operare
+  - este primit in momentul crearii si nu se schimba pe parcursul rularii
+  - comenzile ca re se refera la un proces primesc id-ul sau
+  - pt a termina un proces folosim comanda `kill` urmata de PID-ul sau 
+
+Atributul UID:
+  - id-ul utilizatorului care detine procesul
+  - procesul va avea acces la resursele utilizatorului care l-a pornit 
+
+## 4.2.2: Utilitare pentru urmarirea pproceselor
+
+Tipuri de utilitare:
+  - care afiseaza un snapshot al momentului (procese active in acel moment si atributele lor)
+  - care monitorizeaza procesele sistemului
+
+PID
+  - identifica procesul
+  - e atribuit la pornire
+  - nu e modificabil
+
+PPID
+  - identifica parintele proces
+  - e atribuit la pornire
+  - e modificabil
+    - un proces nu își poate alege un alt părinte "la dorință", dar PPID-ul 
+      se schimbă automat dacă părintele inițial moare (se termină) înaintea copilului.
+    - Procesul de re-parenting: Când părintele moare, procesul copil devine orfan. 
+      Pentru a nu rămâne suspendat, acesta este adoptat imediat de procesul cu PID 1 (systemd sau init).
+    - Cum se face: Nu există o comandă terminal directă pentru a schimba părintele unui proces activ. 
+      Schimbarea are loc doar prin terminarea procesului părinte actual.
+
+Program executabil
+  - constituie imaginea procesului (cod si date)
+  - e atribuit la pornire
+  - nu e modificabil
+
+UID / GID
+  - stabilesc permisiunile procesului
+  - e atribuit la pornire
+  - nu e modificabil (cu exceptia unor situatii punctuale)
+    Situatiile punctuale:
+      1. Executabile cu bitul SUID/SGID activ: 
+         Dacă fișierul are bitul SUID (ex: /usr/bin/passwd), în momentul rulării, UID-ul procesului se 
+         schimbă din "student" în "root" pentru a avea permisiunile necesare.
+      2. Utilizarea sudo: 
+         Comanda sudo permite lansarea unui proces direct cu UID 0 (root).
+      3. Apeluri de sistem (setuid): 
+         Un proces care rulează ca root poate decide singur să renunțe la privilegii și să își 
+         schimbe UID-ul într-unul de utilizator obișnuit (pentru securitate).
+
+Prioritate statică (nice)
+  - indică importanța în accesul resurselor
+  - e atribuită la pornire
+  - este modificabilă
+
+Terminal
+  - reprezintă interfața de comunicare cu utilizatorul
+  - e atribuit la pornire
+  - e modificabil
+
+Fișiere deschise
+  - necesare pentru lucrul cu fișierele
+  - sunt atribuite la rulare
+  - sunt modificabile
+
+Stare
+  - indică accesul curent la procesor
+  - e atribuită la rulare
+  - e modificabilă
+
+Timp de rulare pe procesor
+  - util pentru contabilizarea consumului de procesor
+  - e atribuit la rulare
+  - e modificabil
+
+Memorie consumată
+  - utilă pentru contabilizarea consumului de memorie
+  - e atribuită la rulare
+  - e modificabilă
+
+Spațiu virtual de adrese
+  - constituie harta memoriei unui proces
+  - e atribuit la pornire
+  - e modificabil
+
+1. Utilitare care afiseaza un snapshot al momentului
+
+- ps (Process Status)   (randul 41 pt mai multe detalii)
+  - Folosință: Afișează informații despre procesele active la un moment dat.
+  - -e (afișează toate procesele)
+    - Comandă terminal: ps -e
+  - -f (afișează formatul complet de coloane)
+    - Comandă terminal: ps -ef
+  - -u (afișează procesele unui utilizator specific)
+    - Comandă terminal: ps -u student
+  - -p (afișează informații despre un PID anume)
+    - Comandă terminal: ps -fp 1234
+  - -o (afișează doar coloanele alese de tine)
+    - Comandă terminal: ps -e -o pid,ppid,comm
+
+- pgrep (Process Grep)
+  - Folosință: Afiseaza procese care corespund unei anumite conditii.
+  - -l (afișează și numele procesului, nu doar PID-ul)
+    - Comandă terminal: pgrep -l ssh
+  - -u (filtrează după utilizatorul care deține procesul)
+    - Comandă terminal: pgrep -u root apache
+  - -a (afișează întreaga linie de comandă folosită la lansare)
+    - Comandă terminal: pgrep -a python
+
+- pidof (PID of)
+  - Folosință: Află rapid PID-ul unui program folosind numele exact al acestuia.
+               Afiseaza PID-ul proceselor care au un anumit program (imagine de proces)
+  - -s (returnează un singur PID, chiar dacă sunt mai multe instanțe)
+    - Comandă terminal: pidof -s bash
+  - -x (returnează și PID-ul scripturilor shell care rulează)
+    - Comandă terminal: pidof -x myscript.sh
+
+- pstree (Process Tree)
+  - Folosință: Vizualizarea ierarhiei sub formă de arbore.
+  - -p (afișează PID-urile lângă numele proceselor)
+    - Comandă terminal: pstree -p
+  - -a (afișează argumentele cu care au fost pornite procesele)
+    - Comandă terminal: pstree -a
+  - -h (evidențiază procesul curent și părinții săi)
+    - Comandă terminal: pstree -h
+
+- pmap (Process Map)
+  - Folosință: Afiseaza harta memoriei unui proces (zonele de memorie ocupate de acesta)
+  - -x (afișează detalii extinse despre utilizarea memoriei)
+    - Comandă terminal: pmap -x $(pidof bash)
+  - -d (afișează formatul de dispozitiv/device)
+    - Comandă terminal: pmap -d 1234
+
+- lsof (List Open Files)
+  - Folosință: Identificarea fisierele deschide de un proces
+  - -p (listează fișierele deschise de un anumit PID)
+    - Comandă terminal: sudo lsof -p 1234
+  - -u (listează fișierele deschise de un anumit utilizator)
+    - Comandă terminal: sudo lsof -u student
+  - -i (listează conexiunile de rețea active)
+    - Comandă terminal: sudo lsof -i
+
+2. Utilitare care monitorizeaza in timp real procesele sistemului
+
+- top (Table of Processes)
+  - Folosință: Monitorizarea dinamică a consumului de resurse.
+  - -u (afișează doar procesele unui utilizator specific)
+    - Comandă terminal: top -u student
+  - -d (setează intervalul de timp pentru actualizarea datelor)
+    - Comandă terminal: top -d 5
+  - -p (monitorizează strict unul sau mai multe PID-uri date)
+    - Comandă terminal: top -p 1,1234
+
+- htop (Interactive Process Viewer)
+  - Folosință: Monitorizare interactivă.
+  - -u (afișează procesele unui utilizator anume)
+    - Comandă terminal: htop -u student
+  - -d (setează întârzierea actualizării în zecimi de secundă)
+    - Comandă terminal: htop -d 100
+
+- iotop (I/O Top)
+  - Folosință: Monitorizarea utilizării discului (I/O).
+  - -o (afișează doar procesele care fac activitate pe disc în acel moment)
+    - Comandă terminal: sudo iotop -o
+  - -u (afișează doar procesele unui utilizator)
+    - Comandă terminal: sudo iotop -u root
+  - -b (batch mode - util pentru a salva datele într-un fișier)
+    - Comandă terminal: sudo iotop -b -n 3
+
+- iostat (parte din sysstat)
+  - Folosință: Statistici despre utilizarea CPU și a dispozitivelor de stocare.
+  - -d (afișează doar statisticile despre discuri)
+    - Comandă terminal: iostat -d
+  - -c (afișează doar statisticile despre CPU)
+    - Comandă terminal: iostat -c
+  - [interval] [număr] (actualizează datele la X secunde de Y ori)
+    - Comandă terminal: iostat 2 5
+
+## 4.2.3: Starea proceselor
+
+- un proces are o stare care arata daca acesta ruleaza sau nu pe procesor
+- un proces are nevoie de minim un procesor pentru a rula
+- cand sunt mai multe procese decat procesoare, un proces ruleaza, iar altul asteapta
+Def. Procesul planificat (scheduled) = procesul care ruleaza pe un procesor.
+Def. Procesul blocat (sleeping) = procesul care asteapta operatii de input / output.
+- starea proceselor se pot verifica cu utilitare de monitorizare
+  - putem vedea daca un proces e blocat si cauza pentru care a fost blocat
+  - sau sa vedem cat de multe procese sunt active (ready), gata sa ruleze  
+
+Exemplu:
+student@uso:~$ ps -e -o pid,cmd,state,time,%cpu --sort -%cpu
+PID     CMD                           S     TIME       %CPU
+8637    /usr/bin/python3 /usr/bin/u   S     00:00:22   3.6
+9042    /usr/lib/snapd/snapd          S     00:00:05   1.2
+1221    /usr/bin/gnome-shell          S     00:04:03   0.4
+2717    /usr/lib/firefox/firefox -c   S     00:02:05   0.3
+2637    /usr/lib/firefox/firefox -n   S     00:02:01   0.2
+
+Stari ale proceselor:
+
+- R (Running / Runnable) - Regula Generală
+  - Procesul fie rulează pe procesor în acest moment, fie se află în coada de așteptare (ready), 
+    fiind gata să fie executat imediat ce îi vine rândul.
+  - Comandă terminal: ps -eo pid,state,cmd | grep " R"
+  - Exemplu: Un script care face calcule matematice intense va fi aproape mereu în starea R.
+
+- S (Interruptible Sleep) - Regula Generală
+  - Procesul așteaptă un eveniment (apasarea unei taste, un semnal, un interval de timp) 
+    pentru a continua. Poate fi trezit de un semnal.
+  - Comandă terminal: ps -eo pid,state,cmd | grep " S"
+  - Exemplu: Comanda `sleep 100` va sta în starea S până expiră timpul sau primește 
+    un semnal (ex. Ctrl+C).
+
+- D (Uninterruptible Sleep) - Regula Generală
+  - Procesul așteaptă o resursă hardware (I/O) și NU poate fi trezit sau omorât 
+    până nu primește acea resursă.
+  - Comandă terminal: ps -eo pid,state,cmd | grep " D"
+  - Exemplu: Un proces care încearcă să citească de pe un CD-ROM zgâriat sau un 
+    disc de rețea deconectat.
+
+- T (Stopped) - Regula Generală
+  - Procesul a fost suspendat manual de către utilizator sau de un alt proces.
+  - Comandă terminal: ps -eo pid,state,cmd | grep " T"
+  - Exemplu: Un proces trimis în fundal prin apăsarea tastelor Ctrl+Z.
+
+- Z (Zombie) - Regula Generală
+  - Procesul a terminat execuția (este mort), dar încă ocupă un loc în tabela 
+    de procese deoarece părintele nu i-a eliberat structura.
+  - Comandă terminal: ps -eo pid,state,cmd | grep " Z"
+  - Exemplu: Un proces copil care s-a terminat înainte ca părintele să apeleze funcția `wait()`.
+
+- I (Idle) - Regula Generală
+  - Procese de tip kernel thread care nu sunt active în acest moment și nu influențează 
+    sarcina sistemului (load average).
+  - Comandă terminal: ps -eo pid,state,cmd | grep " I"
+  - Exemplu: kworker (fire de execuție ale kernelului care așteaptă de lucru).
+
+Caracterele adiționale:
+  <: Proces cu prioritate mare (nice negativ).
+  N: Proces cu prioritate mică (nice pozitiv).
+  L: Proces care are pagini de memorie blocate în RAM.
+  s: Proces care este lider de sesiune (ex. un shell).
+  l: Proces multi-threaded (are mai multe fire de execuție).
+  +: Proces care rulează în prim-plan (foreground).
+Obs. S+ este un proces pornit de în terminal care așteaptă o comandă.
+     R+, este procesul care tocmai "muncește" vizibil pe ecran.
+
+- un sistem este cu atat mai incarcat cu cat are mai multe procese gata sa ruleze (ready / runable)
+Obs. Utilitarul `uptime` ne afisează încărcarea unui sistem în ultimul minut, în ultimele 5 minute si în ultimele 15 minute.
+Ex. 
+  student@uso:~$ uptime
+  13:48:40 up 9 days 16:13,  5 users,  load average: 1.61, 2.05, 2.81
+Obs. Utilitarul `top` afiseaza in partea de sus informatii despre incarcarea sistemului
+
+## 4.2.4: Prioritatea proceselor
+
+- procesele cu prioritate mai buna ruleaza mai des si mai mult timp pe procesor 
+- prioritatea unui proces este afectata de comportamentul acestuia
+- se poate schimba prioritatea unui proces prin modificarea atributului `nice` al procesului
+  - o val nice mai mare inseamna ca procesul este mai "dragut" cu celelalte si le lasa sa fie planificate
+  - o val mai mica inseamna ca e mai putin dragut, si le va lua fata altor procese
+- un proces porneste cu o valoare `nice` = 0, neutra
+- val poate fi modificata la pornirea procesului (load-time) sau cand ruleaza (run-time)
+Obs. Un user neprivilegiat, poate doar creste valoarea `nice` a procesului pe care il detine, 
+     adica poate doar slabi prioritatea procesului.
+Obs. Doar un user privilegiat poate scadea valoarea si sa ii imbunatateasca prioritatea.
+
+Utilitarul `nice`
+  - folosit pentru a modifica prioritatea unui proces la pornire (load-time)
+
+Utilitarul `renice`
+  - folosit pentru a modifica prioritatea unui proces la rulare (run-time)
+
+Obs. Comanda `renice` poate fi folosita de un user neprivilegiat doar pentru a cteste val nice a procesului sau.
+Obs. Pentru scaderea valorii nice folosim contul privilegiat cu ajutorul `sudo`.
+Obs. La fel, si `nice` poate porni un proces cu valoare modificata.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
