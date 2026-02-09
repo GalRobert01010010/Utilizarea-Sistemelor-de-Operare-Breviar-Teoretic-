@@ -884,13 +884,119 @@ Obs. Variabila $? contine codul de iesire al ultimei comenzi rulate in terminal.
 
 ## 4.5.2: Semnale
 
-Def. Mecanisme de interactiune intre procese.
+Obs. Un semnal este identificat printr-un număr sau un nume.
+Def. Mecanisme de interacțiune și notificare între procese.
+- Procesele comunică între ele pentru a semnala situații deosebite.
+- Pentru ca un proces să poată trimite semnale, trebuie să aibă permisiuni:
+  -> Trebuie ca ambele procese să aparțină aceluiași user SAU
+  -> Să aparțină user-ului root.
+Obs. Semnalele pot fi folosite și pentru omorârea proceselor.
 
+- Utilitar: kill 
+  - Rol: Trimite un semnal către un proces identificat prin PID.
+  - Steaguri:
+    - -l : Listează toate semnalele disponibile.
+      - Comandă terminal: kill -l
+    - -s [semnal] : Specifică semnalul prin nume.
+      - Comandă terminal: kill -s SIGKILL 1234
+    - -[număr/nume] : Modul scurt de a trimite un semnal.
+      - Comandă terminal: kill -9 1234
+    - -a : Permite trimiterea semnalelor proceselor care nu aparțin utilizatorului curent (necesită root).
+      - Comandă terminal: sudo kill -a -9 1234
 
+- Utilitar: pkill
+  - Rol: Trimite semnale bazat pe atributele procesului (nume, user etc.).
+  - Steaguri:
+    - -u [user] : Targetează procesele unui anumit utilizator.
+      - Comandă terminal: pkill -u student sleep
+    - -x : Potrivire exactă a numelui (Exact match).
+      - Comandă terminal: pkill -x bash
+    - -n : Trimite semnal doar celui mai recent proces pornit (Newest).
+      - Comandă terminal: pkill -n python
+    - -o : Trimite semnal doar celui mai vechi proces pornit (Oldest).
+      - Comandă terminal: pkill -o firefox
+    - -P [PPID] : Targetează procesele care au un anumit părinte.
+      - Comandă terminal: pkill -P 1
 
+- Utilitar: killall 
+  - Rol: Omoară toate procesele care au un anumit nume.
+  - Steaguri:
+    - -i : Cere confirmare înainte de a omorî procesul (Interactive).
+      - Comandă terminal: killall -i firefox
+    - -I : Ignoră diferența între litere mari și mici (Ignore case).
+      - Comandă terminal: killall -I FIREFOX
+    - -u [user] : Omoară procesele cu numele X doar dacă aparțin user-ului Y.
+      - Comandă terminal: killall -u student vim
+    - -v : Afișează detalii despre succesul operațiunii (Verbose).
+      - Comandă terminal: killall -v sleep
 
+- Utilitar: skill (Menționat în USO ca alternativă pe alte sisteme)
+  - Rol: Semnalizează sau schimbă prioritatea proceselor.
+  - Steaguri:
+    - -t [tty] : Targetează toate procesele atașate unui anumit terminal.
+      - Comandă terminal: skill -KILL -t /dev/pts/1
+    - -u [user] : Targetează toate procesele unui utilizator.
+      - Comandă terminal: skill -STOP student
+    - -p : Targetează procesul după PID (similar cu kill).
+      - Comandă terminal: skill -CONT -p 1234
 
+- Concurs (Sinteză Capcane):
+  - Diferența critică: `kill` vrea PID (numeric), `killall` și `pkill` vor Nume (text).
+  - Semnalul implicit: Toate trimit **15 (SIGTERM)** dacă nu specifici altceva.
+  - Atenție la pkill: Dacă scrii `pkill fi`, va omorî și `firefox` și `find` (orice conține "fi"). 
+    Folosește `-x` pentru siguranță.
 
+  Semnale Critice:
+
+    - SIGINT (2)
+      - Rol: Întrerupe un proces de la tastatură (Interrupt).
+      - Combinație taste: Ctrl+C
+      - Comandă terminal: kill -SIGINT $(pidof sleep)
+    
+    - SIGQUIT (3)
+      - Rol: Termină un proces și generează un core dump (Quit).
+      - Combinație taste: Ctrl+\
+      - Comandă terminal: kill -3 1234
+
+    - SIGKILL (9)
+      - Rol: Omoară forțat procesul (Kill). NU poate fi ignorat.
+      - Combinație taste: Nu există.
+      - Comandă terminal: kill -9 1234
+
+    - SIGTERM (15)
+      - Rol: Cere procesului să se închidă frumos (Terminare implicită).
+      - Combinație taste: Nu există.
+      - Comandă terminal: kill 1234
+
+    - SIGCONT (18)
+      - Rol: Continuă execuția unui proces care a fost suspendat.
+      - Combinație taste: Nu există (corespunde comenzii `bg` sau `fg`).
+      - Comandă terminal: kill -SIGCONT 1234
+
+    - SIGSTOP (19)
+      - Rol: Suspendă imediat procesul (Stop). NU poate fi ignorat.
+      - Combinație taste: Nu există.
+      - Comandă terminal: kill -19 1234
+
+    - SIGTSTP (20)
+      - Rol: Suspendă procesul de la tastatură (Terminal Stop).
+      - Combinație taste: Ctrl+Z
+      - Comandă terminal: kill -SIGTSTP $(pidof sleep)
+
+ Concurs (Sinteză Grile):
+- Semnale de neignorat: SIGKILL (9) și SIGSTOP (19). Orice alt semnal poate 
+  fi interceptat sau ignorat de programator.
+- Diferența SIGINT vs SIGTERM: SIGINT vine de la terminal (Ctrl+C), SIGTERM 
+  este cererea sistemului de a închide procesul.
+- Identificare: Dacă o grilă întreabă de semnalul 10, te uiți în `kill -l` 
+  și vezi că este SIGUSR1 (semnal definit de utilizator).
+
+Pe scurt, atunci când vrem să omorâm un proces aflat în foreground folosim:
+• combinatia de taste `Ctrl+c`
+• combinatia de taste `Ctrl+\`
+• trimiterea semnalului SIGKILL din alt terminal
+
+## 4.5.3: Inlantuirea comenzilor
 
 
 
