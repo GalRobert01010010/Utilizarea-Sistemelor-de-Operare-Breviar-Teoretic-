@@ -862,12 +862,6 @@ Terminarea (omorarea)
 
 Obs. Terminarea unui proces in Windows are loc prin transmiterea unei notificari numite `exceptie`, de la un proces la altul.
 
-Utilitarul `kill`
-  - permite transmiterea de semnale catre procese
-Steaguri:
-
-
-
 Obs. La incheierea unui proces, procesul incheiat trimite proceului parinte doua informatii:
   -> cum si-a incheiat executia (exit status)
   -> un cod de iesire (exit code)
@@ -881,6 +875,24 @@ Obs. Variabila $? contine codul de iesire al ultimei comenzi rulate in terminal.
    student@uso:~$ grep profesor /etc/passwd > /dev/null
    student@uso:~$ echo $?
    1
+
+Variabile Speciale Bash
+  Def. Variabile predefinite de shell care stochează informații despre starea proceselor și a argumentelor.
+  - Lista Variabilelor:
+    - $? : Codul de retur al ultimei comenzi executate. 0 înseamnă succes, orice alt număr indică o eroare.
+      - Exemplu: ls /folder_invalid; echo $?
+    - $! : PID-ul ultimului proces trimis în background folosind operatorul &.
+      - Exemplu: sleep 100 & echo $!
+    - $$ : PID-ul procesului shell curent în care lucrezi.
+      - Exemplu: echo $$
+    - $0 : Numele scriptului sau al shell-ului care rulează.
+      - Exemplu: echo $0
+    - $# : Numărul total de argumente transmise unei comenzi sau script.
+      - Exemplu: ./script.sh arg1 arg2 (afișează 2)
+    - $1, $2, ... : Valoarea fiecărui argument în ordinea introducerii lor.
+      - Exemplu: echo $1 (afișează primul argument)
+    - $@ : Reprezintă toate argumentele primite, tratate ca elemente individuale.
+    - $* : Reprezintă toate argumentele primite, concatenate într-un singur șir de caractere.
 
 ## 4.5.2: Semnale
 
@@ -997,6 +1009,59 @@ Pe scurt, atunci când vrem să omorâm un proces aflat în foreground folosim:
 • trimiterea semnalului SIGKILL din alt terminal
 
 ## 4.5.3: Inlantuirea comenzilor
+
+- folosim operatori de inlantuire care ne permit sa rulam mai multe procese unul dupa altul 
+    si sa folosim o singura linie de comanda
+
+1. Operatorul de inlantuire neconditionata (`;`)
+  - ruleaza doua comenzi una dupa alta, indiferent de codul de iesire
+2. Operatorii de inlantuire conditionata (`&&` (AND) & `||` (OR))
+  - conditioneaza rularea celei de-a doua comenzi de codul de iesire al primei comenzi
+  -> comm1 || comm2 ruleaza comanda 2 doar daca comanda 1 s-a incheiat cu insucces
+  -> comm1 && comm2 ruleaza comanda 2 doar daca comanda 1 s-a incheiat cu succes
+
+Ex.
+  student@uso:~/.../code/04-process/main-args$ make && ./main_args
+Ce se intampla in linia de comanda:
+  - executabilul main_args ruleaza (./) doar daca a reusit comanda de compilare `make`
+  - main_args = program scris in C folosit pentru a demonstra argumentele liniei de comanda
+    - afiseaza numarul de argumente primite si continutul acestora (vectorul de argumente `argv`)
+
+ Utilitarul `make` 
+  - erifică ce fișiere sursă au fost modificate și compilează doar părțile necesare pentru a obține executabilul.
+ Steaguri:
+    - -f [file] : Specifică un alt fișier în loc de cel implicit ("Makefile").
+      - Comandă terminal: make -f MyMakefile
+    - -j [n] : Rulează compilarea în paralel pe mai multe nuclee (Jobs). Foarte util pentru viteza.
+      - Comandă terminal: make -j 4
+    - -C [dir] : Schimbă directorul înainte de a căuta Makefile-ul.
+      - Comandă terminal: make -C /home/student/proiect
+    - -n (dry-run) : Afișează comenzile care ar fi executate, fără a le rula efectiv.
+      - Comandă terminal: make -n
+  - Target-uri comune (Convenții):
+    - make clean : Șterge fișierele obiect și executabilele rezultate din compilările anterioare.
+    - make all : Target-ul implicit care compilează tot proiectul.
+
+- Alte utilitare relevante pentru compilare:
+  - gcc (GNU Compiler Collection) : Compilatorul propriu-zis pentru C/C++.
+    - Steaguri critice:
+      - -o [nume] : Specifică numele executabilului final.
+        - Comandă terminal: gcc main.c -o main_args
+      - -Wall : Afișează toate avertismentele (Warnings All).
+      - -g : Include informații pentru debugging (necesar pentru GDB).
+  - gdb (GNU Debugger) : Utilitar pentru depanarea programelor pas cu pas.
+  - ld (Linker) : Combină fișierele obiect într-un executabil (make/gcc îl apelează automat).
+
+## 4.5.4: Comunicarea prin pipe-uri
+
+
+
+
+
+
+
+
+
 
 
 
