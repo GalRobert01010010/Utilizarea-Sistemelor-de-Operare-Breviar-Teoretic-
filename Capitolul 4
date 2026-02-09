@@ -842,8 +842,56 @@ Def. Redirectarea = modificarea unor descriptori standard, astfel incat sa refer
 
 ## 4.5: Operatii cu procese. Interactiunea intre procese
 
+- procesele dau nastere la alte procese, iar shell-ul este de obicei procesul parinte
+  -> se folosesc comenzi care creeaza procese
+  -> procesul ruleaza pana la incheierea sa, folosind resursele sistemului
 
- 
+## 4.5.1: Incheierea unui proces
+
+Exista urmatoarele situatii pentru incheierea unui proces:
+  - atingerea sfarsitului rpogramului (incheierea functiei main() in C)
+  - pelul unei rutine de incheiere (Ex. functia exit() in C)
+  - atingerea unei conditii neasteptate
+    - Ex. accesare unei zone invalide de memorie, rularea unei comenzi invalide etc.
+  - omorarea / terminarea de un alt proces
+
+Terminarea (omorarea)
+  - se realizeaza de catre un alt proces cu permisiuni
+    - procesul poate apartine user-ului curent sau administratorului
+  - are loc prin transmiterea unui semnal catre acel proces
+
+Obs. Terminarea unui proces in Windows are loc prin transmiterea unei notificari numite `exceptie`, de la un proces la altul.
+
+Utilitarul `kill`
+  - permite transmiterea de semnale catre procese
+Steaguri:
+
+
+
+Obs. La incheierea unui proces, procesul incheiat trimite proceului parinte doua informatii:
+  -> cum si-a incheiat executia (exit status)
+  -> un cod de iesire (exit code)
+    - val 0 pentru succes si val cuprinse intre 1-255 pentru eroare
+
+Obs. Variabila $? contine codul de iesire al ultimei comenzi rulate in terminal.
+  Ex.
+   student@uso:~$ grep student /etc/passwd > /dev/null
+   student@uso:~$ echo $?
+   0
+   student@uso:~$ grep profesor /etc/passwd > /dev/null
+   student@uso:~$ echo $?
+   1
+
+## 4.5.2: Semnale
+
+Def. Mecanisme de interactiune intre procese.
+
+
+
+
+
+
+
 
 
 
