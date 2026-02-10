@@ -1054,16 +1054,65 @@ Ce se intampla in linia de comanda:
 
 ## 4.5.4: Comunicarea prin pipe-uri
 
+- cand folosim inlantuiri urmarim transferul de date de la o comanda la alta
+Transferul folosind un fisier:
+  - o comanda redirecteaza iesirea spre acel fisier, iar alta comanda redirecteaza intrarea
+  - Ex. 
+    student@uso:~$ ps -e --no-header > out   
+    student@uso:~$ wc -l < out
+    191
+    - redirectam iesirea comenzii `ps` in fisierul out
+    - folosim fisierul out ca intrare pentru `wc`
+    -> aflam cate procese sunt active in sistem, numarand liniile afisate de comanda ps
+    Obs. --no-header face ca ps sa nu mai afiseze capul tabelar.
 
+Utilitarul `wc` (Word/Line/Character/Byte Count)
+  -afișează implicit numărul de linii, cuvinte și octeți (bytes) dintr-un fișier
+    - Ex. wc date.txt
+  Steaguri:
+  - wc -l: (Lines) Afișează doar numărul de linii (cea mai folosită opțiune)
+    - Exemplu: wc -l /etc/passwd
+  - wc -w: (Words) Afișează doar numărul total de cuvinte
+    - Exemplu: wc -w eseuri.txt
+  - wc -c: (Bytes) Afișează numărul total de octeți (bytes)
+    - Exemplu: wc -c imagine.jpg
+  - wc -m: (Characters) Afișează numărul de caractere (important pentru fișiere 
+            cu caractere speciale/Unicode unde 1 caracter != 1 byte)
+    - Exemplu: wc -m text_romana.txt
+  - wc -L: (Max line length) Afișează lungimea celei mai lungi linii din 
+            fișier (numărul de caractere)
+    - Exemplu: wc -L configuratie.conf
 
+Operatorul `|` (pipe)
+  - transfera iesirea standard a unei comenzi catre intrarea standard a celeilalte comenzi
+  - Ex. 
+    student@uso:~$ ps -e --no-header | wc -l
+    192
+    -> aflam cate procese sunt active in sistem, numarand liniile afisate de comanda ps
+    Obs. Spre deosebire de prima implementare (unde contorul este 191 de procese), 
+in a doua implementare este 192.
+      Asta rezulta din faptul ca in prima implementare, `ps` nu numara procesul `wc`, 
+deoarece `wc` incepe cand fisierul out cu procese din `ps` este completat.
+      In a doua implementare, `ps` si `wc` ruleaza simultan, deci `ps` vede cu un proces mai mult (192).
 
+Exemplu de inlantuire de comenzi cu `|`:
+  student@uso:~$ grep -rwc FILE /usr/include/ | grep -v ':0' | sort -n -t ':' -k2 | tail -5
+  Explicatie:
+  1. grep -rwc FILE /usr/include/
+    - cauta recursiv (-r) cuvantul intreg (-w) "FILE" si le numara (-c) aparitiile in directorul specificat
+    Obs. Când rulezi grep -c (count) pe mai multe fișiere, formatul standard de afișare 
+         este întotdeauna: nume_fisier:numar_aparitii   # coloana1(k1):coloana2(k2)
+  2. grep -v ':0'
+    - elimina (-v) liniile care se termina in ":0" (adica ignora 
+      fisierele in care nu a gasit niciul "FILE" scris)
+  3. sort -n -t ':' -k2
+    - sorteaza numeric (-n), folosind ":" ca separator de coloane (-t ':') si se 
+      uita la a doua coloana (-k2) adica la numarul de aparitii
+  4. tail -5
+    - pastreaza doar ultimele 5 aparitii din lista sortata, adica 
+      fisierele cu cele mai multe aparitii
 
-
-
-
-
-
-
+## 4.6: Interactivitatea Proceselor
 
 
 
