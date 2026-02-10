@@ -1114,6 +1114,29 @@ Exemplu de inlantuire de comenzi cu `|`:
 
 ## 4.6: Interactivitatea Proceselor
 
+Def. Procesele interactive = procese care au nevoie de informatii (prin mouse sau 
+     tastatura) de la utilizator si ofera informatii pe ecran.
+Def. Procesele neinteractive = ruleaza fara interventia utilizatorului.
+  - se mai numesc si `procese batch`
+
+Obs. Shell-ul e unul dintre cele mai inportante procese interactive.
+  - poate fi grafic sau in linia de comanda
+
+## 4.6.1: Terminale
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
