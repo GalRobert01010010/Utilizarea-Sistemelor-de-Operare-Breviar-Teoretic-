@@ -1119,21 +1119,60 @@ Def. Procesele interactive = procese care au nevoie de informatii (prin mouse sa
 Def. Procesele neinteractive = ruleaza fara interventia utilizatorului.
   - se mai numesc si `procese batch`
 
-Obs. Shell-ul e unul dintre cele mai inportante procese interactive.
+Obs. Shell-ul e unul dintre cele mai importante procese interactive.
   - poate fi grafic sau in linia de comanda
 
 ## 4.6.1: Terminale
 
+- terminalul intermediaza transmiterea intrarii (0) si iesirii (1) de la utilizator la shell
+- e localizat in FSH in /dev, si se acceseaza cu comanda `tty`
+- procesul de rulate al terminalului se poate vedea cu `ps`
+- procesele desfasurate simultan in shell vor impartii iesirea standard (1)
+- poate exista un singur proces in foreground, si doar acesta are acces la intrarea standard (0)
 
+## 4.6.2: Procesele neinteractive
 
+- procesele neinteractive sunt utile pentru mentinerea bunei-functionari a sistemului
+  -> nu necesita standard input 
+- un background process nu are acces la terminal pentru intrarea standard
+  -> acesta ruleaza in general interactiv
+- un proces care ruleaza in background poate fi detasat de terminal
+Def. Proces detasat = proces care a pierdut orice legatura cu terminalul (standard 
+    input, output si error nu mai refera terminalul).
+  - legatura nu mai poate fi restaurata
+  - descriptorii standard ai unui proces detasat nu mai refera ternalul, ci refera 
+    fisiere sau alte tipuri de intrare precum (pipe-uri, sockets)
 
+4.6.3: Procese daemon
 
+- se mai numesc servicii (ca si in Windows)
+  - gestiunea serviciilor in Linux se face cu comanda `service`
+- ruleaza in background, neinteractiv, detasate de terminal
+- are ca proces parinte procesul init
+- descriptorii standard refera intrarea /dev/null
+- ofera un anumit serviciu de sistem
+  - Ex. procesul `atd`
+    - proces daemon care planifica executarea altor procese la un moment dat
 
+Interactiunea cu procesele daemon se face prin:
+  - semnale
+  - fisiere de configurare
+  - fisiere de tip jurnal (log)
 
+Exemple de procese daemon:
+  - procesul init
+  - procese de tip servicii (Ex. `cron`, pentru servicii de retea)
+  - alte procese rulate de user pentru a rula fara un terminal asociat
 
+Caracteristici ale unui proces daemon:
+  - ruleaza in bakground fara interactiune directa cu user-ul
+  - ofera un serviciu sistemului (planificare, indexare de fisiere etc.)
+  - nu are un terminal asociat
+  - are ca proces parinte init
 
+Obs. Pentru a afisa in chell o lista aproximativa a proceselor daemon existente, rulam in terminal comada ps -f --ppid 1
 
-
+## 4.6.4: Detasarea de terminal
 
 
 
