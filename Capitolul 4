@@ -1258,9 +1258,219 @@ Diferenta dintre `nohup` si `disown`:
 
 ## 4.5.6: Utilitarele `screen`, `tmux`, `byobu`, `dtach`
 
+- daca folosim `nohup` si `disown`, pierdem interactivitatea cu procesele
+  -> se creeaza procese daemon, detasate de terminal, care ruleaza in bg
+
+Obs. Daca avem nevoie sa rulam o aplicatie interactiva de la care sa ne deconectam, vom folosi utilitarele `screen`, `tmux`, `byobu`, `dtach`.
+Obs. `screen`, `tmux`, `byobu` se numesc multiplexoare de terminal.
+  - pot creea "ferestre de terminal" intr-o singura sesiune
+  - pot detasa si reatasa procese de la sesiunea curenta de terminal
+
+Utilitarul `tmux`:
+- creaza o sesiune noua de terminal de la care ne putem detasa si reatasa
+Argumente pentru `tmux`:
+  - tmux list-sessions: Afișează sesiunile active (ID, număr ferestre, dată).
+  - tmux attach-session: Reia ultima sesiune activă.
+  - tmux attach-session -t [ID]: Se conectează la o sesiune specifică după ID/Nume.
+  - tmux new-session -s [nume]: Creează o sesiune cu un nume personalizat.
+  - tmux kill-session -t [ID]: Închide sesiunea specificată.
+
+Comenzi din interior (Prefix: Ctrl+b), apoi:
+  - d: Detach (te deconectezi, procesul continuă).
+  - c: Create (fereastră nouă).
+  - n / p: Next / Previous (navigare ferestre).
+  - %: Split Vertical (panouri).
+  - ": Split Horizontal (panouri).
+  - x: Kill pane (închide panoul curent).
+
+Obs. `screen`, `tmux`, `byobu` sunt utilitare similare in ceea ce priveste pornirea unui proces interactiv si detasarea de la terminal.
+  1. Se porneste o sesiune de terminal folosind `screen`, `tmux` sau `byobu`.
+  2. Se ruleaza comenzile in acel terminal.
+  3. Se face detasarea de la terminal.
+  4. Se poate realiza reconectarea la terminal.
+- shellu-ul in care a fost pornit terminalul `screen`, `tmux`, `byobu` poate fi inchis, terminalul ramanand activ.
+
+Detașarea și Persistența
+- Terminalul (Clientul): Programul grafic pe care îl vezi (ex: GNOME Terminal, PuTTY). Dacă îl închizi (apeși X), trimiți în mod normal SIGHUP tuturor proceselor din el.
+- Shell-ul din interior (Serverul tmux): Când rulezi tmux, el creează un "server" care rulează independent. 
+- Procesul: 
+    1. tmux pornește un server în fundal.
+    2. Închizi terminalul (fereastra).
+    3. Shell-ul tău local moare, dar serverul tmux rămâne activ în memoria RAM.
+    4. Procesele pornite în interiorul tmux continuă să ruleze ca și cum nimic nu s-a întâmplat.
+- reconectarea se poate face intr-un alt shell
+
+Obs. `tmux` si `byobu` sunt aplicatii mai bogate in functionalitati si sunt recomandate in defavoarea `screen`.
+
+Comenzi frecvente pentru `tmux`, `byobu` si `screen`:
+
+- Creare fereastră nouă:
+    - tmux: Ctrl+b c
+    - byobu: F2
+    - screen: Ctrl+a c
+
+- Detașare (Ieșire fără oprire):
+    - tmux: Ctrl+b d
+    - byobu: Shift+F6
+    - screen: Ctrl+a d (Notă: În textul tău era scris Ctrl+b c, care e greșit pentru screen)
+
+- Listare sesiuni:
+    - tmux: tmux list-sessions
+    - byobu: byobu list-sessions
+    - screen: screen -ls
+
+- Reatașare la sesiune:
+    - tmux: tmux attach -t [nume]
+    - byobu: byobu attach
+    - screen: screen -r [ID]
+
+- Schimbare fereastră (Navigare):
+    - tmux: Ctrl+b [0-9] (ID-ul ferestrei)
+    - byobu: F3 (înapoi) / F4 (înainte)
+    - screen: Ctrl+a [0-9]
+
+- Închidere sesiune (Kill):
+    - tmux: Ctrl+b :kill-session
+    - byobu: Ctrl+a \ (sau ieșire din toate shell-urile)
+    - screen: Ctrl+a \
+
+Utilitarul `dtach`:
+  - folosit daca ne intereseaza doar rularea unei sesiuni de terminal, nu si partea de multiplexare si subferestre
+  - creaza o sesiune de terminal si ruleaza o comanda in cadrul ei
+  - apoi ne putem deconecta de la acea sesiune
+ Mod de funcționare:
+    - Folosește un fișier de tip socket pentru a menține legătura cu sesiunea.
+    - Comanda de detașare: Ctrl+\ (Prefixul care te scoate din sesiune fără să o închidă).
+ Steaguri:
+    - -c [nume_socket] [comanda]: Create (Creează o sesiune nouă folosind socket-ul specificat și rulează comanda, ex: /bin/bash).
+      Ex. student@uso:~$ dtach -c this_socket /bin/bash
+    - -a [nume_socket]: Attach (Se reconectează la o sesiune existentă prin intermediul socket-ului).
+      Ex. student@uso:~$ dtach -a this_socket
+    - -n [socket]: New (Creează o sesiune nouă, dar o pornește direct în fundal - detached).
+    - -e [caracter]: Escape (Schimbă combinația de taste pentru detașare; implicit este Ctrl+\).
+    - -p: Push (Trimite conținutul din stdin direct în sesiune și apoi se detașează imediat).
+    - -r [metodă]: Resizing (Definește cum să se comporte fereastra când schimbi mărimea terminalului: none, shell, sau winch).
+
+Obs. Spre deosebire de tmux, dtach nu are un server central care listează sesiunile. 
+  -> Trebuie să știi tu unde ai creat fișierul this_socket ca să te poți reatașa.
+
+## 4.7: Investigarea proceselor
 
 
+- e util sa investigam procesele pentru a identifica resursele consumate de procese
+  - aceste procese pot fi omorate sau li se pot actualiza prioritatile
+- procesele pot fi investigate in mai multe moduri
 
+Utilitarele de listare sau monitorizare a proceselor:
+  - ps, top, htop (in Linux)
+  - Task Manager sau Process Explorer (in Windows)
+  - scopul investigării este identificarea proceselor care consumă resurse excesive pentru a le opri, analiza sau schimba prioritățile.
+  - resursele monitorizate includ: procesorul (CPU), memoria (RAM), discul (I/O) și conexiunile de rețea.
+
+Utilitare de monitorizare și listare
+
+Utilitarul `ps`
+- Afișează o imagine statică (snapshot) a proceselor curente.
+- Steaguri:
+- -e : Afișează toate procesele din sistem.
+- Comandă terminal: ps -e
+- -f : Afișează lista completă de detalii (UID, PID, PPID, C, STIME, TTY).
+- Comandă terminal: ps -ef
+- -u [user] : Afișează procesele unui anumit utilizator.
+- Comandă terminal: ps -u student
+
+Utilitarele `top` și `htop`
+- Oferă o interfață interactivă și dinamică pentru monitorizarea proceselor.
+- htop este varianta mai modernă, colorată și mai ușor de navigat față de top.
+- Comandă terminal: top
+- Comandă terminal: htop
+
+Utilitarul `iotop`
+- Folosit pentru investigarea proceselor care utilizează intens discul (Input/Output).
+- Necesită drepturi de administrator (sudo).
+- Steaguri:
+- -o : Afișează doar procesele care realizează efectiv operații de I/O în acel moment.
+- Comandă terminal: sudo iotop -o
+- -u [user] : Monitorizează doar consumul de disc al unui utilizator.
+- Comandă terminal: sudo iotop -u student
+- Comandă terminal: sudo iotop
+
+Utilitarul `lsof` (List Open Files)
+- Identifică fișierele sau socket-urile deschise de procese.
+- Steaguri:
+- -p [PID] : Listează toate fișierele deschise de un proces specific după ID.
+- Comandă terminal: lsof -p 1234
+- -u [user] : Listează fișierele deschise de procesele unui utilizator.
+- Comandă terminal: lsof -u student
+- -i : Afișează fișierele de rețea (socket-uri) deschise.
+- Comandă terminal: lsof -i
+
+Familia de utilitare `sysstat`
+- Folosite pentru a observa trenduri și statistici pe termen lung.
+- Acestea afisează periodic informatii despre procentul de procesor ocupat, procentul de memorie ocupată, utilizarea de I/O
+- Comandă terminal: iostat
+- Comandă terminal: sar
+
+Utilitare pentru investigarea amănunțită (Tracing)
+  -aceste utilitare urmăresc execuția unui program prin apelurile pe care acesta le face către sistem sau biblioteci.
+
+Utilitarul `strace`
+- Interceptează și înregistrează apelurile de sistem (system calls) realizate de un proces către kernel.
+Steaguri:
+- -e [apel] : Filtrează afișarea doar pentru anumite apeluri (ex: write).
+- Comandă terminal: strace -e write ls > /dev/null
+- -p [PID] : Se atașează unui proces care rulează deja pentru a-l monitoriza.
+- Comandă terminal: strace -p 1234
+- -o [file] : Salvează rezultatul urmăririi într-un fișier text.
+- Comandă terminal: strace -o output.txt ls
+
+Utilitarul `ltrace`
+- Interceptează și afișează apelurile către bibliotecile partajate (library calls).
+Steaguri:
+- -e [funcție] : Filtrează afișarea pentru o anumită funcție de bibliotecă.
+- Comandă terminal: ltrace -e fwrite_unlocked ls > /dev/null
+- -S : Afișează și apelurile de sistem pe lângă cele de bibliotecă.
+- Comandă terminal: ltrace -S ls
+
+
+## 4.8 Anexă: Sistemul de fișiere procfs
+
+- procfs este un sistem de fișiere virtual care nu ocupă spațiu pe disc, ci rezidă în memoria RAM.
+- Reprezintă interfața principală a nucleului (kernel) prin care oferă informații despre procese și hardware.
+- Localizare: /proc (doar în sistemele Linux).
+- Utilitare dependente: Pachetul procps (conține ps, pgrep, top etc.) își extrage datele direct din /proc.
+
+Structura directorului /proc
+  - Directoare numerice: Fiecare director al cărui nume este un număr corespunde unui PID (Process ID) activ.
+  - Fișiere de sistem: Intrări care oferă informații despre starea generală a mașinii (CPU, memorie, kernel).
+
+Investigarea proceselor (/proc/[PID])
+  - Fiecare director numeric reprezintă un PID (Process ID) activ.
+  - exe : Legătură simbolică către executabilul aferent procesului.
+  - fd : Director cu tabela de descriptori de fișiere ai procesului.
+  - status : Informații despre starea procesului (nume, PID, memorie, etc.).
+  - task : Director cu firele de execuție (thread-urile) procesului.
+
+Intrări globale pentru investigarea sistemului
+  - /proc/filesystems : Afișează sistemele de fișiere suportate de sistem.
+  - /proc/interrupts : Evidența întreruperilor hardware.
+  - /proc/ioports : Adresele porturilor de I/O (Input/Output).
+  - /proc/sys/ : Director pentru configurarea și vizualizarea parametrilor de sistem.
+  - /proc/cmdline : Argumentele liniei de comandă folosite de kernel la pornire.
+  - /proc/cpuinfo : Detalii despre arhitectura și specificațiile procesorului.
+  - /proc/meminfo : Statistici despre utilizarea memoriei RAM.
+
+Utilitare care consultă /proc
+  - lscpu : Consultă /proc/cpuinfo pentru a afișa datele procesorului.
+  - free : Consultă /proc/meminfo pentru starea memoriei.
+  - mount : Consultă /proc/filesystems pentru a verifica sistemele de fișiere.
+  - lsblk : Consultă /proc/partitions pentru a lista dispozitivele de stocare.
+  - df : Consultă fișierele de montare (mounts/mountinfo) din /proc.
+
+Comenzi terminal pentru investigare manuală:
+  - ls /proc
+  - cat /proc/cpuinfo
+  - ls -l /proc/self/exe
 
 
 
