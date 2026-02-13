@@ -1174,6 +1174,102 @@ Obs. Pentru a afisa in chell o lista aproximativa a proceselor daemon existente,
 
 ## 4.6.4: Detasarea de terminal
 
+- procesele daemon sunt create la pornirea sistemului de procesul init
+- un user poate decide sa transforme un proces intr-unul daemon (neinteractivsi detasat de ecran)
+  -> procesul va fi independent de shell si va rula chiar daca shell-ul curent ca fi inchis
+Def. Daemonizarea unui proces = modificarea unui proces in asa fel incat sa fie independent de shell.
+
+Conceptul de Daemonizare și Gestiunea Proceselor la Distanță
+  Ce este Bittorrent în acest context?
+    - este un protocol de transfer de date P2P (Peer-to-Peer).
+    - in administrarea sistemelor, este folosit ca exemplu de „task de lungă durată” (long-running task).
+    - necesită daemonizare deoarece descărcarea nu trebuie întreruptă dacă conexiunea SSH pică sau dacă utilizatorul închide laptopul.
+  Problema Tehnică: Semnalul SIGHUP
+    - când un shell se închide, trimite automat semnalul `SIGHUP` (Hangup) tuturor proceselor de care este responsabil (copiii săi).
+    - implicit, un proces care primește SIGHUP se termină imediat.
+
+  Soluția 1: Daemonizarea (nohup, disown, &)
+    - simbolul `&`: Trimite procesul în background, dar acesta rămâne legat de terminal (moare la SIGHUP).
+    - `nohup` (No Hang Up): Rulează o comandă care ignoră semnalul SIGHUP și redirecționează `stdout` și `stderr` în fișierul `nohup.out`.
+    - `disown`: O comandă internă a shell-ului care elimină un proces activ din tabela de joburi a shell-ului, astfel încât acesta să nu mai primească SIGHUP la închidere.
+
+  Soluția 2: Multiplexoare de Terminal (tmux, screen)
+    - creează o sesiune de terminal virtuală pe server care persistă indiferent de starea conexiunii SSH.
+    - detach: Te deconectezi de la sesiune fără a opri programele (ele rămân interactive în interiorul tmux).
+    - attach: Te reconectezi ulterior pentru a vedea progresul (ex: interfața bittorrent).
+
+  Daca dorim sa pornim o descarcare de fisier prin Bittorent pe un server la distanta, accesat prin SSH:
+    1. Ne conectam prin SSH la serverul de la distanta: `ssh user@server`
+    2. Pornim procesul `bittorent` detasat de terminal: `nohup bittorrent-client fisier.torrent &` (sau în interiorul unei sesiuni `tmux`).
+    3. Inchidem conexiunea la shell-ul curent. Procesul bittorent continua executia
+      - Procesul continua să ruleze pe server deoarece este detașat de terminalul local.
+    4. Ulterior ne reconectam prin SSH si putem investiga rularea procesului
+      - Reconectare după un timp pentru verificarea rezultatelor.
+
+Obs. Procesul 3 este dificil de realizat, deoarece inchiderea shell-ului nu trebuie sa duca la inchiderea procesului bittorent.
+  - putem face acest lucru in doua moduri:
+  1. Daemonizarea procelului bittorent (sa ruleze in background detasat de terminal)
+    - utilitare: `nohup` si `disown`
+  2. Folosirea unui utilitar care sa creeze o sesiune de terminal detasabila in care procesul ruleaza in continuare
+    - utilitare: `screen`, `tmux`, `dtach`, `byobu`
+
+## 4.6.4.1: Utilitarele `nohup` si `disown`
+
+- permit daemonizarea unui proces care ruleaza in shell
+Obs. Tehnic vorbind, aceste procese nu sunt daemoni, deoarece:
+  - nu au neaparat descriptorii standard directionati catre /dev/null
+  - nu au ca parinte procesul init de la inceput
+
+Intelegerea utilitarelor `nohup` si `disown`
+  - cand terminalul aferent unui shell e inchis, si shell-ul isi incheie executia
+  - shell-ul trimite semnalul `SIGHUP` proceselor aflate in background
+    -> acele procese isi incheie executia
+  - pt a preveni ca un proces din background sa isi incheie executia in momentul inchiderii terminalului, trebuie ca acesta sa ignore semnalul `SIGHUP`
+
+Utilitarul `nohup`
+  - folosit pentru a determina un proces sa ignore semnalul `SIGHUP`
+  - inchiderea shell-ului nu va duce la inchiderea executiei sale
+  - dupa inchiderea shell-ului, procesul e adoptat de init
+  - stdout si stderr nu vor mai fi legate de terminal, ci de fisierul `nohup.out` (daca nu se specifica alta metoda de afisare)
+    - putem specifica redirectarea iesirii catre /dev/null
+  - folosim utilitarul `nohup` urmat de `transmission-cli` pentru instalari lungi
+
+Utilitarul `disown`
+  - daca nu folosim `nohup` de la inceput ca sa nu trimita SIGHUP procesului, putem folosi `disown`
+  - are rolul de a spune shell-ului sa nu mai trimita semnalul `SIGHUP` unui proces din background
+  - procesul este persistent si dupa inchiderea shell-ului
+  Def. Job = proces supravegheat activ de catre shell.
+    - joburile pot fi si cele din background si cele din foreground, atata vreme cat au fost pornite in sesiunea curenta
+  - folosind `disown`, procesul la care ne referim dispare din lista de joburi, adica nu mai sunt supravegheate de terminal
+
+Diferenta dintre `nohup` si `disown`:
+  - Momentul aplicării:
+      - nohup: SE FOLOSEȘTE LA LANSARE (ex: nohup comanda &). Nu poți pune nohup pe un proces care rulează deja.
+      - disown: SE FOLOSEȘTE DUPĂ LANSARE. Dacă ai pornit ceva, ai uitat de nohup și nu vrei să-l oprești, folosești disown.
+  - Cine gestionează semnalul:
+      - nohup: Este un utilitar extern care face procesul să ignore semnalul SIGHUP.
+      - disown: Este o comandă internă a shell-ului (bash builtin) care șterge procesul din lista de joburi. Shell-ul nici nu mai încearcă să-i trimită SIGHUP.
+  - Output (Ieșirea de date):
+      - nohup: Redirecționează automat stdout/stderr în fișierul nohup.out (dacă nu îi zici tu altfel).
+      - disown: Nu se ocupă de output. Dacă procesul scria în terminal, va continua să încerce să scrie acolo dacă nu ai făcut redirectările la început.
+  - Vizibilitate:
+      - Procesul cu nohup: Rămâne în lista de joburi (vizibil cu comanda jobs).
+      - Procesul cu disown: Dispare complet din lista de joburi (nu-l mai vezi cu jobs, doar cu ps).
+
+## 4.5.6: Utilitarele `screen`, `tmux`, `byobu`, `dtach`
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
