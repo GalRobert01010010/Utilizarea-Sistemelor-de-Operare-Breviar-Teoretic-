@@ -1,2 +1,182 @@
 # Capitolul 7: Interfata in linia de comanda
 
+Def. Interfata = modul prin care utilizatorul interactioneaza cu o aplicatie sau un sistem.
+- unele aplicatii sunt neinteractive
+  - Ex. programe batch
+  - nu ofera interfata cu utilizatorul
+  - ruleaza in bg
+- aplicatiile interactive ofera interfata
+  - GUI (Grafhical User Interface)
+  - CLI (Command Line Interface)
+  - web (webUI)
+Obs. Interfetele CLI se folosesc pentru a ajunge cel mai rapid la rezultat.
+- GUI este mai accesibila
+  - e folosita predominant pe medii mobile si in cele mai multe medii desktop
+  - elementele GUI sunt WIMP (Window, Icon, Menu, Pointer)
+  - pe sistemele mobile se foloseste ecran tactil
+- CLI este universala si ofera acces rapid la functionalitatea sistemului
+  - mai simpla, eficienta si cu facilitati complexe
+  - prezinta un prompt unde user-ul introduce comenzi pentru a interactiona cu sistemul sau aplicatia
+  - Ex. Linux shell, PowerShell, python shell, game consoles etc.
+
+
+## 7.1: Shellul. Functionarea shellului
+
+Def. Shell = aplicatie care realizeaza interactiunea dintre user si sistemul de operare.
+- poate fi GUI sau CLI
+
+## 7.1.1: Interactiunea cu shellul
+
+- ofera prompt unde se introduc comenzi
+- promptul poate contine informatii suplimentare
+  - Ex. numele utilizatorului, numele statiei de lucru, directorul curent
+
+Def. Comanda = un sir de caractere interpretat de shell, odata de user-ul apasa tasta Enter.
+=> shellul CLI se mai numeste interpretator de comenzi
+- folosim tastatura pt input si ecranul pentru output
+
+Def. Terminal = interfata prin care shellul interactioneaza cu utilizatorul
+- descroptorii standard ai shellului refera terminalul (afisarea lor obisnuita se va face pe terminal)
+=> terminalul este un canal de comunicare intre shell si user
+
+
+## 7.1.2: Facilitati shell
+
+- folosirea shellului implica eficcitate si eficienta
+- eficacitatea
+  - data de comenzile adecvate si parametri corespunzatori
+- eficienta
+  - data de viteza de tastare a comenzilor (generarea rapida a comenzilor sau editarea raspida a unei comenzi)
+  - pt generare rapida, shellul poate completa automat comenzi sau poate cauta in istoricul de comenzi
+
+
+## 7.1.2.1: Completarea comenzilor
+
+- este o facilitate esentiala a folosirii interfatei in linia de comanda
+Tasta Tab
+  - permite completarea unei comenzi sau a unui argument fara tastarea acesteia in totalitate
+  - daca shellul poate deduce ce comanda vrem sa folosim, la apasarea tastei Tab va completa automat
+  - daca sunt mai multe optiuni, la apasarea de doua ori a tastei Tab se vor afisa posibilitatile
+
+
+## 7.1.2.2: Istoricul de comenzi
+
+Utilitarul `history`
+  - afiseaza intreg istoricul de comenzi din sesiunea curenta
+
+- !! : Reexecută ultima comandă introdusă. Este utilă mai ales când ai uitat să pui sudo la început.
+- !-n : Reexecută comanda care s-a aflat cu n poziții în urmă în istoric (ex: !-13 execută a 13-a comandă numărată de la coadă la cap).
+- !string : Reexecută ultima comandă care începe cu șirul de caractere specificat (ex: !sna va rula ultima comandă snap).
+- Ctrl+r : Activează funcția reverse-i-search. Permite căutarea incrementală prin istoricul de comenzi pe măsură ce tastezi caractere din interiorul unei comenzi vechi.
+
+- Exemple practice:
+- sudo !! : Execută ultima comandă cu drepturi de administrator (previne reintroducerea manuală a unei comenzi lungi după o eroare de acces).
+- !-13 : Execută comanda aflată pe poziția curentă minus 13 în lista history.
+- Ctrl+r ink : Va căuta în istoric și va afișa ultima comandă care conține subșirul ink (în exemplul tău, pinky teacher).
+
+Comanda anterioara:
+  - sageata sus
+  - Ctrl + p
+
+Comanda urmatoare:
+  - sageata jos
+  - Ctrl + n
+
+Emacs
+  - editor de text din ecosistemul Unix / Linux
+  - mediu intreg care se bazeaza pe combinatii de taste folosint Ctrl si Meta (de obicei tasta Alt)
+  Editarea liniei de comanda:
+- Navigarea cursorului:
+- Ctrl + a : Mută cursorul la începutul liniei de comandă (Anterior).
+- Ctrl + e : Mută cursorul la sfârșitul liniei de comandă (End).
+- Alt + f : Mută cursorul înainte cu un cuvânt (Forward).
+- Alt + b : Mută cursorul înapoi cu un cuvânt (Backward).
+
+- Ștergerea textului (Cutting/Killing):
+- Ctrl + k : Șterge tot textul de la poziția curentă a cursorului până la sfârșitul liniei.
+- Ctrl + u : Șterge tot textul de la poziția curentă a cursorului până la începutul liniei.
+- Alt + d : Șterge cuvântul de după cursor.
+- Ctrl + w : Șterge cuvântul de dinaintea cursorului.
+
+- Recuperarea textului (Pasting/Yanking):
+- Ctrl + y : Lipsește (paste) ultimul fragment de text șters/tăiat.
+
+- Altele:
+- Ctrl + l : Curăță ecranul (echivalent cu comanda clear), dar păstrează linia curentă intactă.
+- Ctrl + _ : (Undone) Anulează ultima modificare făcută în linia de comandă.
+
+Obs. Cautarea inapoi (Reverse Search) si command-line completion sunt esentiale pentru eficienta.
+
+
+## 7.1.2.3: Editarea comenzilor
+
+- un mod simplesit de editare a unei comenzi se face cu tastele sagetile (stanga si dreapta) in combinatie cu Backspace si Delete
+- deplasari mai rapide se fac cu tastele Home si End
+  Tasta Home: Mută cursorul la începutul liniei curente.
+    Echivalent Emacs (folosit în Bash): Ctrl + a
+  Tasta End: Mută cursorul la sfârșitul liniei curente.
+    Echivalent Emacs (folosit în Bash): Ctrl + e
+Obs. Folosirea de combinatii de taste furnizate de shell au avantaje:
+  1) Nu indeparteaza degetele de pe taste comune.
+  2) Permite editari mai complexe si raspide ale comenzii
+Def. Core Dump = un fișier care conține starea memoriei RAM în momentul prăbușirii.
+
+  - folosite pentru a opri pprocesul curent
+    SIGINT (interrupt) - Ctrl + c
+      - pentru utilizare normala
+      - nu contine Core Dump, dar procesul isi inchide fisierele si lasa mediul curat
+      - mod politicos de a opri o comanda care ruleaza in terminal
+      - cand comanda se opreste, afiseaza statusul la final
+    SIGQUIT (quit) - Ctrl + z
+      - nu contine Core Dump, dar procesul isi inchide fisierele si lasa mediul curat
+      - mod politicos de a opri o comanda care ruleaza in terminal
+      - cand comanda se opreste, afiseaza statusul la final
+    SIGQUIT (quit) - Ctrl + \
+      - contine Core Dump
+      - mai brusc, folosit de obicei cand un program nu mai raspunde corect
+      - folosit cand e nevoie de o analiza tehnica
+    SIGKILL (kill) - fara combinatie de taste
+      - nu contine Core Dump
+      - instantaneu, nu poate fi blocat sau ignorat de un proces
+      - procesul care primeste acest semnal va fi sters din tabela de procese
+
+- Alt + . : Inserează ultimul argument al comenzii anterioare. Este esențial pentru viteza de lucru în CLI.
+  - combinatia de taste Alt+. este folosită pentru cazurile în care una dintre comenzile anterioare contine ca ultim argument o valoare refolosibilă
+  - provine din editorul Emacs și elimină necesitatea de a tasta din nou căi lungi sau nume de fișiere.
+
+Exemple în terminal:
+
+Cazul 1: Crearea unui director și accesarea lui
+  student@uso:~$ mkdir director_cu_nume_foarte_lung_si_complicat
+  student@uso:~$ cd [Alt + .]
+  student@uso:~$ cd director_cu_nume_foarte_lung_si_complicat
+  
+Cazul 2: Verificarea unui fișier și apoi editarea lui
+  student@uso:~$ ls /etc/default/keyboard
+  student@uso:~$ nano [Alt + .]
+  student@uso:~$ nano /etc/default/keyboard
+  
+Cazul 3: Utilizarea repetată (navigare în istoricul argumentelor)
+  -Dacă apeși Alt + . de mai multe ori, shell-ul va aduce ultimele argumente de la comenzile și mai vechi.
+  student@uso:~$ cat /etc/passwd
+  student@uso:~$ ls /etc/group
+  student@uso:~$ echo [Alt + .] -> afișează /etc/group
+  student@uso:~$ echo [Alt + .] [Alt + .] -> afișează /etc/passwd
+
+
+## 7.1.2.4: Biblioteca Readline
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
