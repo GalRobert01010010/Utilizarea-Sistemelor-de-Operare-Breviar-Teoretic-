@@ -166,6 +166,125 @@ Cazul 3: Utilizarea repetată (navigare în istoricul argumentelor)
 
 ## 7.1.2.4: Biblioteca Readline
 
+- exista combinatii de taste si in in alte interfete in linia de comanda precum Python shell sau MySQL shell sau SQlite shell
+
+Combinatii de taste in shell:
+  Ctrl+c - are semnanul SIGINT
+         - ternimarea procesului interactiv curent / anularea comenzii tastate in shell
+  Ctrl+\ - are semnalul SIGQUIT
+         - terminarea fortata procesului interactiv curent (contine Core Dump)
+  Ctrl+d - livrarea EOF si inchiderea shellului
+  Alt+. - completarea in shell al ultimului argument al ultimei comenzi
+  Ctrl+a - plasarea cursorului de editare la inceputul comenzii
+  Ctrl+e - plasarea cursorului de editare la sfarsitul comenzii
+  Alt+b - plasarea cursorului cu un cuvant inapoi
+  Alt+f - plasarea cursorului cu un cuvant inainte
+  Ctrl+u - stergerea din pozitia curenta pana la inceputul comenzii
+  Ctrl+k - stergerea din pozitia curenta pana la sfarsitul comenzii
+  Ctrl+d - stergerea liniei de sub cursor (echivalent Delete)
+  Alt+d - stergerea cuvantului din fata cursorului
+  Alt+Backspace - stergerea cuvantului din spatele cursorului
+
+Obs. Aceste scurtaturi de tastatura sunt prezente in mai multe shelluri, deoarece majoritatea shellurilor folosesc Readline.
+
+
+## 7.1.3: Functionarea shellului
+
+- shellul interpreteaza comenzile si argumentele acestora primite de la user
+  - acestea se separa prin caracterul " " (spatiu)
+- daca sintaxa comenzii este corecta, shellul va efectua comanda
+- pentru aceasta, gaseste un fisier executabil aferent comenzii si creeaza un proces in acel fisier
+  - Ex. pentru ls
+    - fisierul executabil este /bin/ls
+  - Ex. pentru sudo
+    - fisierul executabil este usr/bin/sudo
+Obs. Pentru localizarea unui fisier executabil aferent unei comenzi, shellul foloseste variabila de mediu PATH.
+
+
+## 7.1.3.1: Variabila de mediu PATH
+
+- contine directoarele in care sunt cautate fisierele executabile pentru o comanda, separate prin ":" (doua puncte)
+- daca se transmite o comanda (Ex. ls, cd etc) prin cale (absoluta sau relativa), nu se mai cauta in PATH
+Obs. Directorul curent este absent din PATH, de aceea se ruleaza explicit un executabil ./nume_executabil
+- o variabila are un nume si o valoare
+- pentru a afisa valoarea (continutul):
+  Ex. 
+    student@uso:~$ echo $USER
+    student
+    student@uso:~$ echo $PATH
+    /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/
+    usr/local/games:/snap/bin
+
+Utilitarul `which`
+  - folosit pentru a afla fara a rula, care este fisierul executabil aferent unei comenzi
+  - which: Afișează calea absolută a fișierului executabil care ar fi rulat în terminal
+    - Exemplu: which ls
+  - which -a: (All) Afișează toate locațiile din PATH care conțin executabilul, nu doar pe prima găsită
+    - Exemplu: which -a python3
+  - which -s: (Silent) Nu afișează nimic; returnează doar un cod de stare (util în scripturi pentru a verifica existența unei comenzi)
+    - Exemplu: which -s git && echo "Instalat"
+
+## 7.1.3.2: Crearea unui proces nou
+
+- un proces este creat prin intermediul unui altuia (de exemplu shellul)
+- shellul creeaza un proces printr-un API intern al sistemului de operare, care in Linux este dat de doua functii: fork() si exec()
+  Def. API (Application Programming Interface) = un set de reguli si de unelte care permit unui program sa comunice cu alt program sau cu OS.
+
+fork()
+  - proces care creeaza un proces copil identic cu procesul parinte
+exec()
+  - apelul care modifica imaginea procesului copil cu cea din executabilul primit ca parametru
+
+Ex. 
+  - shellul primeste comanda `ls` si identifica executabilul /bin/ls
+  - apoi creeaza un proces copil identic folosind fork()
+  - apoi inlocuieste imaginea de executabil cu /bin/ls folosind exec()
+- procesul nou creat are ca parinte shellul
+
+ Relația Părinte-Copil în Shell
+  - Shell-ul este părintele (PPID) oricărei comenzi lansate din el.
+  - echo $$ : Afișează PID-ul shell-ului curent.
+  - ps -f -C <nume> : Comandă pentru a vedea PID-ul procesului și PPID-ul (care va coincide cu PID-ul shell-ului).
+    Explicatie:
+    - ps -f: (Full-format) Afișează o listă detaliată care include coloanele UID, PID, PPID, C, STIME, TTY, TIME și CMD.
+      - Exemplu: ps -f
+    - ps -C: (Command) Filtrează procesele după numele executabilului.
+      - Exemplu: ps -C sleep
+    - ps -f -C: Combină afișarea detaliată cu filtrarea după nume.
+      - Exemplu: ps -f -C bash
+
+ Comportamentul Shell-ului
+  - Blocare: Shell-ul așteaptă implicit finalizarea procesului copil (foreground).
+  - Buffer terminal: Datele tastate în timpul execuției sunt stocate și transmise shell-ului abia după deblocare.
+  - Background (&) : Operator folosit pentru a lansa procesul fără a bloca shell-ul.
+
+ Codul de ieșire (Exit Code)
+  - $? : Variabilă care reține succesul/eșecul ultimei comenzi.
+  - 0 : Succes.
+  - != 0 : Eroare.
+
+- Exemple în terminal:
+
+# Pas 1: Aflăm PID shell
+student@uso:~$ echo $$
+14599
+
+# Pas 2: Lansăm proces și verificăm ierarhia din alt terminal
+student@uso:~$ sleep 100
+# (În alt terminal)
+student@uso:~$ ps -f -C sleep
+# Rezultat: PID 14619, PPID 14599
+
+# Pas 3: Verificăm codul de ieșire
+student@uso:~$ ls /neexistent
+student@uso:~$ echo $?
+# Rezultat: o valoare diferită de 0 (eroare)
+
+
+## 7.1.4: Comenzi interne si comenzi externe
+
+
+
 
 
 
