@@ -283,6 +283,91 @@ student@uso:~$ echo $?
 
 ## 7.1.4: Comenzi interne si comenzi externe
 
+- cand rulam o comanda, shellul identifica un fisier executabil aferent acelei comenzi
+Def. Comenzi externe = comenzi al caror executabil este separat de shell.
+- din ratiuni de viteza si de functionalitate, unele comenzi sunt implementate la nivelul shellului
+Def. Comenzi interne = comenzi care duc la rularea unei componente de program din procesul shell curent
+  - acestea nu mai creeaza un proces nou dintr-un executabil
+
+- comenzile interne sunt folosite din ratiuni de eficienta
+- crearea unui proces nou inseamna cost de timp (overhead) la nivelul shellului
+
+Obs. Comenzile externe sunt prevalente pentru moduilaritate.
+  - comenzile noi se adauga prin adaugarea unui nou executabil, fara a modifica shellul
+
+- comanda `which`
+  - ne spune tipul unei comenzi si precizeaza tipul de executabil asociat
+  - binar independent
+- comanda `type`
+  - varianta mai robusta decat `which`
+  - comanda integrata
+
+
+## 7.2: Functionalitati shell
+
+- shellul oermite rularea de comenzi cu sau fara parametri
+- shellul are functionalitati care permit inlantuirea si combinarea mai multor comenzi si configurarea modului in care opereaza
+  - functionalutatile sunt oferite de: variabile, operatori, expandari, constructii agregate
+
+
+## 7.2.1: Operatori shell
+
+- cei mai frecvent folositi sunt cei de redirectare si inlantuire
+  - redirectare: >, <, >>, 2>      (sectiunea 2.4)
+  - inlantuire: ;, ||, &&, |       (sectiunea 4.5.3)
+Obs. Folosim "&" pentru rularea unui proces in background. (sectiunea 4.3.3)
+
+
+## 7.2.2: Subshelluri
+
+Ex.
+  student@uso:~$ ls ; ps > a.out
+  Desktop Documents Downloads examples.desktop Music
+  snap Templates uso.git Videos vm-actions-log.txt  Pictures Public
+  student@uso:~$ ( ls ; ps ) > a.out
+Diferenta: 
+  - in prima comanda doar rezultatul `ps` este redirectat
+  - in a doua, se creeaza un subshell pentru a inlantui comenzi
+    Def. Subshellul este un proces nou shell care suleaza cele doua comenzi si le transmite outputul
+
+
+## 7.2.3: Variabile shell
+
+- pot fi folosite pentru a investiga si configura executia shellului
+- variabila are nume si valoare
+- pt a afisa numele variabile, o prefixam cu "$"
+
+Parametri din shell asemuiti unor variabile:
+  $ - PID-ul procesului shell curent
+  ! - PID-ul celui mai recent proces din background
+  ? - codul de iesire al celei mai recente comenzi
+  _ - ultimul argument al celei mai recente comenzi
+
+Parametrii speciali pentru shell scripting (sectiunea 13.3.1):
+  # - numărul de parametri primiți de script (echivalent argc din C)
+  0 - numele scriptului curent (echivalent argv[0] din C)
+  1, 2, ... - primul, al doilea, etc. parametru primit de script
+  * - toți parametrii scriptului tratați ca un singur șir de caractere
+  @ - toți parametrii scriptului tratați ca elemente individuale
+
+Variabile predefinite Bash:
+  PATH - caile de cautare a fisierelor executabile pentru comenzi
+  PWD - directorul curent
+  USER - numele utilizatorului curent
+  HOME - directorul home al utilizatorului curent
+  SHELL - shellul curent
+  TERM - tipul de terminal folosit
+
+Obs. Pentru a vedea toate variabilele predefinite intr-un shell Bash, folosim `declare`.
+Obs. Pentru a anula definirea unei variabile, folosim `unset`.
+
+
+## 7.2.3.1: Variabile de mediu
+
+
+
+
+
 
 
 
