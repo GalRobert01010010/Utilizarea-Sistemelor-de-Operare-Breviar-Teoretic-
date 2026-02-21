@@ -542,10 +542,36 @@ Tehnici Avansate de Globbing
         - dacă scrii doar ls [[:digit:]], shell-ul va căuta fișiere al căror nume este format dintr-o singură cifră (de exemplu, fișierul 5).
 
 
+## 7.2.4.2: Expandarea comenzilor
+
+- se foloseste frecvent folosirea unei comenzi ca parametru al unei alte comenzi sau retinerea lui intr-o variabila
+
+Expandarea Comenzilor (Command Substitution)
+  - Sintaxă: `$(comanda)` sau `` `comanda` `` (varianta veche).
+  - Rol: Permite preluarea output-ului unei comenzi și folosirea lui ca text/argument pentru o altă comandă sau stocarea într-o variabilă.
+
+Exemple Practice și Aplicabilitate:
+
+1. Automatizarea creării de fișiere (Data și Ora)
+  - Utilizare: Generarea de nume de fișiere unice pentru backup-uri sau rapoarte.
+    Comandă: touch raport_$(date +%Y-%m-%d).txt
+    Funcționalitate: Injectează data curentă în numele fișierului.
+    Rezultat: Crearea fișierului "raport_2026-02-21.txt".
+
+2. Procesarea listelor (Comenzi imbricate)
+  - Utilizare: Obținerea de detalii despre un fișier fără a-i cunoaște calea exactă.
+    Comandă: ls -l $(which python3)
+    Funcționalitate: `which` găsește calea, iar `ls -l` o folosește pentru a afișa permisiunile.
+    Rezultat: -rwxr-xr-x 1 root root ... /usr/bin/python3
+
+3. Analiza proceselor (Din Listing 7.20)
+  - Stocare PID-uri: pids=$(pgrep -u student)
+    Afișare: echo $pids (Afișează toate ID-urile proceselor utilizatorului student).
+  - Numărare procese: num_proc=$(pgrep -u student | wc -w)
+    Afișare: echo $num_proc (Afișează numărul total de procese active).
 
 
-
-
+## 7.2.5: Escaping
 
 
 
