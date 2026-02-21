@@ -364,17 +364,103 @@ Obs. Pentru a anula definirea unei variabile, folosim `unset`.
 
 ## 7.2.3.1: Variabile de mediu
 
+Def. Variabila de mediu = = variabila modtenita de procesele din shell.
+Obs. Marcam o variabila ca variabila de mediu cand vream sa fie mostenita si vizibila in alt proces.
+
+Diferența de Scop - Shell vs. Environment
+  - Variabilă simplă: Este vizibilă exclusiv în procesul Bash curent. Niciun program pornit din acest terminal nu o poate accesa.
+    Exemplu: USER_NOTE="Sunt in terminal"
+  - Variabilă de mediu: Este copiată în memoria oricărui proces nou creat din acest shell. Este metoda standard de configurare a programelor.
+    Exemplu: export EDITOR=nano
+
+Utilitarul `env` - Environment
+  - Afișează toate variabilele de mediu exportate în sesiunea curentă a shell-ului.
+    Exemplu: env
+  - env -i: Ignoră mediul moștenit și pornește un proces nou într-un mediu complet gol.
+    Exemplu: env -i /bin/sh
+  - env VAR=VALOARE: Rulează un program cu o variabilă de mediu specifică, fără a o modifica pe cea din shell-ul părinte.
+    Exemplu: env LANG=fr_FR.UTF-8 vlc
+  - env -u: Șterge (unset) o variabilă specifică din mediul în care rulează comanda.
+    Exemplu: env -u HOME bash
+
+Utilitarul `export` - Export Variables
+  - Marchează o variabilă shell pentru a fi moștenită de toate procesele copil create ulterior.
+    Exemplu: export NUME_VAR=valoare
+  - export -p: Afișează toate variabilele exportate în shell-ul curent sub forma unor comenzi "declare -x".
+    Exemplu: export -p
+  - export -n: Elimină atributul de "export" al unei variabile; aceasta rămâne o variabilă de shell.
+    Exemplu: export -n LANG
+  - export -f: Exportă o funcție definită în shell către procesele copil.
+    Exemplu: export -f numele_functiei
+
+Obs. Pentru a vedea toate variabilele de mediu definite, folosim comanda `export -p` sau `env`.
+Obs. Folosim `export` pentru a defini o variabila de mediu.
+Obs. Folosim `export -n` pentru ca o variabila sa nu mai fie definita ca variabila de mediu. 
+
+Utilitarul `declare` - Shell Variable Management
+  - Afișează toate variabilele (locale și de mediu) și funcțiile definite în sesiunea curentă a shell-ului.
+    Exemplu: declare
+  - declare -x: Marchează o variabilă pentru export, transformând-o în variabilă de mediu (identic cu comanda export).
+    Exemplu: declare -x CONFIG_PATH=/etc/settings
+  - declare -r: Definește o variabilă "read-only", a cărei valoare nu mai poate fi modificată sau ștearsă.
+    Exemplu: declare -r ID_SISTEM=99
+  - declare -i: Forțează variabila să fie tratată ca un întreg, permițând calcule matematice directe.
+    Exemplu: declare -i CALCUL=10+5
+  - declare -p: Afișează atributele și valoarea unei variabile specifice sub formă de comandă.
+    Exemplu: declare -p PATH
+
+Folosirea variabileor temporare:
+  - implica faptul ca nu e nevoie sa declaram mereu variabile de mediu cand rulam procese
+
+  Injectarea Variabilelor per Proces (Inline Definition)
+  - Permite definirea unei variabile care va fi moștenită ca variabilă de mediu doar de către programul lansat, fără a afecta shell-ul curent.
+    Exemplu: TR_DEBUG=1 transmission-cli
+  - Variabila încetează să existe imediat ce procesul respectiv se închide și nu apare în comanda `env`.
+    Exemplu: LANG=en_US.UTF-8 vlc
+> Obs. `transmission-cli` este varianta de terminal (CLI) a unui client de descărcat fișiere
+  - este folosit în exemple pentru a demonstra cum variabilele de mediu pot activa funcții ascunse (precum depanarea/debug) dintr-o singură comandă.
 
 
+## 7.2.4: Expandari
+
+- comenzile de intrare din shell pot cuprinde parametri, operatori si variabile
+
+Variabile de Mediu Esențiale
+  - HOME: Reține calea către directorul personal al utilizatorului.
+    Exemplu comandă: echo $HOME
+    Exemplu afișare: /home/student
+  - PATH: Listă de directoare unde shell-ul caută executabilele comenzilor introduse.
+    Exemplu comandă: echo $PATH
+    Exemplu afișare: /usr/local/bin:/usr/bin:/bin
+  - TERM: Specifică tipul de terminal utilizat pentru a știi cum să afișeze culorile sau caracterele speciale.
+    Exemplu comandă: echo $TERM
+    Exemplu afișare: xterm-256color
+
+Expandarea cu tildă (Liniile 1-2)
+  - Înlocuiește `~` cu valoarea variabilei $HOME.
+    Exemplu comandă: ls ~/Downloads/
+    Exemplu afișare: idafree70_linux.run opensc-0.20.0
+
+Expandarea cu acolade (Liniile 4-12)
+  - Multiplică argumentele prin enumerarea opțiunilor, utilă pentru a accesa mai multe resurse deodată.
+    Exemplu comandă: ls lab{02,03}
+    Exemplu afișare: lab02: anul_1 demo  lab03: pc project
+
+Expandarea parametrică / a variabilelor (Liniile 14-19)
+  - Înlocuiește numele variabilei cu valoarea ei.
+    Exemplu comandă: echo $config
+    Exemplu afișare: /etc/nsswitch.conf
+  - Concluzie delimitare: Acoladele `${}` sunt necesare pentru a fixa numele variabilei atunci când aceasta este lipită de alte caractere (litere, cifre, underscore).
+    Exemplu comandă: echo ${config}_test
+    Exemplu afișare: /etc/nsswitch.conf_test
+
+Expandarea aritmetică (Liniile 21-24)
+  - Permite efectuarea calculelor matematice prin construcția `$(( ))`.
+    Exemplu comandă: echo $((3+4))
+    Exemplu afișare: 7
 
 
-
-
-
-
-
-
-
+## 7.2.4.1 Globbing
 
 
 
