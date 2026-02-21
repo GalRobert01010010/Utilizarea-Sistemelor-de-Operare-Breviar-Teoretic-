@@ -462,6 +462,92 @@ Expandarea aritmetică (Liniile 21-24)
 
 ## 7.2.4.1 Globbing
 
+- se mai numeste "expandarea căilor" (pathname expansion)
+- se refera la constructii specifice shellului care pot fi expandate la a se potrivi cu mai multe optiuni
+
+Expandarea Parametrică Avansată (Manipularea String-urilor)
+
+  - Afișarea valorii (Delimitare): Folosită pentru a izola numele variabilei.
+    Comandă: echo ${config}
+    Funcționalitate: Afișează conținutul curat al variabilei.
+    Rezultat: /etc/nsswitch.conf
+
+  - Lungimea șirului (${#var}): Returnează numărul de caractere din variabilă.
+    Comandă: echo ${#config}
+    Funcționalitate: Numără tot (litere, cifre, semne de punctuație).
+    Rezultat: 18
+
+  - Înlocuirea de text (${var/vechi/nou}): Caută un subșir și îl înlocuiește.
+    Comandă: echo ${config/ns/df}
+    Funcționalitate: Înlocuiește prima apariție a șirului "ns" cu "df".
+    Rezultat: /etc/dfswitch.conf
+
+  - Înlocuirea multiplă (${var//vechi/nou}): Caută și înlocuiește TOATE aparițiile subșirului.
+      Comandă: echo ${config//n/X}
+      Funcționalitate: Înlocuiește fiecare literă "n" din variabilă cu litera "X".
+      Rezultat: /etc/Xsswitch.coXf
+
+  - Ștergere de la început (${var#model}): Taie cel mai scurt segment care se potrivește cu modelul, pornind de la stânga.
+    Comandă: echo ${config#/*/}
+    Funcționalitate: Șterge tot ce se află între primele două caractere "/" (inclusiv acestea).
+    Rezultat: nsswitch.conf
+
+  - Ștergere de la sfârșit (${var%model}): Taie segmentul care se potrivește cu modelul, pornind de la dreapta.
+    Comandă: echo ${config%/*}
+    Funcționalitate: Șterge tot ce urmează după ultimul "/" (inclusiv slash-ul), lăsând doar calea directorului.
+    Rezultat: /etc
+
+Tehnici de Globbing (Potrivirea numelor de fișiere)
+
+  - Caracterul `*` (Wildcard universal): Se potrivește cu orice șir de caractere (inclusiv niciunul).
+    Comandă: ls *.c
+    Funcționalitate: Afișează toate fișierele care se termină în ".c".
+    Rezultat: main.c helper.c tema.c
+
+  - Caracterul `?` (Single character): Se potrivește cu un singur caracter, exact unul.
+    Comandă: ls tema?.c
+    Funcționalitate: Caută fișiere ca tema1.c, tema2.c, dar NU tema10.c (două caractere).
+    Rezultat: tema1.c temaA.c
+
+  - Setul `[...]` (Character set): Se potrivește cu oricare dintre caracterele din interior.
+    Comandă: ls lab[123].txt
+    Funcționalitate: Caută doar lab1.txt, lab2.txt sau lab3.txt.
+    Rezultat: lab1.txt lab3.txt
+
+  - Intervalul `[a-z]` (Range): Se potrivește cu orice caracter dintr-un interval definit.
+    Comandă: ls [a-c]*.txt
+    Funcționalitate: Afișează fișierele care încep cu litera a, b sau c și se termină în .txt.
+    Rezultat: ana.txt bogdan.txt costel.txt
+
+Tehnici Avansate de Globbing
+
+  - Negarea setului ([!...]): Selectează orice caracter care NU se află în lista specificată. 
+    Este opusul setului clasic.
+    Comandă: ls lab[!0-9].txt
+    Funcționalitate: Afișează fișierele care au un caracter non-numeric după cuvântul "lab".
+    Rezultat: labA.txt, lab_backup.txt (Ignoră lab1.txt sau lab2.txt).
+
+  - Globbing Recursiv (**): Caută în folderul curent și în TOATE subdirectoarele de orice adâncime.
+    Comandă: ls **/solutie.c
+    Funcționalitate: Găsește orice fișier "solutie.c" indiferent cât de adânc e ascuns în structura de foldere.
+    Rezultat: solutie.c, runda1/problema1/solutie.c, arhiva/vechi/solutie.c.
+    Notă: Necesită activarea cu `shopt -s globstar`.
+
+  - Seturi de clase predefinite ([[:clasa:]]): Folosește categorii de caractere standardizate (Portable Operating System Interface).
+    Comandă: ls *[[:digit:]]*
+    Funcționalitate: Găsește orice fișier care conține cel puțin o cifră în nume.
+    Rezultat: tema1.c, varianta_02.txt.
+    Alte clase utile: [:alpha:] (litere), [:upper:] (majuscule), [:space:] (spații).
+      De ce adăugăm "*" in constructia "ls *[[:digit:]]*"?
+        - dacă scrii doar ls [[:digit:]], shell-ul va căuta fișiere al căror nume este format dintr-o singură cifră (de exemplu, fișierul 5).
+
+
+
+
+
+
+
+
 
 
 
