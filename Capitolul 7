@@ -573,8 +573,110 @@ Exemple Practice și Aplicabilitate:
 
 ## 7.2.5: Escaping
 
+Def. Metacaractere = caractere cu roluri dedicate in rularea shellului.
+Ex. 
+  student@uso:~/uso.git$ ls USO - Curs 07.pdf
+  ls: cannot access ’USO’: No such file or directory
+  ls: cannot access ’-’: No such file or directory
+  ls: cannot access ’Curs’: No such file or directory
+  ls: cannot access ’07.pdf’: No such file or directory
+  ls udo curs 05.pdf
+    Explicatie:
+      - rezulta eroare, deoarece blank este considerat metacaracter si shellul percepe linia scrisa ca o comanda urmata de 3 parametrii
+
+Obs. Pentru a impiedica shellul din a interpreta anumite caractere, folosim "escaping".
+Def. Escaping = metode prin care caracterele sa fie interpretate literal, nu ca metacaractere.
+
+Metode de Escaping (Tratarea caracterelor speciale)
+
+1. Cazul cu apostrofuri (' ') - Strong Quoting
+  - Caracterele plasate între două apostrofuri vor avea interpretare literală (exact așa cum sunt scrise).
+    Ex.: echo 'Pretul este $100'
+    Funcționalitate: Ignoră orice semnificație specială a simbolului $.
+    Rezultat: Pretul este $100
+
+2. Cazul cu ghilimele (" ") - Weak Quoting
+  - Similara cu apostrofurile, dar permite expandarea anumitor simboluri.
+  - Construcțiile care folosesc dolar ($) își păstrează semnificația (nu se escapează caracterul dolar).
+    Ex. (fără dolar): echo "Salut, acesta este un test"
+    Rezultat: Salut, acesta este un test
+    Ex. (cu dolar): echo "Directorul meu este $HOME"
+    Funcționalitate: Shell-ul vede $, accesează valoarea variabilei HOME și o afișează.
+    Rezultat: Directorul meu este /home/student
+
+3. Cazul cu backslash (\)
+  - Păstrează sensul literal al caracterului imediat următor.
+    Ex.: echo Pretul\ este\ \$100
+    Funcționalitate: Fiecare \ anulează semnificația specială a caracterului care urmează (spațiu, respectiv $).
+    Rezultat: Pretul este $100
+
+Capcane
+
+- Spații multiple (Word Splitting)
+  - Fără ghilimele: Shell-ul compactează spațiile extra (le vede ca separatori).
+    Ex.: echo A    B
+    Rezultat: A B
+  - Cu ghilimele: Se păstrează spațierea exactă (totul e un singur argument).
+    Ex.: echo "A    B"
+    Rezultat: A    B
+
+- Variabile goale (Argumente fantomă)
+  - Fără ghilimele: Variabila dispare; comanda rămâne fără argument.
+    Ex.: VAR=""; ls $VAR
+    Efect: Execută ls simplu (afișează directorul curent).
+  - Cu ghilimele: Variabila devine un argument vid ("").
+    Ex.: VAR=""; ls "$VAR"
+    Efect: Eroare (ls: cannot access '': No such file or directory).
+
+- Expandarea în text (Grile $)
+  - Ghilimele (" "): Permit expandarea valorii.
+    Ex.: echo "$USER" -> student
+  - Apostrofuri (' '): Blochează expandarea (interpretare literală).
+    Ex.: echo '$USER' -> $USER
+
+Capcane: Escaparea Formelor de Quoting
+
+- Ghilimele în Apostrofuri (și invers)
+  - Ex.: touch "ana'are'mere"
+    Explicație: Ghilimelele exterioare (" ") protejează apostrofurile din interior.
+    Rezultat: Un singur fișier numit: ana'are'mere
+
+- Eroarea de închidere (Promptul secundar)
+  - Ex.: touch 'ana"are"mere"
+    Explicație: Ai deschis cu apostrof ('), dar ai încercat să închizi cu ghilimele ("). Shell-ul crede că numele nu s-a terminat și așteaptă un alt apostrof (apare simbolul `>`).
+    Efect: Comanda rămâne blocată până la închiderea corectă sau Ctrl+C.
+
+- Apostrofuri pentru a proteja Ghilimele
+  - Ex.: touch 'ana"are"mere'
+    Explicație: Apostrofurile exterioare (' ') fac ca ghilimelele din interior să fie tratate ca text simplu, nu ca delimitatori.
+    Rezultat: Un singur fișier numit: ana"are"mere
+
+- Protejarea Backslash-ului
+  - Ex.: touch 'ana\are\mere'
+    Explicație: Între apostrofuri, backslash-ul își pierde puterea de a escapa și devine un simplu caracter de text.
+    Rezultat: Un singur fișier numit: ana\are\mere
 
 
+## 7.3: Pornirea si personalizarea shell-ului
+
+- orice utilizator are configurat un shell de login in /etc/passwd
+- procesul shellului de login este /bin/bash
+  - cand se porneste inseamna ca se porneste shellul Bash
+
+Configurarea Shell-ului (Bash)
+
+- Tipuri de Configurări
+  - Globale: Se aplică tuturor utilizatorilor din sistem (stocate de regulă în /etc/).
+  - Locale: Se aplică doar utilizatorului curent (stocate în directorul HOME, ex: ~/.bashrc).
+
+- Variabile de Control (Exemplu: PS1)
+  - PS1 (Prompt String 1): Variabila care definește aspectul promptului în terminal.
+    Ex.: PS1="\u@\h:\w\$ "
+    Funcționalitate: Afișează utilizatorul (\u), host-ul (\h) și directorul curent (\w).
+
+- Ordinea de încărcare (Grile)
+  - La pornirea unui shell interactiv (non-login), Bash caută fișierul local ~/.bashrc.
+  - Orice modificare în fișierele locale suprascrie setările din fișierele globale.
 
 
 
