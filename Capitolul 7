@@ -890,9 +890,194 @@ Obs. Un filtru de text prelucreaza si afiseaza la iesire tot text.
 
 - sunt in general orice comenzi care afiseaza informatii
 Ex. ps, pstree, ls, find, stat, df, lsblk, tree, strace, diff
+- informatiile pot fi folosite de user sau de alte comenzi
 
 
+## 7.5.1.1: Prelucratoarele de text
 
+- presupune actiuni de forma: selectie, inlocuire, extragere, ordonare (dupa un criteriu), 
+  sumarizare (obtinere de informatii numerice sau statistice), reformatare (plasarea unor elemente in plus, reordonarea unor elemente pe o linie)
+
+
+## 7.5.1.2: One-linere
+
+- pentru a prelucra text, combinam:
+  - generatoare de text (sau un fisier simplu)
+  - prelucratoate de text
+- operatorul pipe (|) intermediaza procesul si creaza one-linere
+
+Prelucratoare de Text
+  grep - Extrage liniile care se potrivesc cu o expresie regulată (extragere)
+  cut - Extrage anumite coloane (selecție)
+  nl - Afișează numărul liniei pentru fiecare linie (reformatare)
+  wc - Afișează numărul de linii, cuvinte, caractere (sumarizare)
+  sort - Sortează liniile (ordonare)
+  uniq - Elimină liniile duplicate (extragere, reformatare)
+  fmt - Reformatează conținutul (reformatare)
+  paste - Alătură conținutul mai multor fișiere (reformatare)
+  join - Alătură conținutul fișierelor pe baza unor informații comune (reformatare)
+  rev - Inversează conținutul unei linii (reformatare)
+  tail - Afișează doar liniile finale (selecție)
+  head - Afișează doar liniile inițiale (selecție)
+  tac - Inversează liniile unui fișier - ultima devine prima (reformatare)
+  tr - Translatează sau șterge caractere (înlocuire)
+  tee - Clonează conținutul într-un fișier și la ieșirea standard (duplicare)
+  sed - Utilitar de prelucrare complexă de text (toate tipurile)
+  awk - Utilitar de prelucrare complexă de text (toate tipurile)
+
+
+## 7.6: Utilitare avansate
+
+- utilitarele `find`, `sed`, `awk` sunt avansate datorita functionalitatilor si optiunilor complexe pe care le au
+
+
+## 7.6.1: find
+
+- folosit pentru filtrarea intrarilor in sistemul de fisiere care corespund unor anumite criterii
+Căutare și Procesare cu find
+
+find - Find Files
+  - find [cale]: Listarea recursivă a tuturor intrărilor din directorul specificat
+    - Exemplu: find uso.git/
+  - find -type [tip]: Filtrare după tipul intrării (f=fișier, d=director)
+    - Exemplu: find uso.git/ -type f (Afișează doar fișierele)
+  - find -name [pattern]: Căutare după nume folosind caractere de înlocuire (wildcards)
+    - Exemplu: find uso.git/ -type f -name 'a*' (Fișiere care încep cu litera 'a')
+  - find -perm [mod]: Căutare după permisiuni specifice (cu minus în față caută cel puțin aceste permisiuni)
+    - Exemplu: find uso.git/ -type f -perm -111 (Fișiere care au drept de execuție pentru toți)
+  - find -mtime [zile]: Căutare după timpul ultimei modificări (cu minus în față înseamnă "mai recent de")
+    - Exemplu: find uso.git/ -type f -mtime -25 (Fișiere modificate în ultimele 25 de zile)
+
+Acțiuni (ACTIONS) pe rezultatele find
+  - find -delete: Șterge automat fișierele care corespund criteriilor de căutare
+    - Exemplu: find uso.git/ -type f -perm -111 -delete
+  - find -exec [comanda] {} \;: Execută o comandă pentru fiecare fișier găsit (parantezele {} sunt înlocuite de numele fișierului)
+    - Exemplu: find uso.git/ -type f -exec ls -l {} \; (Afișează detalii pentru fiecare fișier)
+  - find -exec [comanda] +: Similar cu exec, dar pasează mai multe fișiere ca argumente unei singure comenzi (mai rapid)
+    - Exemplu: find uso.git/ -type f -exec stat -c "%s" {} \; (Afișează doar dimensiunea fișierelor)
+
+Combinări și One-linere (Pipeline)
+  - Integrare cu sort: Extragerea datelor despre fișiere și ordonarea lor numerică
+    - Exemplu: find uso.git/ -type f -exec stat -c "%s,%n" {} \; | sort -n (Listează fișierele după dimensiune)
+  - Integrare cu xargs: Pasează lista de rezultate către o altă comandă (alternativă la -exec)
+    - Exemplu: find uso.git/ -type f -name 'a*' | xargs ls -l
+
+Diferențe între find -exec și xargs
+
+find ... -exec [comanda] {} \;
+  - Funcționare: Lansează un proces nou pentru FIECARE fișier găsit.
+  - Impact: Mai lent dacă ai mii de fișiere (overhead de proces).
+  - Exemplu: find . -type f -exec chmod 644 {} \;
+
+find ... | xargs [comanda]
+  - Funcționare: Grupează fișierele și lansează comanda o singură dată (sau de câteva ori) cu o listă lungă de argumente.
+  - Impact: Mult mai rapid pentru seturi mari de date.
+  - Limitare: Poate avea probleme cu fișierele care conțin spații în nume (necesită find -print0 | xargs -0).
+  - Exemplu: find . -type f | xargs chmod 644
+
+find ... -exec [comanda] {} +
+  - Funcționare: Varianta modernă a lui -exec care se comportă ca xargs (grupează argumentele).
+  - Impact: Combină viteza xargs cu siguranța find (gestionează corect spațiile).
+  - Exemplu: find . -type f -exec chmod 644 {} +
+
+
+## 7.6.2: sed
+
+- folosit pentru a face inlocuiri intr-un fisier sau prelucrare text
+- forma avansata pentru utilitarul `tr`
+
+sed - Stream Editor (Comenzi și Sintaxă)
+  - sed 's/[vechi]/[nou]/g': Comanda de substituție (s). Înlocuiește secvența "vechi" cu "nou".
+    - g (global): Forțează înlocuirea tuturor aparițiilor din linie, nu doar pe prima.
+    - Exemplu (Linia 18): sed 's/al/AL/g' < test.txt (Transformă "alune" în "ALune" și "galben" în "gALben").
+  - sed -n '/[start]/,/[stop]/p': Afișarea unui interval de linii (p = print).
+    - -n (quiet): Dezactivează afișarea automată a fiecărei linii (fără el, liniile din interval ar fi dublate).
+    - Exemplu (Linia 34): sed -n '/ana/,/si/p' < test.txt (Afișează tot textul cuprins între prima linie care conține "ana" și prima care conține "si").
+  - sed '/[pattern]/d': Ștergerea liniilor (d = delete).
+    - Exemplu (Linia 41): sed '/si/d' < test.txt (Elimină complet liniile care conțin șirul "si", restul rămânând intacte).
+
+Detalii tehnice pentru concurs
+  - Caracterul 's': Provine de la "substitute" și este cea mai utilizată funcție.
+  - Caracterul 'p': Provine de la "print". Se folosește aproape mereu cu flag-ul -n pentru a controla exact ce ajunge la stdout.
+  - Caracterul 'd': Provine de la "delete". Atenție: șterge linia din fluxul de ieșire, nu din fișierul original (decât dacă se folosește -i).
+
+
+## 7.6.3: awk
+
+- e limbaj de programare care poate fi folosit ca filtru de text
+- e intermediar intre utilitar de tip filtru si limbaj de programare ca Pearl sau Python
+  Obs. E in esenta limbaj de programare deoarece are o structura mai complexa decat `grep` sau `sed`.
+
+awk - Pattern Scanning and Processing
+  - awk -F [delimitator]: (Field separator) Specifică caracterul care separă coloanele. Poate fi un singur caracter sau o expresie regulată.
+    - Exemplu (Linia 8): awk -F '\t' '{print $1, $2;}' < students.txt (Folosește TAB ca separator pentru a extrage numele și grupa)
+  - awk -v [var]=[val]: (Variable) Transmite o variabilă externă din shell către interiorul scriptului awk.
+    - Exemplu: awk -v prag=5 '$3 > prag {print $1}' students.txt
+  - awk '$[n] ~ /[pattern]/': (Match) Execută acțiunea doar dacă coloana n se potrivește cu expresia regulată.
+    - Exemplu (Linia 16): awk -F '\t' '$2 ~ /313CC/ {print $1, $2;}' < students.txt (Afișează doar studenții din grupa 313CC)
+  - awk '$[n] !~ /[pattern]/': (No Match) Execută acțiunea doar dacă coloana n NU se potrivește cu șablonul.
+    - Exemplu: awk '$2 !~ /311CC/' students.txt
+  - awk -f [fisier]: (File) Rulează un script awk salvat într-un fișier separat (util pentru structuri complexe ca în Listing 7.34).
+    - Exemplu: awk -f calcul_matrice.awk date.txt
+
+Variabile Interne (Built-in Variables)
+  - $0: Reprezintă întreaga linie curentă.
+  - $1, $2, $n: Reprezintă coloana 1, 2, respectiv n.
+  - NR: (Number of Record) Numărul liniei curente.
+  - NF: (Number of Fields) Numărul total de coloane de pe linia curentă.
+  - FS: (Field Separator) Variabila internă pentru separator (echivalentul lui -F).
+
+Analiza formei programatice:
+
+- BEGIN { ... }: Bloc de inițializare
+  - Rol: Se execută o singură dată la începutul programului, înainte de a procesa prima linie de text.
+  - Utilizare în exemplu: Inițializarea unei matrice (tablou bidimensional) folosind bucle `for` imbricate.
+    - Exemplu:
+      BEGIN {
+        for (i = 0; i < len; i++)
+          for (j = 0; j < len; j++)
+            arr[i,j] = 0;
+      }
+
+- { ... }: Blocul principal de procesare (Body)
+  - Rol: Se execută automat pentru fiecare linie (record) citită din fișierul de intrare.
+  - Utilizare în exemplu: Aplicarea unor condiții logice (`if-else`) pe coloana 1 (`$1`) pentru a incrementa contoarele din matrice.
+    - Exemplu:
+      {
+        if ($1 == "a")
+          arr[0,0]++;
+        else if ($1 == "b")
+          arr[0,1]++;
+      }
+
+- Elemente de sintaxă programatică regăsite:
+  - Bucle for: Identice cu cele din limbajul C pentru parcurgerea indicilor.
+  - Matrice (Arrays): `arr[i,j]` reprezintă tablouri asociative în awk (cheia este compusă din indicii i și j).
+  - Operatori de incrementare: `++` (crește valoarea existentă cu 1).
+  - Structuri de decizie: `if`, `else if` pentru filtrarea datelor în funcție de conținutul câmpurilor.
+
+
+awk - Structură de Programare (Blocuri de cod)
+  - BEGIN { ... }: Blocul de inițializare. Se execută o singură dată, înainte de procesarea liniilor.
+    - Exemplu (Liniile 1-6): Se folosește pentru a declara și inițializa matricea `arr[i,j]` cu 0.
+  - { ... }: Blocul principal (Body). Se execută automat pentru fiecare linie citită din fișier.
+    - Exemplu (Liniile 7-11): Folosește structuri de control `if-else` pentru a incrementa valori în matrice în funcție de conținutul primei coloane ($1).
+  - END { ... }: Blocul final. Se execută o singură dată după ce tot fișierul a fost parcurs (nu apare în listing, dar e esențial pentru afișarea rezultatelor).
+
+Elemente de limbaj regăsite în exemplu
+  - for (i = 0; i < len; i++): Ciclu de repetare identic cu cel din limbajul C.
+  - arr[i,j] = 0: Declararea tablourilor (arrays). În awk, acestea sunt asociative (cheia poate fi orice șir de caractere).
+  - if ($1 == "a") ... else if: Luarea deciziilor bazată pe conținutul coloanelor.
+  - arr[0,0]++: Operatorul de incrementare (crește valoarea cu 1).
+
+
+## 7.7: Sumar
+
+- interfata in linia de comanda e necesara pentru: eficienta si uniformitate
+- shellul e principala forma de interactiune cu OS-ul
+  - Bash este cel mai raspandit shell in Linux
+- comenzile din shell si fisierele sunt centrate pe folosirea textului
+- multe comenzi sunt filtre de text sau care prelucreaza text
 
 
 
