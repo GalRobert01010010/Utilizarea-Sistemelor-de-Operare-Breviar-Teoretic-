@@ -751,6 +751,145 @@ Obs. `tmux`, `byobu` si `screen` permit configurarea:
 
 ## 7.4: Expresii regulate
 
+- folosite de utilitare precum `grep`, `sed` si `awk`
+- fisierele contin informatii text si afiseaza informatii text
+- prelucrarea informatiei presupune:
+  - extragerea de linii si coloane
+  - verificarea aparitiei unor secvente
+
+Verificarea aparitiei unor secvente (Pattern Matching)
+  - folosim expresii regulate
+  Def. Expresii regulate = siruri de caractere.
+    - folosite pentru a ingloba reprezentarea mai multor siruri
+  - unele caractere au rol special si le numim metacaractere (globbing)
+
+Expresii Regulate (RegEx)
+
+- Concept: Pattern matching pentru căutarea de text complex.
+- Exemplu tău: [a-z]+,[0-9]+
+  - [a-z]+ : Una sau mai multe litere mici.
+  - ,     : Caracterul virgulă (trebuie să apară exact așa).
+  - [0-9]+ : Una sau mai multe cifre.
+  - Rezultat: Se potrivește cu "ana,123" sau "mere,0", dar NU cu "Ana,12" (A e mare).
+  Obs. Semnul "+" este un cuantificator:
+    -fără el, dacă ai scrie doar [a-z],[0-9], RegEx-ul ar căuta o singură literă urmată de virgulă și o singură cifră (ex: a,1).
+
+- Metacaractere Esențiale (Grile)
+  - . (Punct): Orice caracter, mai puțin newline.
+  - ^ (Căciulă): Începutul liniei (Ex: ^Ana -> linia trebuie să înceapă cu Ana).
+  - $ (Dolar): Sfârșitul liniei (Ex: sfarsit$ -> linia trebuie să se termine cu sfarsit).
+  - * : Caracterul anterior apare de 0 sau mai multe ori.
+  - + : Caracterul anterior apare de 1 sau mai multe ori.
+  - ? : Caracterul anterior apare de 0 sau 1 dată (opțional).
+  - [ ] : O clasă de caractere (Ex: [abc] -> a, b sau c).
+  - [^ ] : Negare (Ex: [^0-9] -> orice caracter care NU este cifră).
+
+Diferențe Cheie: Globbing vs. RegEx
+  Folosinta
+  - Globbing: Shell-ul (Bash) pentru a găsi nume de fișiere/foldere.
+  - RegEx: Utilitare specifice (grep, sed, awk) pentru a căuta text în interiorul fișierelor.
+  Exemple terminal
+  - Globbing (Shell / ls)
+    - Comandă: ls p*
+    - Interpretare: Caută fișiere al căror nume începe cu litera "p", urmată de oricâte caractere (sau niciunul).
+    - Rezultat: poza, pauza, p, p123.
+  - RegEx (Grep)
+    - Comandă: grep "p.*" fisier.txt
+    - Interpretare: Caută în interiorul fișierului liniile care conțin litera "p", urmată de orice caracter (.) de oricâte ori (*).
+    - Rezultat: Va găsi liniile cu "peste", "p", "apa" (pentru că are p în interior), "pauza".
+
+Metacaractere RegEx
+
+- . (Punct): Wildcard universal. Înlocuiește exact UN caracter.
+  - Ex.: a.b se potrivește cu "axb", "a2b", "a b".
+
+- ? (Opțional): Caracterul anterior apare de 0 sau 1 dată.
+  - Ex.: mere? -> "mer" sau "mere".
+
+- * (Kleene Star): Caracterul anterior apare de 0 sau de oricâte ori.
+  - Ex.: lo*l -> "ll", "lol", "loool".
+
+- + (Cel puțin unu): Caracterul anterior apare de 1 sau de oricâte ori.
+  - Ex.: lo+l -> "lol", "loool" (NU se potrivește cu "ll").
+
+- ^ (Ancoră Start): Forțează potrivirea la începutul liniei.
+  - Ex.: ^Linux -> Linia trebuie să înceapă cu "Linux".
+
+- $ (Ancoră Final): Forțează potrivirea la sfârșitul liniei.
+  - Ex.: bash$ -> Linia trebuie să se termine în "bash".
+
+- [ ] (Set/Clasă): Orice caracter unic din interiorul parantezelor.
+  - Ex.: [abc] -> găsește "a", "b" sau "c".
+
+- \ (Escaping): Anulează rolul special al unui metacaracter.
+  - Ex.: \. -> caută caracterul punct propriu-zis, nu "orice caracter".
+
+Obs. Dacă dorim să folosim într-o expresie regulată un metacaracter în sensul său literal (adică sa facem escaping) vom folosi backslash.
+
+Escaparea în grep (Basic Regular Expressions (BRE) vs Extended Regular Expressions (ERE))
+
+- Regula: În varianta standard (Basic), caracterele +, |, (, ), <, > sunt tratate ca text.
+- Activare metacaracter: Trebuie prefixate cu \ (backslash) pentru a le activa funcția specială.
+- Sfat AcadNet: Folosește grep -E pentru a evita scrierea excesivă de backslash-uri.
+
+Exemple de comenzi complete:
+
+1. Metacaracterul + (Cel puțin o apariție)
+   Comandă: grep "lo\+l" file.txt
+   Efect: Găsește "lol", "lool", dar nu "ll".
+
+2. Metacaracterul | (SAU logic)
+   Comandă: grep "mere\|pere" fructe.txt
+   Efect: Găsește liniile care conțin fie "mere", fie "pere".
+
+3. Metacaracterul ( ) (Grupare)
+   Comandă: grep "\(abc\)\+" test.txt
+   Efect: Caută repetiții ale grupului "abc" (ex: abcabcabc).
+
+4. Metacaracterele \< \> (Ancore pentru cuvânt)
+   Comandă: grep "\<ana\>" text.txt
+   Efect: Găsește cuvântul exact "ana", nu și "ananas" sau "cana".
+
+Construcții RegEx Practice
+
+- Nume propriu: [A-Z][a-z]+
+  - Explicație: O majusculă urmată de cel puțin o literă mică.
+- Prenume și Nume: [A-Z][a-z]+ [A-Z][a-z]+
+  - Explicație: Două cuvinte cu majusculă separate prin spațiu.
+- Nume de variabilă (C/Bash): [a-zA-Z_][a-zA-Z_0-9]*
+  - Explicație: Începe cu literă sau underscore, urmat de cifre/litere (nu poate începe cu cifră).
+- Număr de telefon (10 cifre): [0-9]{10}
+  - Explicație: Caută o secvență de exact 10 cifre.
+- Directivă #include (C): ^#include +<[^>]+>$
+  - Explicație: Linia începe cu #include, urmat de spații, apoi text între < >.
+
+Variabile în RegEx (Back-references)
+
+- Definire: Se folosesc paranteze rotunde \( \) pentru a captura un grup.
+- Referențiere: Se folosește \1, \2 etc., pentru a apela grupul capturat anterior.
+
+Exemplu (Listing 7.29):
+Comandă: grep '^\([A-Z]\)[a-z]\+ \1' students.txt
+
+Explicație pas cu pas:
+1. ^\([A-Z]\) -> Capturează prima literă a liniei (trebuie să fie majusculă) în variabila \1.
+2. [a-z]\+    -> Urmează restul prenumelui (litere mici).
+3. (spațiu)   -> Separator între nume și prenume.
+4. \1         -> Aici e magia: cere ca următoarea literă (prima de la nume) să fie IDENTICĂ cu cea capturată la pasul 1.
+
+Rezultat: Va găsi "Andrei Antonescu" sau "Bogdan Berbec", dar NU "Andrei Berbec".
+
+
+## 7.5: Prelucrare de text de bază: filtre de text si one-linere
+
+- comenzile in Linux pot fi: generatoare de text SAU prelucratoare de text (uneori se numesc "filtre de text")
+Obs. Un filtru de text prelucreaza si afiseaza la iesire tot text.
+
+
+## 7.5.1: Generatoare de text
+
+- sunt in general orice comenzi care afiseaza informatii
+Ex. ps, pstree, ls, find, stat, df, lsblk, tree, strace, diff
 
 
 
