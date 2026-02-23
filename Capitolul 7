@@ -679,6 +679,88 @@ Configurarea Shell-ului (Bash)
   - Orice modificare în fișierele locale suprascrie setările din fișierele globale.
 
 
+## 7.3.1: Configurarea la pornire a shellului Bash
+
+- moduri de pornire a shellului Bash
+  - login / non-login
+  - interactiv / neinteractiv
+
+Obs. Cel mai uzual este shellul interactiv de login.
+  - shellul parcurge initial fisierul global de configurare (/etc/profile)
+  - apoi parcurge primul fisier gasit dintre ∼/.bash_profile, ∼/.bash_login, ∼/.profile
+- configuratia Bash va face sa fie interpretat continutul fisierului /etc/bash.bashrc si continutul fisierelor din directorul /etc/profile.d/
+-fisierul ∼/.bash_profile va avea configuratia astfel incat se va interpreta si continutul fisierului ∼/.bashrc
+
+Configurarile pentru personalizarea si configurarea pornirii shelului se fac:
+  - global (la nivelul sistemului) : in fisierul /etc/bash.bashrc
+  - local (la nivelul utilizatorului) : in fisierul ~/.bashrc
+
+Obs. La inchiderea unei sesiuni, shellul interpreteaza fisierul  ~/.bash_logout
+
+
+## 7.3.2: Personalizarea promptului
+
+- implica personalizarea continutului sau a culorilor
+- promptul afisat de Bash este definit de PS1
+
+  Elemente care fac parte din variabila PS1
+  - \u : Numele utilizatorului curent.
+  - \h : Numele stației (hostname).
+  - \w : Directorul curent (calea completă).
+  - \W : Directorul curent (doar ultima componentă din cale).
+  - \$ : Caracterul $ (devine automat # pentru utilizatorul root).
+  - \t : Ora curentă (format 24h: HH:MM:SS).
+  - \@ : Ora curentă (format 12h + AM/PM).
+  - \d : Data curentă (ex: Wed Feb 23).
+  - \n : Linie nouă (New line).
+
+- Culori și Formatare
+  - Sintaxă: \[\033[COLORm\]
+  - Regulă: Codurile trebuie închise între \[ \] pentru ca terminalul să calculeze corect lungimea rândului.
+
+Capcane
+
+- Persistența modificării
+  - Ex.: PS1="bash> " (rulat în terminal)
+  - Efect: Modificarea este temporară (dispare la logout).
+  - Soluție: Scrierea PS1="valoare" în ~/.bashrc.
+
+- Diferența critică \w vs \W
+  - Ex. (cale: /home/elev/lab):
+    - \w -> afișează /home/elev/lab
+    - \W -> afișează doar lab
+
+- Identificarea privilegiilor (\$ )
+  - Dacă în grilă promptul se termină în #, înseamnă că utilizatorul este ROOT (administrator).
+  - Dacă se termină în $, este un utilizator normal.
+
+
+## 7.3.3: Multiplexoare de terminal
+
+- putem folosi shelluri multiple
+  - mai multe ferestre de shell
+  - mai multe taburi de shell
+  - multiplexoare de shell (Ex. screen, tmux etc.)
+
+Obs. Multiplexoarele sunt utile cand dorim rularea unor aplicatii interactive si apoi ne detasam de terminal. 
+Obs. `tmux`, `byobu` si `screen` permit configurarea:
+  - aspectului terminalului
+  - combinatii de taste
+  + au facilitati dedicate (salvarea sesiunii curente, restaurarea acesteia)
+
+
+## 7.4: Expresii regulate
+
+
+
+
+
+
+
+
+
+
+
 
 
 
