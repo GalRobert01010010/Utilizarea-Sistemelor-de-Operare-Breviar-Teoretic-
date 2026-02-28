@@ -623,12 +623,31 @@ Utilitarul `jobs`:
   Steaguri:
   - -l : Afișează PID-ul procesului alături de numărul job-ului.
     - Comandă terminal: jobs -l
+         `student@uso:~$ sleep 1000 &`
+         `[1] 10533`
+         `student@uso:~$ jobs -l`
+         `[1]+ 10533 Running                 sleep 1000 &`
+         Obs.: Apare coloana a doua care indică PID-ul (Process ID) 10533.
   - -p : Afișează doar PID-urile proceselor.
     - Comandă terminal: jobs -p
+         `student@uso:~$ jobs -p`
+         `10533`
+         Obs.: Util când vrei să transmiți PID-ul direct altei comenzi, ex: `kill -9 $(jobs -p)`.
   - -r : Afișează doar job-urile care sunt în starea "Running".
     - Comandă terminal: jobs -r
+         `student@uso:~$ sleep 2000 &`
+         `[2] 10540`
+         `student@uso:~$ nano` (Apasă Ctrl+Z pentru suspendare)
+         `[3]+  Stopped                 nano`
+         `student@uso:~$ jobs -r`
+         `[1]-  Running                 sleep 1000 &`
+         `[2]+  Running                 sleep 2000 &`
+         Obs.: Job-ul [3] cu Nano a fost filtrat din listă deoarece starea lui este "Stopped", nu "Running".
   - -s : Afișează doar job-urile care sunt în starea "Stopped".
     - Comandă terminal: jobs -s
+         `student@uso:~$ jobs -s`
+         `[3]+  Stopped                 nano`
+         Obs.: Afișează exclusiv procesele care au primit semnalul de suspendare (SIGTSTP) prin Ctrl+Z.
   Exemplu probă:
   - student@uso:~$ firefox &
   - [1] 10533
@@ -638,6 +657,10 @@ Utilitarul `jobs`:
   - Comanda jobs afișează doar procesele pornite din shell-ul curent. 
     - Într-un terminal nou, lista va fi goală.
   - Diferența PID vs Job ID: PID (ex: 10533) este global, Job ID (ex: [1]) este local shell-ului.
+
+Semnele indică ordinea de prioritizare a proceselor în fundal:
++ (Job-ul Curent): Este procesul cel mai recent accesat/pornit. Dacă scrii simplu fg, acesta va fi adus în prim-plan.
+- (Job-ul Anterior): Este "următorul la rând". Dacă job-ul cu + se termină, acesta îi ia locul.
 
 Obs. Un proces creat ca sa ruleze in fg, poate fi suspendat cu comanda `Ctrl + z` si va trece in bg.
 Obs. Operatorul `&` duce in background un proces ruland (running), iar comada `Ctrl + z`
