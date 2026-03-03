@@ -1,1 +1,115 @@
+# Capitolul 11
 
+- folosirea internetului ofera avantaje dar si provocari
+
+Scalabilitatea
+  - poate reprezenta o problema
+  - se refera la infrastructura de interconectare, la spatiul de stocare a cantitatii de informatie si la viteza de transfer a datelor
+  Def. Modul prin care internetul ajunge la cat mai multe persoane in lume.
+  - numarul dispozitivelor conectate la internet a crescut in momentul aparitiei World Wide Web
+
+Securitatea si viata privata
+  - o alta problema
+  - interconectarea persoanelor implica faptul ca informatia livrata pe infrastructura internetului poate fi capturata la sursa,
+    pe parcursul livrarii catre destinatie, sau din spatiul unde e stocata
+  - Vezi Cap. 12
+
+Obs. Internetul este infrastructura care asigura interconectarea intre dispozitiive si sisteme la divel global.
+  - este ansamblul tuturor retelelor interconectate
+Obs. Fiecare sistem face parte dintr-o retea, care la randul ei este conectata la alta retea.
+
+Def. Retea = o multime de dispozitive care pot comunica intre ele.
+  - pot fi interconectate prin: medii de transmisie (cablu, aer, fibra etc) si echipamente de retea (ruter, switch, acces point).
+
+
+## 11.1: Servicii de internet
+
+Def. Client = sistemul utilizatorului si aplicatia care realizeaza cererea.
+  - Ex. aplicatie client sau sistem client
+Def. Server = aplicatia si sistemul organizatiei care ofera serviciul.
+  - Ex. aplicatie server sau sistem server
+Def. Paradigma client-server = modul de a comunica stabilit intre solicitant si furnizori de servicii/produse.
+
+Tipuri de servicii:
+  Acces la distanta
+    - Ex: SSH (Secure Shell), Remote Desktop, VNC (Virtual Network Computing)
+  Acces de informatii
+    - Ex: WWW, Wikipedia, Google
+  Livrare de continut (multimedia)
+    - Ex. Netflix, YouTube, Amazon Prime, HBO GO, Spotify
+  Comunicare / Messaging
+    - Ex. e-mail, forumuri, instant messaging, Facebook Messenger, WhatsApp, Slack, Signal, Telegram, Microsoft Teams
+  Servicii online / Intermediere tranzactii
+    - Ex. Amazon, eBay, PayPal, Revolut, Glovo, Uber, AirBnb, Booking.com
+  Spatiu de stocare
+    - Ex. Google Drive, Microsoft One Drive, Dropbox
+  Resurse de calcul / Sisteme distribuite
+    - Ex. Amazon EC2 / S3, Google Compute Engine, Microsoft Azure, Rackspace
+  Colaborare
+    - Ex. GitHub, Microsoft SharePoint, Google Drive, Trello
+
+Obs. Browserul web este una dintre cele mai importante aplicatii client de pe internet.
+  - alternative sunt aplicatiile dedicate pentru anumite servicii
+  - Ex. Mozilla Thunderbird (pentru e-mail), Starcraft 2 (joc de retea), Dropbox (pentru sincronizarea datelor pe un sistem local),
+        Slack (pentru comunicare in cadrul unei echipe) etc.
+
+Obs. Aplicatiile de tip web browser sunt mai folosite pe desktop / laptop.
+Obs. Aplicatiile dedicate (Dropbox, Facebook, YouTube, e-mail, WhatsApp) sunt mai intalnipe pe sisteme mobile.
+
+Def. Modelul clasic de afaceri = un client primeste un bun de la un furnizor si primeste contravaloarea acelui bun.
+Obs. Modelul de afaceri online are alte forme de monetizare.
+  - Ex. serviicii fremium/premium, comision de tranzactii, reclame pentru utilizatori etc.
+
+
+## 11.2: Functionarea internetului
+
+Def. Internetul = infrastructura care face legatura dintre sisteme si dispozitive.
+  - exista sisteme de tip client si de tip server
+- numim sistemele si statii (în engleză hosts, network hosts, end nodes)
+Obs. Prin infrastructura fizica se face legatura intre aplicatii client si aplicatii server
+
+Pentru a putea realiza comunicarea între statii în internet, este nevoie de:
+  Un mod de adresare - statia a trebuie sa poata preciza ca vrea sa faca legatura cu statia B sau C
+  O forma de transmitere a datelor - datele comunicate trebuie sa fie compartimentate pentru a fi transmise intre statii
+  Un mecanism de dirijare a comunicatiei - pe baza adreselor furnizate, datele trebuie dirijate intre statiile A si B
+  Un mod comun acceptat de interactiune - aplicatia client trebuie sa aiba un limbaj asemanator cu aplicatia furnizor
+
+Def. Protocol = set de reguli care guverneaza comunicarea intre minim doua componente interconectate.
+Obs. Necesitatile mentionate anterior sunt asigurate de Protocoalele de Comunicatie.
+  - protocolul cunoscut si de statia A si de statia B permite interactiunea dintre acestea
+Obs. In internet, sistemele implementeaza o stiva de protocoale.
+Def. Stiva de protocoale = mai multe protocoale construite una peste alta si care ofera interconectivitate.
+
+Stiva TCP/IP
+  - stiva de protocoale folosita cel mai des in internet
+  - se bazeaza pe cele mai cunoscute protocoale: TCP (Transmission Control Protocol) si IP (Internet Protocol)
+
+
+## 11.2.1: Internet Protocol (IP)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
