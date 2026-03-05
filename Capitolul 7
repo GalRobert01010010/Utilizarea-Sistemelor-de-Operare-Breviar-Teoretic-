@@ -328,7 +328,7 @@ Ex.
 Diferenta: 
   - in prima comanda doar rezultatul `ps` este redirectat
   - in a doua, se creeaza un subshell pentru a inlantui comenzi
-    Def. Subshellul este un proces nou shell care suleaza cele doua comenzi si le transmite outputul
+    Def. Subshellul este un proces nou shell care sudeaza cele doua comenzi si le transmite outputul
 
 
 ## 7.2.3: Variabile shell
@@ -446,7 +446,7 @@ Expandarea cu acolade (Liniile 4-12)
     Exemplu comandă: ls lab{02,03}
     Exemplu afișare: lab02: anul_1 demo  lab03: pc project
 
-Expandarea parametrică / a variabilelor (Liniile 14-19)
+Expandarea parametrică / a variabilelor
   - Înlocuiește numele variabilei cu valoarea ei.
     Exemplu comandă: echo $config
     Exemplu afișare: /etc/nsswitch.conf
@@ -564,7 +564,7 @@ Exemple Practice și Aplicabilitate:
     Funcționalitate: `which` găsește calea, iar `ls -l` o folosește pentru a afișa permisiunile.
     Rezultat: -rwxr-xr-x 1 root root ... /usr/bin/python3
 
-3. Analiza proceselor (Din Listing 7.20)
+3. Analiza proceselor 
   - Stocare PID-uri: pids=$(pgrep -u student)
     Afișare: echo $pids (Afișează toate ID-urile proceselor utilizatorului student).
   - Numărare procese: num_proc=$(pgrep -u student | wc -w)
