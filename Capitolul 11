@@ -54,11 +54,11 @@ Obs. Browserul web este una dintre cele mai importante aplicatii client de pe in
         Slack (pentru comunicare in cadrul unei echipe) etc.
 
 Obs. Aplicatiile de tip web browser sunt mai folosite pe desktop / laptop.
-Obs. Aplicatiile dedicate (Dropbox, Facebook, YouTube, e-mail, WhatsApp) sunt mai intalnipe pe sisteme mobile.
+Obs. Aplicatiile dedicate (Dropbox, Facebook, YouTube, e-mail, WhatsApp) sunt mai intalnite pe sisteme mobile.
 
 Def. Modelul clasic de afaceri = un client primeste un bun de la un furnizor si primeste contravaloarea acelui bun.
 Obs. Modelul de afaceri online are alte forme de monetizare.
-  - Ex. serviicii fremium/premium, comision de tranzactii, reclame pentru utilizatori etc.
+  - Ex. serviicii freemium/premium, comision de tranzactii, reclame pentru utilizatori etc.
 
 
 ## 11.2: Functionarea internetului
@@ -66,10 +66,10 @@ Obs. Modelul de afaceri online are alte forme de monetizare.
 Def. Internetul = infrastructura care face legatura dintre sisteme si dispozitive.
   - exista sisteme de tip client si de tip server
 - numim sistemele si statii (în engleză hosts, network hosts, end nodes)
-Obs. Prin infrastructura fizica se face legatura intre aplicatii client si aplicatii server
+Obs. Prin infrastructura fizica se face legatura intre aplicatii client si aplicatii server.
 
 Pentru a putea realiza comunicarea între statii în internet, este nevoie de:
-  Un mod de adresare - statia a trebuie sa poata preciza ca vrea sa faca legatura cu statia B sau C
+  Un mod de adresare - statia A trebuie sa poata preciza ca vrea sa faca legatura cu statia B sau C
   O forma de transmitere a datelor - datele comunicate trebuie sa fie compartimentate pentru a fi transmise intre statii
   Un mecanism de dirijare a comunicatiei - pe baza adreselor furnizate, datele trebuie dirijate intre statiile A si B
   Un mod comun acceptat de interactiune - aplicatia client trebuie sa aiba un limbaj asemanator cu aplicatia furnizor
@@ -86,6 +86,90 @@ Stiva TCP/IP
 
 
 ## 11.2.1: Internet Protocol (IP)
+
+- cel mai important protocol de pe Internet
+- IP ofera : schema de adresare IP (pe baza careia se dirijeaza datele in intenret)
+             schema de compartimentare a datelor in unitati numite pachete IP (IP packets)
+- datele sunt trimise sub forma de pachete
+- statia sursa compartimenteaza datele in pachete, le transfera, iar statia destinatie de receptioneaza si le reasambleaza
+
+Obs. Dirijarea pachetelor in internet poarta numele de "rutare".
+  - este realizata de echipamente dedicate numite "rutere"
+  - pt a putea dirija un pachet, un ruter are nevoie sa cunoasca sursa si destinatia
+  -> orice pachet IP contine metadate (info despre sursa, si info despre distinatie)
+  - un ruter decide si CUM sa il transfere (in mod normal catre alt ruter aflat mai aproape de destinatie)
+
+Reteaua locala (Local Area Network - LAN)
+  - este o retea cu statii
+  - in acesta retea exista mereu un ruter care intermediaza accesul la internet si care face primul pas in dirijarea pachetului
+  -> acest ruter este numit "gateway" (default gateway)
+
+Comunicarea in internet
+  - compartimentarea datelor in pachete
+  - adaugarea de metadate de adresare
+  - rutarea lor pe baza metadatelor
+
+Obs. Faptul ca intre sursa si destinatie sunt echipamente intermediare, poate reprezenta un risc de securitate.
+  - pachetele pot fi interceptate, analizate si modificate
+  -> e important ca informatiile sa fie criptate
+  -> este bine sa folosim protocolul HTTPS in loc de HTTP 
+
+
+## 11.2.2: Nume in internet. DNS
+
+- cand folosim un serviciu, trebuie sa cunoastem adresa destinatie statiei server
+- adresele IP au forme greu de retinut si este nevoie de o metoda de a le gestiona si organiza
+
+Serviiciul DNS (Domain Name System)
+  - modalitate de a atribui nume usor de retinut adreselor
+  - putem folosi nume de statii (DNS hostnames) si nume de domenii (DNS domain names) usor de retinut si inteles
+  Obs. Statiile si domeniile reprezinta DESTINATII.
+  Def. Stația este numele specific al unui calculator (sau al unui serviciu) dintr-o rețea.
+    Ex. poți avea un calculator numit "imprimanta-etaj1" sau un server numit "stocare".
+  Def. Domeniul este „familia” sau grupul din care face parte acea stație. Este ca un nume de familie, ca un dume de grup.
+    Ex. google.com, facebook.com, mapn.ro.
+
+Fully Qualified Domain Name (FQDN)
+  Exemplu: www.google.com
+    www este stația (hostname-ul care oferă serviciul web).
+    google.com este domeniul.
+  Exemplu: mail.yahoo.com
+    mail este stația (calculatorul care se ocupă de e-mail).
+    yahoo.com este domeniul.
+
+Implementarea DNS in internet
+  - se face printr-un set de servere
+  - aceste servere retin asociarea dintre adresa IP si nume 
+
+Obs. Cand o aplicatie face apel la un server DNS (pentru a face legatura dintre domeniu si adresa IP), 
+     aplicatia face o interogare (un DNS querry).
+Obs. Serverul DNS configurat pe sistemul pe care rulează aplicatia va răspunde interogării dacă are răspunsul, altfel va 
+     transmite cererea mai departe altor servere DNS, si tot asa până obtine răspunsul.
+
+
+## 11.3: Echipamente de retea
+
+- folosite pentru conectarea fizica a statiilor intre ele, la alte retele si la Internet
+
+Dispozitive de retea: switch-uri, hub-uri, rutere, access point-uri, firewall etc.
+  - lucreaza cu pachete transmise de la statia sursa catre destinatie (le prelucreaza si dirijeaza)
+    - un ruter urmareste adresele IP sursa si destinatie pentru a ruta un pachet
+    - un access point preia un pachet din mediul aer si il transmite catre mediul cablu
+    - un firewall filtreaza anumite pachete (nu trec mai departe)
+  - exista dispozitive de retea multi-rol: de dirijare, filtrare, conversie etc.
+
+Medii de transmisie: aer, cablu, fibra optica
+  - folosite pentru a trimite informatia digitala (biti) sub forma de semnal (0 / 1) in functie de mediul sau
+  ### Tabel 11.2: Medii de transmisie în rețea
+
+| Mediu          | Semnal          | Viteză maximă | Avantaje                                            | Dezavantaje             |
+| :---           | :---            | :---          | :---                                                | :---                    |
+| Cablu de cupru | electric        | 10 Gbps       | cost redus, individual fiecărui sistem (nepartajat) | incomod                 |
+| Aer            | electromagnetic | 300 Mbps      | flexibilitate                                       | viteză redusă, partajat |
+| Fibră optică   | optic (lumină)  | 100 Gbps      | viteză mare                                         | cost mare               |
+
+
+
 
 
 
