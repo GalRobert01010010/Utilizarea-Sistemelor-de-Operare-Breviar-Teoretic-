@@ -168,15 +168,20 @@ Medii de transmisie: aer, cablu, fibra optica
 | Aer            | electromagnetic | 300 Mbps      | flexibilitate                                       | viteză redusă, partajat |
 | Fibră optică   | optic (lumină)  | 100 Gbps      | viteză mare                                         | cost mare               |
 
+Obs. O statie comunica printr-un mediu de transmisie cu un echipament de retea.
+  -> pentru asta, o statie / un dispositiv are nevoie de o placa de retea (Network Interface Card - NIC)
+
+Placa de retea (Network Interface Card - NIC)
+  - componenta hardware parte a unei statii
+  - preia datele de la aplicatii care ruleaza pe statie si le converteste in semnal specific mediului de transmisie
+  -> o placă de retea Ethernet va transmite datele în semnal electric pe un cablu de retea
+  -> o placă wireless va transmite datele în semnal electromagnetic prin aer către un ruter wireless sau access point.
+
+Obs. In general, statiile au placa de retea de tip Ethernet/LAN (Local Area Network) sau de tip WiFI/WLAN (Wireless Area Network).
+- dispoziitivele mobile au placa de retea WiFi integrata si desktop foloseste o placă de retea Ethernet.
 
 
-
-
-
-
-
-
-
+## 11.4: Adresarea IP. Stiva TCP/IP
 
 
 
