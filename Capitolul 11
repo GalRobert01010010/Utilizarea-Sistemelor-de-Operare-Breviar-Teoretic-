@@ -38,7 +38,7 @@ Tipuri de servicii:
   Livrare de continut (multimedia)
     - Ex. Netflix, YouTube, Amazon Prime, HBO GO, Spotify
   Comunicare / Messaging
-    - Ex. e-mail, forumuri, instant messaging, Facebook Messenger, WhatsApp, Slack, Signal, Telegram, Microsoft Teams
+    - Ex. e-mail, forumuri, instant messaging, Facebook, Messenger, WhatsApp, Slack, Signal, Telegram, Microsoft Teams
   Servicii online / Intermediere tranzactii
     - Ex. Amazon, eBay, PayPal, Revolut, Glovo, Uber, AirBnb, Booking.com
   Spatiu de stocare
@@ -126,7 +126,7 @@ Serviiciul DNS (Domain Name System)
   Obs. Statiile si domeniile reprezinta DESTINATII.
   Def. Stația este numele specific al unui calculator (sau al unui serviciu) dintr-o rețea.
     Ex. poți avea un calculator numit "imprimanta-etaj1" sau un server numit "stocare".
-  Def. Domeniul este „familia” sau grupul din care face parte acea stație. Este ca un nume de familie, ca un dume de grup.
+  Def. Domeniul este „familia” sau grupul din care face parte acea stație. Este ca un nume de familie, ca un nume de grup.
     Ex. google.com, facebook.com, mapn.ro.
 
 Fully Qualified Domain Name (FQDN)
@@ -159,8 +159,7 @@ Dispozitive de retea: switch-uri, hub-uri, rutere, access point-uri, firewall et
   - exista dispozitive de retea multi-rol: de dirijare, filtrare, conversie etc.
 
 Medii de transmisie: aer, cablu, fibra optica
-  - folosite pentru a trimite informatia digitala (biti) sub forma de semnal (0 / 1) in functie de mediul sau
-  ### Tabel 11.2: Medii de transmisie în rețea
+  - folosite pentru a trimite informatia digitala (biti) sub forma de semnal (0 / 1) in functie de mediul sau material.
 
 | Mediu          | Semnal          | Viteză maximă | Avantaje                                            | Dezavantaje             |
 | :---           | :---            | :---          | :---                                                | :---                    |
@@ -172,23 +171,127 @@ Obs. O statie comunica printr-un mediu de transmisie cu un echipament de retea.
   -> pentru asta, o statie / un dispositiv are nevoie de o placa de retea (Network Interface Card - NIC)
 
 Placa de retea (Network Interface Card - NIC)
+  - actioneaza la Nivelul 2 (Legatura de date)
   - componenta hardware parte a unei statii
   - preia datele de la aplicatii care ruleaza pe statie si le converteste in semnal specific mediului de transmisie
   -> o placă de retea Ethernet va transmite datele în semnal electric pe un cablu de retea
   -> o placă wireless va transmite datele în semnal electromagnetic prin aer către un ruter wireless sau access point.
 
-Obs. In general, statiile au placa de retea de tip Ethernet/LAN (Local Area Network) sau de tip WiFI/WLAN (Wireless Area Network).
+Obs. In general, statiile au placa de retea de tip Ethernet/LAN (Local Area Network) sau de tip WiFI/WLAN (Wireless Local Area Network).
 - dispoziitivele mobile au placa de retea WiFi integrata si desktop foloseste o placă de retea Ethernet.
 
 
 ## 11.4: Adresarea IP. Stiva TCP/IP
 
+Def. Conexiunea logica = legatura stabilita intre statii.
+  - este diferita de infrastructura fizica stabilita intre statii
+  - este realizata cu protocoalele de retea
+
+Protocoalele de retea
+  - sunt organizate intr-o stiva de retea
+  - protocoalele de pe un nivel inferior ofera sprijin pentru protocoalele de nivel superior
+
+Nivelele protocoalelor (Stiva TCP/IP):
+1. Nivelul legatura de date (Ethernet)
+  - adresa de la acest nivel este adresa MAC (Media Access Control)
+  - adresa unica de 48 biti
+2. Nivelul Internet (IP)
+  - adresa este adresa IP
+  - adresa poate fi configurata pe statie 
+  - este folosita sa identifice statia si sa ruteze pachetele
+3. Nivelul transport (TCP/UDP)
+  - adresa este portul
+  - portul este un numar care identifica un proces sau aplicatie de pe acel sistem  (cum este cazul pentru PID)
+4. Nivelul aplicatie (HTTP, DNS, FTP, SSH, DHCP, SNMP, LDAP)
+  - adresele depind de protocol  
+  - adresele iau forma unui URI (Uniforme Resource Identifier)
+  - identifica o resursa in sistemul fizic, accesibila prin protocolul respectiv
 
 
+## 11.4.1: Adresarea IP
+
+Stația pentru Internet Wireless (WLAN): 
+  Def. Este Routerul Wi-Fi sau un Access Point dedicatA
+  -acesta emite unde radio și gestionează conexiunile fără fir.
+
+Stația pentru Ethernet (LAN): 
+  Def. Este Switch-ul. Acesta are mai multe porturi fizice (mufă RJ45) unde conectezi cablurile de rețea
+    - ajoritatea routerelor de acasă au un switch cu 4 porturi integrat în spate.
+
+- adresa ip (IPv4) este formata din 32 de biti
+- sunt scrise in format zecimal
+- forma de reprezentare zecimala traduce fiecare octet intr-un numar intre 0 si 255
+- a aparut IPv6 pt ca IPv4 a devenit limitat
+- IPv6 este formata din 128 de octeti
+- sunt in format hexazecimal
+- internetul reprezintă o interconectare de rețele la nivel planetar.
+- rutarea datelor se realizează între rețele pentru a permite scalabilitatea sistemului.
+- switch-ul este echipamentul care transmite pachetele în interiorul rețelei către stația destinație.
+- fiecare stație are nevoie de o adresă IP și de apartenența la o rețea pentru a comunica.
+- adresa rețelei se calculează prin înlocuirea ultimului octet al adresei IP cu valoarea zero.
+- EX: adresa de rețea pentru IP-ul 192.168.53.100 este 192.168.53.0.
+- numarul de biti din adresa unei statii inlocuiti cu 0 variaza de la o retea la alta
+  - pt a determina nr de biti inlocuiti folosim masca de retea (network mask, netmask, subnet mask) 
+  - Masca de rețea determină câți biți din adresa IP aparțin rețelei și câți aparțin stației.
+  - O adresă IPv4 are un total de 32 de biți, organizați în 4 grupuri de câte 8 biți (octeți).
+  - Masca de rețea determină numărul de biți din adresa IP care rămân neschimbați pentru a identifica rețeaua.
+    - Biții care nu fac parte din masca de rețea sunt setați pe valoarea zero pentru a obține adresa rețelei.
+    - Masca /24 păstrează primii 24 de biți (3 octeți) și pune ultimii 8 biți (1 octet) pe zero.
+    - EX: Adresa 192.168.53.129/24 are adresa de rețea 192.168.53.0.
+    - Masca /16 păstrează primii 16 biți (2 octeți) și pune restul de 16 biți (2 octeți) pe zero.
+    - EX: Adresa 192.168.53.129/16 are adresa de rețea 192.168.0.0.
+    - Masca /8 păstrează primii 8 biți (1 octet) și pune restul de 24 de biți (3 octeți) pe zero.
+    - EX: Adresa 192.168.53.129/8 are adresa de rețea 192.0.0.0.
+  - Valoarea de după bară reprezintă numărul de biți de la stânga la dreapta care definesc rețeaua.
 
 
+## 11.4.2: Adresarea TCP
+
+- adresa IP identifica statia in Internet
+- portul identifica aplicatii de retea (client sau server) care ruleaza pe statie
+  Def. Portul = adresa la nivelul Transport din stiva TCP/IP
+    - protocolul TCP are adrese corespunzatore numite proturi TCP
+Obs. Portul implicit folosit de un serviciu de retea apare in fisierul /etc/services.
+Obs. Porturile TCP permit coexistenta mai multor aplicatii de retea pe aceeasi statie.
+  => spunem că porturile permit multiplexarea serviciilor de retea pe aceeasi statie
+- TCP garanteaza ca pachetele vor ajunge la destinatie, si ca o vor face in ordine.
 
 
+## 11.4.3: Limita de adrese IP
+
+- un server cu adresa IPv4 si unul cu IPv6 nu pot comunica
+
+NAT (Network Address Transfer)
+  - tehnologie / mecanism de retea care se afla la nivelul de retea (nivelul 3) si nivelul de transport (nivelul 4)
+  - inseamna ca o retea locala primeste o singura adresa IP (adresa publica a retelei)
+  - este construit pe infrastructura IPv4 existenta
+  - cand folosim NAT, ruterul face doua traduceri
+    - din adrese private in adrese publice (pentru a se putea conecta la internet)
+    - din adrese publica in adresa privata (pentru fiecare statie si reteaua LAN)
+      Obs. In reteaua locala (LAN) exista doar adrese private, si cand pachetele trimise catre Internet ies din LAN, abia atunci sunt traduse in adrese publice.
+  Def. Adresa publica = adresa care poate fi folosita pentru a identifica reteaua si pentru rutare.
+    Obs. Adresele private sunt rezervate si sunt de forma 192.168.X.Y, 172.16-31.X.Y si 10.X.Y.Z.
+  Def. Adresele private = adrese care nu permit identificarea sau rutarea prinintrnet.
+
+
+## 11.5: Configurari de retea
+
+Elemente de infrastructura necesare pentru conectarea unei statii (telefon, laptop, TV etc.) la Internet sunt:
+  - statia trebuie sa aiba o placa NIC configurata
+  - statia trebuie sa faca parte dintr-o retea, conectata la Internet prin ruter (numit si gateway)
+  - statia trebuie sa aiba un mediu de transmisie (aer, cablu, fibra optica), care sa o conecteze la retea
+  - statia trebuie sa aiba acces la un server DNS pe care sa il poata interoga pentru a transforma numele de domenii in adrese IP
+
+Parametrii de retea care trebuie configurati pe statie: 
+  - adresa IP a statiei (care va fi folosita pentru a identifica statia in retea)
+  - masca de retea a retelei (pentru determinarea adresei retelei din care statia va face parte)
+  - adresa IP a gateway-ului (a ruterului care ruteaza pachetele si face legatura la Internet)
+  - adresa IP a serverului DNS
+Obs. Configurarea acestor parametri se face automat de DHCP (Dynamic Host Configuration Protocol).
+  - 67 e portul Serverului DHCP si 68 este portul Clientului DHCP
+
+
+## 11.5.1: Interfete de retea. Investigatia configuratiei
 
 
 
